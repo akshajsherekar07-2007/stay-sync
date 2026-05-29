@@ -71,14 +71,42 @@
 - ❌ No database migrations run
 - *Reason: Awaiting user confirmation before Phase 1 implementation*
 
+### Session 2 — Phase 1.1 Project Setup & Infrastructure
+
+**Date:** 2026-05-30  
+**Duration:** Phase 1 Setup  
+**Phase:** Phase 1.1 (In Progress)
+
+#### Objectives
+- [x] Backend project scaffold (FastAPI)
+- [x] Frontend project scaffold (Vite + React + TypeScript + Tailwind)
+- [ ] Frontend ShadCN UI configuration
+- [x] Docker Compose for full local stack
+- [x] Environment configuration
+- [x] Linting and formatting configs
+
+#### Deliverables Created
+- `backend/app` core skeleton (`main.py`, config, logger, exceptions)
+- `backend/requirements` files and `pyproject.toml`
+- `frontend/vite.config.ts`, `frontend/tsconfig.json`
+- `frontend/src` base React structure, `styles/globals.css`, hooks, lib utils
+- `docker-compose.yml`, `backend/docker/Dockerfile`, `frontend/Dockerfile.dev`
+- Root `.gitignore`
+
+#### What Was NOT Done (Intentionally)
+- ❌ No Authentication implementation
+- ❌ No Database models or logic
+- ❌ No API endpoints (besides health checks)
+- *Reason: Confined to 1.1 setup.*
+
 ---
 
 ## Current State
 
 | Aspect                    | Status                                    |
 | ------------------------- | ----------------------------------------- |
-| **Current Phase**         | Pre-Implementation (Planning Complete)    |
-| **Next Action**           | Awaiting user confirmation to begin Phase 1 |
+| **Current Phase**         | Phase 1.1 Implementation (In Progress)    |
+| **Next Action**           | Complete ShadCN UI setup or proceed to 1.2  |
 | **Blocking Issues**       | None                                      |
 | **Technical Debt**        | None (fresh project)                      |
 | **Open Questions**        | See below                                 |
