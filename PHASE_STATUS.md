@@ -43,7 +43,7 @@
 
 > **Goal:** Establish a scalable, production-grade foundation with complete authentication, role-based access, and full property hierarchy CRUD.
 
-**Status:** 🔜 Next  
+**Status:** 🔄 In Progress  
 **Target Completion:** —  
 **Dependencies:** None (starting phase)
 
@@ -54,7 +54,7 @@
 | ---- | --------------------------------------------- | ------ |
 | 1.1.1 | Initialize backend project (FastAPI + Poetry/pip) | ✅ |
 | 1.1.2 | Initialize frontend project (Vite + React + TS) | ✅ |
-| 1.1.3 | Configure TailwindCSS + ShadCN UI              | 🔄 |
+| 1.1.3 | Configure TailwindCSS + ShadCN UI              | ✅ |
 | 1.1.4 | Docker + Docker Compose setup                   | ✅ |
 | 1.1.5 | Environment configuration (.env.example)        | ✅ |
 | 1.1.6 | ESLint + Prettier + pyproject.toml config       | ✅ |
