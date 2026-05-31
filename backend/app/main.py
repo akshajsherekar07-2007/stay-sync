@@ -11,6 +11,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
+from app.db.init_db import init_db
+from app.db.session import close_db
 
 
 @asynccontextmanager
@@ -20,8 +22,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # ── Startup ──────────────────────────────────────────────
     if settings.is_development:
         print(f"🚀 {settings.APP_NAME} starting in {settings.ENVIRONMENT} mode")
+    await init_db()
     yield
     # ── Shutdown ─────────────────────────────────────────────
+    await close_db()
     if settings.is_development:
         print(f"🛑 {settings.APP_NAME} shutting down")
 
