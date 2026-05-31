@@ -19,7 +19,7 @@
 │  + Auth +    │      + Realtime +                │   + Analytics +   │
 │  Property    │      Notifications               │   Production      │
 │              │                                  │                   │
-│   🔜 NEXT    │         ⏳ QUEUED                 │    ⏳ QUEUED       │
+│   🔄 IN PROG │         ⏳ QUEUED                 │    ⏳ QUEUED       │
 │              │                                  │                   │
 └──────────────┴──────────────────────────────────┴───────────────────┘
 ```
@@ -62,15 +62,15 @@
 #### 1.2 Database Foundation
 | #    | Task                                          | Status |
 | ---- | --------------------------------------------- | ------ |
-| 1.2.1 | Supabase project setup                        | ⬜ |
-| 1.2.2 | SQLAlchemy base model + session factory        | ⬜ |
-| 1.2.3 | Alembic migration setup                        | ⬜ |
-| 1.2.4 | Users + Profiles tables migration              | ⬜ |
-| 1.2.5 | Property hierarchy tables migration            | ⬜ |
+| 1.2.1 | Supabase project setup                        | ✅ |
+| 1.2.2 | SQLAlchemy base model + session factory        | ✅ |
+| 1.2.3 | Alembic migration setup                        | ✅ |
+| 1.2.4 | Users + Profiles tables migration              | ✅ |
+| 1.2.5 | Property hierarchy tables migration            | ✅ |
 | 1.2.6 | Amenities + Images tables migration            | ⬜ |
 | 1.2.7 | Saved properties table migration               | ⬜ |
 | 1.2.8 | Seed amenities data                            | ⬜ |
-| 1.2.9 | Database triggers (updated_at, bed counts)     | ⬜ |
+| 1.2.9 | Database triggers (updated_at, bed counts)     | ✅ |
 
 #### 1.3 Backend Core Architecture
 | #    | Task                                          | Status |
