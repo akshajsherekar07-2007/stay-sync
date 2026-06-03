@@ -1,9 +1,9 @@
 # PHASE_STATUS.md — StaySync
 
-> **Version:** 1.0  
-> **Last Updated:** 2026-05-30  
+> **Version:** 1.1  
+> **Last Updated:** 2026-06-03  
 > **Total Phases:** 3  
-> **Current Phase:** Phase 1 (Implementation in progress)
+> **Current Phase:** Phase 1.4 Authentication System
 
 ---
 
@@ -75,15 +75,15 @@
 #### 1.3 Backend Core Architecture
 | #    | Task                                          | Status |
 | ---- | --------------------------------------------- | ------ |
-| 1.3.1 | FastAPI application factory (main.py)          | ⬜ |
-| 1.3.2 | Core config (pydantic-settings)                | ⬜ |
-| 1.3.3 | Custom exception classes + handlers            | ⬜ |
-| 1.3.4 | Structured logging setup                       | ⬜ |
-| 1.3.5 | Middleware pipeline (CORS, rate limiter, logging) | ⬜ |
-| 1.3.6 | Base repository (generic CRUD)                 | ⬜ |
-| 1.3.7 | Dependency injection setup                     | ⬜ |
-| 1.3.8 | API response envelope (standard format)        | ⬜ |
-| 1.3.9 | Health check endpoint                          | ⬜ |
+| 1.3.1 | FastAPI application factory (main.py)          | ✅ |
+| 1.3.2 | Core config (pydantic-settings)                | ✅ |
+| 1.3.3 | Custom exception classes + handlers            | ✅ |
+| 1.3.4 | Structured logging setup                       | ✅ |
+| 1.3.5 | Middleware pipeline (CORS, rate limiter, logging) | ✅ |
+| 1.3.6 | Base repository (generic CRUD)                 | ✅ |
+| 1.3.7 | Dependency injection setup                     | ✅ |
+| 1.3.8 | API response envelope (standard format)        | ✅ |
+| 1.3.9 | Health check endpoint                          | ✅ |
 
 #### 1.4 Authentication System
 | #    | Task                                          | Status |
