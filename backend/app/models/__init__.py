@@ -12,6 +12,10 @@ Property     → properties        (depends on users)
 Floor        → floors            (depends on properties)
 Room         → rooms             (depends on floors, properties)
 Bed          → beds              (depends on rooms, properties)
+
+Phase 1.4 models
+-----------------
+RefreshToken → refresh_tokens    (depends on users)
 """
 
 # Preserve import order — parent tables first
@@ -21,6 +25,7 @@ from app.models.property import Property
 from app.models.floor import Floor
 from app.models.room import Room
 from app.models.bed import Bed
+from app.models.refresh_token import RefreshToken
 
 __all__ = [
     "User",
@@ -29,4 +34,5 @@ __all__ = [
     "Floor",
     "Room",
     "Bed",
+    "RefreshToken",
 ]

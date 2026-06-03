@@ -29,13 +29,13 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     settings = get_settings()
     # ── Startup ──────────────────────────────────────────────
     if settings.is_development:
-        print(f"🚀 {settings.APP_NAME} starting in {settings.ENVIRONMENT} mode")
+        print(f"[startup] {settings.APP_NAME} starting in {settings.ENVIRONMENT} mode")
     await init_db()
     yield
     # ── Shutdown ─────────────────────────────────────────────
     await close_db()
     if settings.is_development:
-        print(f"🛑 {settings.APP_NAME} shutting down")
+        print(f"[shutdown] {settings.APP_NAME} shutting down")
 
 
 def create_app() -> FastAPI:
