@@ -1,9 +1,9 @@
 # PHASE_STATUS.md — StaySync
 
-> **Version:** 1.1  
-> **Last Updated:** 2026-06-03  
+> **Version:** 1.2  
+> **Last Updated:** 2026-06-04  
 > **Total Phases:** 3  
-> **Current Phase:** Phase 1.4 Authentication System
+> **Current Phase:** Phase 1.5 Property Management
 
 ---
 
@@ -88,17 +88,17 @@
 #### 1.4 Authentication System
 | #    | Task                                          | Status |
 | ---- | --------------------------------------------- | ------ |
-| 1.4.1 | Password hashing (bcrypt)                      | ⬜ |
-| 1.4.2 | JWT access token generation/validation         | ⬜ |
-| 1.4.3 | Refresh token rotation                         | ⬜ |
-| 1.4.4 | User registration endpoint                     | ⬜ |
-| 1.4.5 | User login endpoint                            | ⬜ |
-| 1.4.6 | Token refresh endpoint                         | ⬜ |
-| 1.4.7 | Logout endpoint (revoke refresh token)         | ⬜ |
-| 1.4.8 | Email verification flow (stub for Phase 1)     | ⬜ |
-| 1.4.9 | Role-based auth dependencies (RBAC)            | ⬜ |
-| 1.4.10| Auth middleware (get_current_user)              | ⬜ |
-| 1.4.11| User profile CRUD                              | ⬜ |
+| 1.4.1 | Password hashing (bcrypt)                      | ✅ |
+| 1.4.2 | JWT access token generation/validation         | ✅ |
+| 1.4.3 | Refresh token rotation                         | ✅ |
+| 1.4.4 | User registration endpoint                     | ✅ |
+| 1.4.5 | User login endpoint                            | ✅ |
+| 1.4.6 | Token refresh endpoint                         | ✅ |
+| 1.4.7 | Logout endpoint (revoke refresh token)         | ✅ |
+| 1.4.8 | Email verification flow (stub for Phase 1)     | ✅ |
+| 1.4.9 | Role-based auth dependencies (RBAC)            | ✅ |
+| 1.4.10| Auth middleware (get_current_user)              | ✅ |
+| 1.4.11| User profile CRUD                              | ✅ |
 
 #### 1.5 Property Management
 | #    | Task                                          | Status |
