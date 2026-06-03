@@ -1,15 +1,37 @@
 """Custom exception classes for StaySync.
 
-Centralized exceptions that map to specific HTTP status codes.
-All business-logic errors should raise one of these exceptions,
-which are then caught by the global exception handler middleware.
+Centralized exception hierarchy that maps cleanly to HTTP status codes.
+All business-logic errors should raise one of these typed exceptions.
+The global exception handler middleware catches them and returns the
+standard API error envelope defined in ``schemas/common.py``.
+
+Exception hierarchy
+-------------------
+StaySyncException (base)
+├── BadRequestException         400
+├── UnauthorizedException       401
+├── ForbiddenException          403
+├── NotFoundException           404
+├── ConflictException           409
+├── UnprocessableEntityException 422
+├── RateLimitException          429
+└── ServiceUnavailableException 503
 """
+
+from __future__ import annotations
 
 from typing import Any
 
 
 class StaySyncException(Exception):
-    """Base exception for all StaySync application errors."""
+    """Base exception for all StaySync application errors.
+
+    Args:
+        message: Human-readable description shown to the API consumer.
+        code: Machine-readable error code (UPPER_SNAKE_CASE).
+        status_code: HTTP status code to return.
+        details: Optional structured payload with additional context.
+    """
 
     def __init__(
         self,
@@ -24,21 +46,17 @@ class StaySyncException(Exception):
         self.details = details or {}
         super().__init__(self.message)
 
-
-class NotFoundException(StaySyncException):
-    """Resource not found (404)."""
-
-    def __init__(
-        self,
-        message: str = "Resource not found",
-        code: str = "NOT_FOUND",
-        details: dict[str, Any] | None = None,
-    ) -> None:
-        super().__init__(message=message, code=code, status_code=404, details=details)
+    def __repr__(self) -> str:
+        return (
+            f"{type(self).__name__}("
+            f"code={self.code!r}, "
+            f"status_code={self.status_code}, "
+            f"message={self.message!r})"
+        )
 
 
 class BadRequestException(StaySyncException):
-    """Invalid request data (400)."""
+    """The request payload is syntactically invalid or logically inconsistent (400)."""
 
     def __init__(
         self,
@@ -50,7 +68,7 @@ class BadRequestException(StaySyncException):
 
 
 class UnauthorizedException(StaySyncException):
-    """Authentication required (401)."""
+    """Authentication credentials are missing or invalid (401)."""
 
     def __init__(
         self,
@@ -62,7 +80,7 @@ class UnauthorizedException(StaySyncException):
 
 
 class ForbiddenException(StaySyncException):
-    """Insufficient permissions (403)."""
+    """The authenticated user lacks the required permission (403)."""
 
     def __init__(
         self,
@@ -73,8 +91,23 @@ class ForbiddenException(StaySyncException):
         super().__init__(message=message, code=code, status_code=403, details=details)
 
 
+class NotFoundException(StaySyncException):
+    """The requested resource does not exist or is not accessible (404)."""
+
+    def __init__(
+        self,
+        message: str = "Resource not found",
+        code: str = "NOT_FOUND",
+        details: dict[str, Any] | None = None,
+    ) -> None:
+        super().__init__(message=message, code=code, status_code=404, details=details)
+
+
 class ConflictException(StaySyncException):
-    """Resource conflict — double booking, race condition (409)."""
+    """The operation conflicts with the current resource state (409).
+
+    Common use-cases: duplicate email, double-booking, optimistic lock failure.
+    """
 
     def __init__(
         self,
@@ -85,8 +118,24 @@ class ConflictException(StaySyncException):
         super().__init__(message=message, code=code, status_code=409, details=details)
 
 
+class UnprocessableEntityException(StaySyncException):
+    """The request is syntactically valid but semantically incorrect (422).
+
+    Use when validation errors come from business logic rather than
+    Pydantic schema validation (which is handled automatically by FastAPI).
+    """
+
+    def __init__(
+        self,
+        message: str = "Unprocessable entity",
+        code: str = "VALIDATION_ERROR",
+        details: dict[str, Any] | None = None,
+    ) -> None:
+        super().__init__(message=message, code=code, status_code=422, details=details)
+
+
 class RateLimitException(StaySyncException):
-    """Rate limit exceeded (429)."""
+    """The client has exceeded the allowed request rate (429)."""
 
     def __init__(
         self,
@@ -95,3 +144,15 @@ class RateLimitException(StaySyncException):
         details: dict[str, Any] | None = None,
     ) -> None:
         super().__init__(message=message, code=code, status_code=429, details=details)
+
+
+class ServiceUnavailableException(StaySyncException):
+    """A downstream dependency (DB, Redis, external API) is unavailable (503)."""
+
+    def __init__(
+        self,
+        message: str = "Service temporarily unavailable",
+        code: str = "SERVICE_UNAVAILABLE",
+        details: dict[str, Any] | None = None,
+    ) -> None:
+        super().__init__(message=message, code=code, status_code=503, details=details)

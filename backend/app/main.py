@@ -4,20 +4,28 @@ Creates and configures the FastAPI application instance
 with middleware, routers, and event handlers.
 """
 
-from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
+from app.core.logging import setup_logging
 from app.db.init_db import init_db
 from app.db.session import close_db
+from app.middleware import (
+    RateLimiterMiddleware,
+    RequestIdMiddleware,
+    RequestLoggingMiddleware,
+    register_exception_handlers,
+)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """Application lifespan manager for startup/shutdown events."""
+    setup_logging()  # Structured logging must be configured before any log calls
     settings = get_settings()
     # ── Startup ──────────────────────────────────────────────
     if settings.is_development:
@@ -44,23 +52,30 @@ def create_app() -> FastAPI:
     )
 
     # ── Middleware ────────────────────────────────────────────
+    # Starlette processes add_middleware() calls in reverse order, so the last
+    # call here becomes the outermost (first to receive the request).
+    # Desired order (outermost → innermost):
+    #   CORSMiddleware → RateLimiterMiddleware → RequestIdMiddleware → RequestLoggingMiddleware
+    app.add_middleware(RequestLoggingMiddleware)  # innermost — logs after ID is bound
+    app.add_middleware(RequestIdMiddleware)       # binds request ID to structlog context
+    app.add_middleware(RateLimiterMiddleware)     # rate-checks before ID logging
     app.add_middleware(
-        CORSMiddleware,
+        CORSMiddleware,                           # outermost — handles preflight first
         allow_origins=settings.cors_origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
 
+    # ── Exception handlers ────────────────────────────────────
+    register_exception_handlers(app)
+
     # ── Routers ──────────────────────────────────────────────
+    from app.api.v1.health import health_router
     from app.api.v1.router import api_v1_router
 
+    app.include_router(health_router)                               # /health, /health/live, /health/ready
     app.include_router(api_v1_router, prefix=settings.API_V1_PREFIX)
-
-    # ── Health Check ─────────────────────────────────────────
-    @app.get("/health", tags=["Health"])
-    async def health_check() -> dict[str, str]:
-        return {"status": "healthy", "service": settings.APP_NAME}
 
     return app
 
