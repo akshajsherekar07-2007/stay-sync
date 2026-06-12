@@ -1,6 +1,6 @@
-import { apiClient } from "@/lib/axios";
-import type { ApiResponse } from "@/types/api";
-import type { MeResponse, ProfileRead, ProfileUpdate } from "@/types/auth";
+import { apiClient } from "../lib/axios";
+import type { ApiResponse } from "../types/api";
+import type { MeResponse, ProfileRead, ProfileUpdate } from "../types/auth";
 
 export const userService = {
   async getMe(): Promise<ApiResponse<MeResponse>> {

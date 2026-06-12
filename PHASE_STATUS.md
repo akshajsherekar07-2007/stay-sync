@@ -118,18 +118,18 @@
 #### 1.6 Frontend Foundation
 | #    | Task                                          | Status |
 | ---- | --------------------------------------------- | ------ |
-| 1.6.1 | Design system setup (colors, typography, spacing) | ⬜ |
-| 1.6.2 | Root layout + responsive navigation           | ⬜ |
-| 1.6.3 | Auth layout (login/register pages)             | ⬜ |
-| 1.6.4 | Dashboard layout (sidebar + content area)      | ⬜ |
-| 1.6.5 | Reusable components (Button, Input, Card, etc.) | ⬜ |
-| 1.6.6 | Axios instance + interceptors (token refresh) | ⬜ |
-| 1.6.7 | TanStack Query setup + query client            | ⬜ |
-| 1.6.8 | Zustand auth store                             | ⬜ |
-| 1.6.9 | Route guards (ProtectedRoute, RoleRoute)       | ⬜ |
-| 1.6.10| Error boundary components                      | ⬜ |
-| 1.6.11| Skeleton loaders                               | ⬜ |
-| 1.6.12| Dark/light mode toggle                         | ⬜ |
+| 1.6.1 | Design system setup (colors, typography, spacing) | ✅ |
+| 1.6.2 | Root layout + responsive navigation           | ✅ |
+| 1.6.3 | Auth layout (login/register pages)             | ✅ |
+| 1.6.4 | Dashboard layout (sidebar + content area)      | ✅ |
+| 1.6.5 | Reusable components (Button, Input, Card, etc.) | ✅ |
+| 1.6.6 | Axios instance + interceptors (token refresh) | ✅ |
+| 1.6.7 | TanStack Query setup + query client            | ✅ |
+| 1.6.8 | Zustand auth store                             | ✅ |
+| 1.6.9 | Route guards (ProtectedRoute, RoleRoute)       | ✅ |
+| 1.6.10| Error boundary components                      | ✅ |
+| 1.6.11| Skeleton loaders                               | ✅ |
+| 1.6.12| Dark/light mode toggle                         | ✅ |
 
 #### 1.7 Frontend Pages
 | #    | Task                                          | Status |

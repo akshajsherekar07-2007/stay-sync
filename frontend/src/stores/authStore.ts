@@ -8,7 +8,7 @@
 
 import { create } from "zustand";
 
-import type { MeResponse } from "@/types/auth";
+import type { MeResponse } from "../types/auth";
 
 interface AuthState {
   /** Current authenticated user (null if not logged in) */

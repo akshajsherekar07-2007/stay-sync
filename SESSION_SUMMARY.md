@@ -411,6 +411,76 @@ Before starting Phase 1, the following decisions may need user input:
 
 ---
 
+### Session 7 — Phase 1.6 Frontend Foundation
+
+**Date:** 2026-06-13  
+**Duration:** Single session  
+**Phase:** Phase 1.6 Frontend Foundation (Complete)
+
+#### Objectives Completed
+
+- [x] Design system setup (colors, typography, spacing variables and @theme blocks)
+- [x] Root layout + responsive navigation with mobile drawer and account menus
+- [x] Auth layout with centered split layout support for guest routes
+- [x] Dashboard layout with collapsible sidebar and role-aware navigation
+- [x] Reusable UI components (Button, Input, Label, Card, Badge, Avatar, Separator, DropdownMenu)
+- [x] Axios instance + request/response interceptors with failures queue for token refresh
+- [x] Zustand auth store and theme persisted uiStore
+- [x] Route guards (ProtectedRoute, RoleRoute, GuestRoute)
+- [x] Error boundary component catching layout/render crashes
+- [x] Skeleton loaders (pulsing base skeleton, skeleton card mockup)
+- [x] Dark/light/system mode toggle with media queries listeners
+
+#### Deliverables Created
+
+| File | Purpose |
+|------|---------|
+| `frontend/src/components/ui/Button.tsx` | Polymorphic button with loading spinner support |
+| `frontend/src/components/ui/Input.tsx` | Styled input field with focus ring and error status |
+| `frontend/src/components/ui/Label.tsx` | Accessible text label supporting required indicators |
+| `frontend/src/components/ui/Card.tsx` | Card, Header, Title, Description, Content, Footer composites |
+| `frontend/src/components/ui/Badge.tsx` | Pill status badge in default, outline, danger, success, warning colors |
+| `frontend/src/components/ui/Avatar.tsx` | Avatar element wrapping image and text fallbacks |
+| `frontend/src/components/ui/Separator.tsx` | Divider lines supporting horizontal and vertical orientations |
+| `frontend/src/components/ui/DropdownMenu.tsx` | Accessible interactive dropdown menus |
+| `frontend/src/components/common/LoadingSpinner.tsx` | SVG spinning loading animation |
+| `frontend/src/components/common/ErrorBoundary.tsx` | UI crash catcher boundary |
+| `frontend/src/components/common/Skeleton.tsx` | Core loading placeholder block |
+| `frontend/src/components/common/SkeletonCard.tsx` | Catalog item card loading placeholder template |
+| `frontend/src/components/common/StatusBadge.tsx` | Maps bed/property statuses to badge variants |
+| `frontend/src/components/common/EmptyState.tsx` | Empty listings visual helper |
+| `frontend/src/components/common/ThemeToggle.tsx` | Dark/light/system cycles toggle |
+| `frontend/src/components/common/Toaster.tsx` | Sonner wrapper provider |
+| `frontend/src/components/common/ProtectedRoute.tsx` | Secure layout subroute guard |
+| `frontend/src/components/common/RoleRoute.tsx` | Student/Owner role route access validator |
+| `frontend/src/components/common/GuestRoute.tsx` | Logged-in session blocker for auth views |
+| `frontend/src/hooks/useMediaQuery.ts` | SSR-safe viewport match query hook |
+| `frontend/src/layouts/RootLayout.tsx` | Global navbar and responsive layout shell |
+| `frontend/src/layouts/AuthLayout.tsx` | Split screen branding and auth shell |
+| `frontend/src/layouts/DashboardLayout.tsx` | Collapsible sidebar role layout shell |
+| `frontend/src/features/auth/hooks/types.ts` | Hook specific types |
+| `frontend/src/features/auth/hooks/useAuth.ts` | Coordinates login, register, and logout operations |
+| `frontend/src/features/auth/hooks/useInitAuth.ts` | Boot-time auth session loader |
+
+#### Files Modified
+
+| File | Change |
+|------|--------|
+| `frontend/src/stores/authStore.ts` | Adjusted imports to relative paths for isolated checks |
+| `frontend/src/services/authService.ts` | Adjusted imports to relative paths |
+| `frontend/src/services/userService.ts` | Adjusted imports to relative paths |
+| `frontend/src/lib/axios.ts` | Adjusted imports to relative paths |
+| `frontend/src/app/App.tsx` | Integrated query client, browser router, session loader hook, toaster |
+| `frontend/src/app/router.tsx` | Nested route declarations inside layout shells and guards |
+
+#### Verification Results
+
+- ✅ Project-wide type validation (`tsc --noEmit`) passes with 0 errors or warnings
+- ✅ Vite production build (`npm run build`) builds index.html, JS and CSS chunks successfully in 1.36s
+- ✅ Dynamic routing, guards redirection, theme changes and layout transitions compile cleanly
+
+---
+
 ## Current State
 
 **Phase 1.1** ✅ Complete  
@@ -418,29 +488,29 @@ Before starting Phase 1, the following decisions may need user input:
 **Phase 1.3** ✅ Complete  
 **Phase 1.4** ✅ Complete — Authentication System fully implemented and verified  
 **Phase 1.5** ✅ Complete — Property Management fully implemented and verified  
-**Phase 1.6** ⬜ Not started — Frontend Foundation
+**Phase 1.6** ✅ Complete — Frontend Foundation fully implemented and verified  
+**Phase 1.7** ⬜ Not started — Frontend Pages
 
 ---
 
 ## Next Session Plan
 
-### Session 7 — Phase 1.6 Frontend Foundation
+### Session 8 — Phase 1.7 Frontend Pages
 
 **Planned deliverables:**
-1. Design system setup (colors, typography, spacing)
-2. Root layout + responsive navigation
-3. Auth layout (login/register pages)
-4. Dashboard layout (sidebar + content area)
-5. Reusable components (Button, Input, Card, etc.)
-6. Axios instance + interceptors (token refresh)
-7. TanStack Query setup + query client
-8. Zustand auth store
-9. Route guards (ProtectedRoute, RoleRoute)
-10. Error boundary components
-11. Skeleton loaders
-12. Dark/light mode toggle
+1. Landing/Home page
+2. Login page
+3. Registration page
+4. Owner Dashboard page
+5. Add Property page (multi-step form)
+6. Manage Properties page
+7. Property Detail page (owner view)
+8. Student Browse page
+9. Student Property View page
+10. Profile page
+11. 404 Not Found page
 
-**Estimated scope:** 12 tasks from Phase 1.6 deliverables
+**Estimated scope:** 11 tasks from Phase 1.7 deliverables
 
 ---
 
