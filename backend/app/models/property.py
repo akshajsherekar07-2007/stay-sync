@@ -33,6 +33,8 @@ from app.db.base import TimestampedBase
 
 if TYPE_CHECKING:
     from app.models.floor import Floor
+    from app.models.property_amenity import PropertyAmenity
+    from app.models.property_image import PropertyImage
     from app.models.user import User
 
 
@@ -275,6 +277,19 @@ class Property(TimestampedBase):
         cascade="all, delete-orphan",
         lazy="select",
         order_by="Floor.sort_order",
+    )
+
+    property_amenities: Mapped[list[PropertyAmenity]] = relationship(
+        "PropertyAmenity",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
+
+    images: Mapped[list[PropertyImage]] = relationship(
+        "PropertyImage",
+        cascade="all, delete-orphan",
+        lazy="select",
+        order_by="PropertyImage.sort_order",
     )
 
     def __repr__(self) -> str:

@@ -71,6 +71,11 @@ class Settings(BaseSettings):
     # ── Rate Limiting ────────────────────────────────────────
     RATE_LIMIT_PER_MINUTE: int = 100
 
+    # ── Supabase Storage (Phase 1.5) ─────────────────────────
+    SUPABASE_STORAGE_BUCKET: str = "property-images"
+    MAX_IMAGE_SIZE_BYTES: int = 5_242_880  # 5 MB
+    ALLOWED_IMAGE_MIMES: str = "image/jpeg,image/png,image/webp"
+
     # ── Computed properties ───────────────────────────────────
 
     @property

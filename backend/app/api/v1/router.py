@@ -6,7 +6,7 @@ This module is imported by the application factory.
 
 from fastapi import APIRouter
 
-from app.api.v1 import auth, users
+from app.api.v1 import amenities, auth, beds, floors, properties, rooms, users
 
 api_v1_router = APIRouter(tags=["v1"])
 
@@ -21,8 +21,16 @@ async def ping() -> dict[str, str]:
 api_v1_router.include_router(auth.router, prefix="/auth", tags=["Auth"])
 api_v1_router.include_router(users.router, prefix="/users", tags=["Users"])
 
-# ── Phase 1.5 routers (will be added in next phase) ──────────────────────────
-# from app.api.v1 import properties, floors, rooms, beds
+# ── Phase 1.5 routers ─────────────────────────────────────────────────────────
+api_v1_router.include_router(
+    properties.router, prefix="/properties", tags=["Properties"]
+)
+api_v1_router.include_router(floors.router, tags=["Floors"])
+api_v1_router.include_router(rooms.router, tags=["Rooms"])
+api_v1_router.include_router(beds.router, tags=["Beds"])
+api_v1_router.include_router(
+    amenities.router, prefix="/amenities", tags=["Amenities"]
+)
 
 # ── Phase 2 routers ──────────────────────────────────────────────────────────
 # from app.api.v1 import holds, waitlists, notifications

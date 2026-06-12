@@ -1,9 +1,9 @@
 # PHASE_STATUS.md — StaySync
 
-> **Version:** 1.2  
-> **Last Updated:** 2026-06-04  
+> **Version:** 1.3  
+> **Last Updated:** 2026-06-12  
 > **Total Phases:** 3  
-> **Current Phase:** Phase 1.5 Property Management
+> **Current Phase:** Phase 1.6 Frontend Foundation
 
 ---
 
@@ -67,9 +67,9 @@
 | 1.2.3 | Alembic migration setup                        | ✅ |
 | 1.2.4 | Users + Profiles tables migration              | ✅ |
 | 1.2.5 | Property hierarchy tables migration            | ✅ |
-| 1.2.6 | Amenities + Images tables migration            | ⬜ |
-| 1.2.7 | Saved properties table migration               | ⬜ |
-| 1.2.8 | Seed amenities data                            | ⬜ |
+| 1.2.6 | Amenities + Images tables migration            | ✅ |
+| 1.2.7 | Saved properties table migration               | ✅ |
+| 1.2.8 | Seed amenities data                            | ✅ |
 | 1.2.9 | Database triggers (updated_at, bed counts)     | ✅ |
 
 #### 1.3 Backend Core Architecture
@@ -103,17 +103,17 @@
 #### 1.5 Property Management
 | #    | Task                                          | Status |
 | ---- | --------------------------------------------- | ------ |
-| 1.5.1 | Property CRUD (create, read, update, delete)   | ⬜ |
-| 1.5.2 | Floor CRUD                                     | ⬜ |
-| 1.5.3 | Room CRUD                                      | ⬜ |
-| 1.5.4 | Bed CRUD                                       | ⬜ |
-| 1.5.5 | Amenity management (add/remove per property)   | ⬜ |
-| 1.5.6 | Image upload to Supabase Storage               | ⬜ |
-| 1.5.7 | Image management (reorder, delete, set primary) | ⬜ |
-| 1.5.8 | Property listing (paginated, filtered)         | ⬜ |
-| 1.5.9 | Property detail endpoint                       | ⬜ |
-| 1.5.10| Google Maps location storage                   | ⬜ |
-| 1.5.11| Ownership validation middleware                | ⬜ |
+| 1.5.1 | Property CRUD (create, read, update, delete)   | ✅ |
+| 1.5.2 | Floor CRUD                                     | ✅ |
+| 1.5.3 | Room CRUD                                      | ✅ |
+| 1.5.4 | Bed CRUD                                       | ✅ |
+| 1.5.5 | Amenity management (add/remove per property)   | ✅ |
+| 1.5.6 | Image upload to Supabase Storage               | ✅ |
+| 1.5.7 | Image management (reorder, delete, set primary) | ✅ |
+| 1.5.8 | Property listing (paginated, filtered)         | ✅ |
+| 1.5.9 | Property detail endpoint                       | ✅ |
+| 1.5.10| Google Maps location storage                   | ✅ |
+| 1.5.11| Ownership validation middleware                | ✅ |
 
 #### 1.6 Frontend Foundation
 | #    | Task                                          | Status |
@@ -158,9 +158,9 @@
 - [ ] Student can save properties to wishlist
 - [ ] All pages are responsive (mobile-first)
 - [ ] Dark/light mode works
-- [ ] API documentation accessible at `/docs`
+- [x] API documentation accessible at `/docs`
 - [ ] Docker Compose runs the full stack locally
-- [ ] Role-based access control enforced on all endpoints
+- [x] Role-based access control enforced on all endpoints
 
 ---
 

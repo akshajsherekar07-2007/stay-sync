@@ -1,51 +1,40 @@
-"""Pydantic schemas package."""
+"""Pydantic schema (DTO) package for StaySync API.
 
+All request/response schemas are organized by domain module.
+Import from here for a flat namespace::
+
+    from app.schemas import RegisterRequest, PropertyCreate, BedRead
+"""
+
+# Phase 1.4
 from app.schemas.auth import (
     LoginRequest,
     LoginResponse,
     RegisterRequest,
     TokenResponse,
 )
+from app.schemas.user import MeResponse, ProfileRead, ProfileUpdate
+
+# Phase 1.5
+from app.schemas.property import (
+    PropertyCreate,
+    PropertyFilter,
+    PropertyListItem,
+    PropertyRead,
+    PropertyStatusUpdate,
+    PropertyUpdate,
+)
+from app.schemas.floor import FloorCreate, FloorRead, FloorUpdate
+from app.schemas.room import RoomCreate, RoomRead, RoomUpdate
+from app.schemas.bed import BedCreate, BedRead, BedUpdate
+from app.schemas.amenity import AmenityAttach, AmenityRead
+from app.schemas.image import ImageRead, ImageReorder, ImageUpdate
+
+# Common
 from app.schemas.common import (
-    ComponentHealth,
-    ErrorDetail,
     ErrorResponse,
-    HealthResponse,
     MessageResponse,
     PaginatedResponse,
-    PaginationInfo,
-    ResponseMeta,
     SuccessResponse,
     build_meta,
 )
-from app.schemas.user import (
-    MeResponse,
-    ProfileRead,
-    ProfileUpdate,
-    UserRead,
-)
-
-__all__ = [
-    # common
-    "ComponentHealth",
-    "ErrorDetail",
-    "ErrorResponse",
-    "HealthResponse",
-    "MessageResponse",
-    "PaginatedResponse",
-    "PaginationInfo",
-    "ResponseMeta",
-    "SuccessResponse",
-    "build_meta",
-    # auth
-    "LoginRequest",
-    "LoginResponse",
-    "RegisterRequest",
-    "TokenResponse",
-    # user
-    "MeResponse",
-    "ProfileRead",
-    "ProfileUpdate",
-    "UserRead",
-]
-

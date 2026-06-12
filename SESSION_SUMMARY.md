@@ -318,34 +318,129 @@ Before starting Phase 1, the following decisions may need user input:
 
 ---
 
+### Session 6 — Phase 1.5 Property Management
+
+**Date:** 2026-06-12  
+**Duration:** Single session  
+**Phase:** Phase 1.5 Property Management (Complete)
+
+#### Objectives Completed
+
+- [x] Property CRUD (create, read, update, delete)
+- [x] Floor CRUD
+- [x] Room CRUD
+- [x] Bed CRUD
+- [x] Amenity management (add/remove per property)
+- [x] Image upload to Supabase Storage
+- [x] Image management (reorder, delete, set primary)
+- [x] Property listing (paginated, filtered, search)
+- [x] Property detail endpoint
+- [x] Google Maps location storage
+- [x] Ownership validation middleware
+- [x] Student property wishlist (save/remove saved properties)
+
+#### Files Created
+
+| File | Purpose |
+|------|---------|
+| `backend/app/models/amenity.py` | Amenity model definition |
+| `backend/app/models/property_amenity.py` | Association table for Property-Amenity many-to-many relationship |
+| `backend/app/models/property_image.py` | PropertyImage model definition |
+| `backend/app/models/saved_property.py` | SavedProperty model (Student wishlist) |
+| `backend/alembic/versions/003_amenities_images.py` | Migration for amenities, property_amenities, and property_images tables |
+| `backend/alembic/versions/004_saved_properties.py` | Migration for saved_properties table |
+| `backend/alembic/versions/005_seed_amenities.py` | Migration seeding the 18 standard amenities |
+| `backend/app/schemas/property.py` | Property Pydantic schemas |
+| `backend/app/schemas/floor.py` | Floor Pydantic schemas |
+| `backend/app/schemas/room.py` | Room Pydantic schemas |
+| `backend/app/schemas/bed.py` | Bed Pydantic schemas |
+| `backend/app/schemas/amenity.py` | Amenity Pydantic schemas |
+| `backend/app/schemas/image.py` | PropertyImage Pydantic schemas |
+| `backend/app/repositories/property_repository.py` | PropertyRepository |
+| `backend/app/repositories/floor_repository.py` | FloorRepository |
+| `backend/app/repositories/room_repository.py` | RoomRepository |
+| `backend/app/repositories/bed_repository.py` | BedRepository |
+| `backend/app/repositories/amenity_repository.py` | AmenityRepository |
+| `backend/app/repositories/image_repository.py` | PropertyImageRepository |
+| `backend/app/repositories/saved_property_repository.py` | SavedPropertyRepository |
+| `backend/app/services/property_service.py` | PropertyService |
+| `backend/app/services/floor_service.py` | FloorService |
+| `backend/app/services/room_service.py` | RoomService |
+| `backend/app/services/bed_service.py` | BedService |
+| `backend/app/services/image_service.py` | ImageService |
+| `backend/app/integrations/supabase_storage.py` | Supabase Storage client integration wrapper |
+| `backend/app/api/v1/properties.py` | Properties API router |
+| `backend/app/api/v1/floors.py` | Floors API router |
+| `backend/app/api/v1/rooms.py` | Rooms API router |
+| `backend/app/api/v1/beds.py` | Beds API router |
+| `backend/app/api/v1/amenities.py` | Amenities API router |
+
+#### Files Modified
+
+| File | Change |
+|------|--------|
+| `backend/app/core/enums.py` | Added 6 new enums (PropertyStatus, RoomType, BedStatus, etc.) |
+| `backend/app/models/__init__.py` | Registered 4 new models (Amenity, PropertyAmenity, PropertyImage, SavedProperty) |
+| `backend/app/models/property.py` | Added relationships to PropertyImage, Amenity, and SavedProperty models |
+| `backend/app/schemas/__init__.py` | Exported newly created Pydantic schemas |
+| `backend/app/api/v1/router.py` | Mounted properties, floors, rooms, beds, and amenities routers |
+| `backend/app/core/config.py` | Added settings for Supabase storage bucket, max image size, allowed image mimes |
+
+#### Verification Results
+
+- ✅ All unit/integration tests passed.
+- ✅ Successfully ran and verified all property management CRUD operations.
+- ✅ Verified image upload integration with Supabase storage.
+- ✅ Wishlist management and paginated listing filters verified.
+
+#### Key Decisions Made
+
+| # | Decision | Choice |
+|---|----------|--------|
+| 1 | Supabase Storage | Storage-only integration with a public bucket `property-images` |
+| 2 | Google Maps | Store coordinate and place metadata directly (lat, lng, place_id, place_name) without backend geocoding |
+| 3 | Image Limits | Max size 5 MB, max 20 images per property |
+| 4 | Property Status | Default to draft, status transitions via explicit endpoints, no auto-activation |
+| 5 | Amenities | Seed 18 amenities, no custom amenity admin endpoints |
+
+#### Technical Notes
+
+- Leveraged async BaseRepository for bulk and soft-deleted queries.
+- Ensured transaction atomicity during cascade soft deletes.
+- Image storage paths are structured: `properties/{property_id}/{image_uuid}.ext`.
+
+---
+
 ## Current State
 
 **Phase 1.1** ✅ Complete  
 **Phase 1.2** ✅ Complete  
 **Phase 1.3** ✅ Complete  
 **Phase 1.4** ✅ Complete — Authentication System fully implemented and verified  
-**Phase 1.5** ⬜ Not started — Property Management
+**Phase 1.5** ✅ Complete — Property Management fully implemented and verified  
+**Phase 1.6** ⬜ Not started — Frontend Foundation
 
 ---
 
 ## Next Session Plan
 
-### Session 6 — Phase 1.5 Property Management
+### Session 7 — Phase 1.6 Frontend Foundation
 
 **Planned deliverables:**
-1. Property CRUD (create, read, update, delete)
-2. Floor CRUD
-3. Room CRUD
-4. Bed CRUD
-5. Amenity management (add/remove per property)
-6. Image upload to Supabase Storage
-7. Image management (reorder, delete, set primary)
-8. Property listing (paginated, filtered)
-9. Property detail endpoint
-10. Google Maps location storage
-11. Ownership validation middleware
+1. Design system setup (colors, typography, spacing)
+2. Root layout + responsive navigation
+3. Auth layout (login/register pages)
+4. Dashboard layout (sidebar + content area)
+5. Reusable components (Button, Input, Card, etc.)
+6. Axios instance + interceptors (token refresh)
+7. TanStack Query setup + query client
+8. Zustand auth store
+9. Route guards (ProtectedRoute, RoleRoute)
+10. Error boundary components
+11. Skeleton loaders
+12. Dark/light mode toggle
 
-**Estimated scope:** 11 tasks from Phase 1.5 deliverables
+**Estimated scope:** 12 tasks from Phase 1.6 deliverables
 
 ---
 

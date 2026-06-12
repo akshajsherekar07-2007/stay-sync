@@ -16,6 +16,13 @@ Bed          → beds              (depends on rooms, properties)
 Phase 1.4 models
 -----------------
 RefreshToken → refresh_tokens    (depends on users)
+
+Phase 1.5 models
+-----------------
+Amenity         → amenities
+PropertyAmenity → property_amenities  (depends on properties, amenities)
+PropertyImage   → property_images     (depends on properties)
+SavedProperty   → saved_properties    (depends on users, properties)
 """
 
 # Preserve import order — parent tables first
@@ -26,6 +33,10 @@ from app.models.floor import Floor
 from app.models.room import Room
 from app.models.bed import Bed
 from app.models.refresh_token import RefreshToken
+from app.models.amenity import Amenity
+from app.models.property_amenity import PropertyAmenity
+from app.models.property_image import PropertyImage
+from app.models.saved_property import SavedProperty
 
 __all__ = [
     "User",
@@ -35,4 +46,8 @@ __all__ = [
     "Room",
     "Bed",
     "RefreshToken",
+    "Amenity",
+    "PropertyAmenity",
+    "PropertyImage",
+    "SavedProperty",
 ]
