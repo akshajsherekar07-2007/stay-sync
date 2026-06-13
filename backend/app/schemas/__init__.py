@@ -38,3 +38,11 @@ from app.schemas.common import (
     SuccessResponse,
     build_meta,
 )
+
+# Phase 2.1
+from app.schemas.hold_request import HoldRequestCreate, HoldRequestRead, HoldRequestUpdate
+from app.schemas.waitlist_entry import WaitlistEntryCreate, WaitlistEntryRead, WaitlistEntryUpdate
+from app.schemas.booking import BookingCreate, BookingRead, BookingUpdate
+from app.schemas.notification import NotificationCreate, NotificationRead, NotificationUpdate
+from app.schemas.audit_log import AuditLogCreate, AuditLogRead
+
