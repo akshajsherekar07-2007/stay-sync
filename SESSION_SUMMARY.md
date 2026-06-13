@@ -199,13 +199,13 @@
 
 ## Current State
 
-| Aspect                    | Status                                    |
-| ------------------------- | ----------------------------------------- |
-| **Current Phase**         | Phase 1.3 Backend Core Architecture (Complete) |
-| **Next Action**           | Proceed to Phase 1.4 Authentication System |
-| **Blocking Issues**       | None |
-| **Technical Debt**        | None |
-| **Open Questions**        | See below |
+**Phase 1.1** ✅ Complete  
+**Phase 1.2** ✅ Complete  
+**Phase 1.3** ✅ Complete  
+**Phase 1.4** ✅ Complete — Authentication System fully implemented and verified  
+**Phase 1.5** ✅ Complete — Property Management fully implemented and verified  
+**Phase 1.6** ✅ Complete — Frontend Foundation fully implemented and verified  
+**Phase 1.7** 🔄 In Progress — Frontend Pages (Groups 1, 1.5, 2, 3, & 4 Complete)
 
 ---
 
@@ -481,36 +481,207 @@ Before starting Phase 1, the following decisions may need user input:
 
 ---
 
-## Current State
+## Session 8 — Phase 1.7 Frontend Pages (Group 1)
 
-**Phase 1.1** ✅ Complete  
-**Phase 1.2** ✅ Complete  
-**Phase 1.3** ✅ Complete  
-**Phase 1.4** ✅ Complete — Authentication System fully implemented and verified  
-**Phase 1.5** ✅ Complete — Property Management fully implemented and verified  
-**Phase 1.6** ✅ Complete — Frontend Foundation fully implemented and verified  
-**Phase 1.7** ⬜ Not started — Frontend Pages
+**Date:** 2026-06-13  
+**Duration:** Single session  
+**Phase:** Phase 1.7 Frontend Pages (Group 1: Complete)
+
+### Objectives Completed
+
+- [x] Create LoginPage.tsx (with Zod schema, useAuth hook, validation, and Dev autofill actions)
+- [x] Create RegisterPage.tsx (with Zod schema, useAuth hook, validation, custom role card selection)
+- [x] Update router.tsx (replaced auth placeholders with real LoginPage and RegisterPage components)
+- [x] Run targeted TypeScript validation and production build verification
+
+### Files Created
+
+| File | Purpose |
+|------|---------|
+| `frontend/src/features/auth/pages/LoginPage.tsx` | Secure login panel with error validations and developer quick login |
+| `frontend/src/features/auth/pages/RegisterPage.tsx` | Student/Owner selection and form registration flow |
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `frontend/src/app/router.tsx` | Mounted `LoginPage` and `RegisterPage` components and deleted temporary auth placeholders |
+| `PHASE_STATUS.md` | Marked login/register deliverables as complete |
+| `SESSION_SUMMARY.md` | Logged Group 1 completion status |
+
+### Verification Results
+
+- ✅ Project-wide type validation (`npx tsc --noEmit`) passes with 0 errors
+- ✅ Vite production build (`npm run build`) builds successfully
+
+---
+
+## Session 9 — Phase 1.7 Frontend Pages (Group 1.5)
+
+**Date:** 2026-06-13  
+**Duration:** Single session  
+**Phase:** Phase 1.7 Frontend Pages (Group 1.5: Complete)
+
+### Objectives Completed
+
+- [x] Create propertyService.ts (querying listings and details)
+- [x] Create savedPropertyService.ts (saving wishlists, client-side filtering)
+- [x] Create dashboardService.ts (client-side dashboards data aggregates)
+- [x] Create ownerPropertyService.ts (creating, updating, status changes, image upload/reordering, and amenities attaching)
+- [x] Update services/api.ts (added re-exports)
+- [x] Run targeted TypeScript validation and production build verification
+
+### Files Created
+
+| File | Purpose |
+|------|---------|
+| `frontend/src/types/property.ts` | Shared TypeScript types matching backend property/image/amenities Pydantic schemas |
+| `frontend/src/services/propertyService.ts` | Public properties catalog search and detail api client |
+| `frontend/src/services/savedPropertyService.ts` | Student wishlist actions client |
+| `frontend/src/services/ownerPropertyService.ts` | Landlord listings configuration, files, and amenities mapper client |
+| `frontend/src/services/dashboardService.ts` | Client-side metrics calculator for students/owners dashboards |
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `frontend/src/services/api.ts` | Added service re-exports |
+| `SESSION_SUMMARY.md` | Logged Group 1.5 completion status |
+| `task.md` | Marked Group 1.5 tasks as complete |
+
+### Verification Results
+
+- ✅ Project-wide type validation (`npx tsc --noEmit`) passes with 0 errors
+- ✅ Vite production build (`npm run build`) builds successfully
+
+---
+
+## Session 10 — Phase 1.7 Frontend Pages (Group 2)
+
+**Date:** 2026-06-13  
+**Duration:** Single session  
+**Phase:** Phase 1.7 Frontend Pages (Group 2: Complete)
+
+### Objectives Completed
+
+- [x] Create HomePage.tsx (Featured Properties section loaded via TanStack Query displaying latest 6 active properties, hero search, value proposition cards)
+- [x] Create BrowsePage.tsx (Debounced text query search, filter sidebar, URL-sync search params state, TanStack Query pagination integration)
+- [x] Create PropertyDetailsPage.tsx (Image gallery, address details, house rules, dynamic sequential floor -> room -> bed hierarchy selector tabs, save property wishlist toggling, and guest CTAs)
+- [x] Update router.tsx (replaced public property placeholders with real HomePage, BrowsePage, and PropertyDetailsPage components)
+- [x] Run targeted TypeScript validation and production build verification
+
+### Files Created
+
+| File | Purpose |
+|------|---------|
+| `frontend/src/features/properties/pages/PropertyDetailsPage.tsx` | Accommodation single detail page with visual image galleries, inventory hierarchy tabs, wishlist management, and guest CTA actions |
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `frontend/src/features/home/pages/HomePage.tsx` | Cleaned up unused HelpCircle icon import |
+| `frontend/src/features/properties/pages/BrowsePage.tsx` | Imported Link component, resolved EmptyState props structure to pass the action button |
+| `frontend/src/services/propertyService.ts` | Cleaned up unused MessageResponse import |
+| `frontend/src/types/property.ts` | Added FloorRead, RoomRead, and BedRead interfaces to match backend schemas |
+| `frontend/src/app/router.tsx` | Mounted `HomePage`, `BrowsePage`, and `PropertyDetailsPage` components and deleted temporary catalog placeholders |
+| `PHASE_STATUS.md` | Marked public catalog deliverables as complete |
+| `SESSION_SUMMARY.md` | Logged Group 2 completion status |
+| `task.md` | Marked Group 2 tasks as complete |
+| `walkthrough.md` | Updated walkthrough details for Group 2 |
+
+### Verification Results
+
+- ✅ Project-wide type validation (`npx tsc --noEmit`) passes with 0 errors
+- ✅ Vite production build (`npm run build`) builds successfully
+
+---
+
+## Session 11 — Phase 1.7 Frontend Pages (Groups 3 & 4)
+
+**Date:** 2026-06-13  
+**Duration:** Single session  
+**Phase:** Phase 1.7 Frontend Pages (Groups 3 & 4: Complete)
+
+### Objectives Completed
+
+- [x] Create StudentDashboard.tsx (welcome banner, metrics widgets, saved stays quick-links, and active holds placeholder)
+- [x] Create SavedPropertiesPage.tsx (wishlist properties cards grid with unsave actions)
+- [x] Create OwnerDashboard.tsx (listings count, revenue projection, and occupied beds percentages indicator metrics cards)
+- [x] Create ManagePropertiesPage.tsx (owned properties list with status badges, activation/deactivation status switches, and delete actions)
+- [x] Update router.tsx (replaced student and owner placeholders with real dashboard components, removed unused declarations)
+- [x] Run targeted TypeScript validation and production build verification
+
+### Files Created
+
+| File | Purpose |
+|------|---------|
+| `frontend/src/features/dashboard/pages/StudentDashboard.tsx` | Dashboard hub showing student holds overview and wishlist summary |
+| `frontend/src/features/dashboard/pages/SavedPropertiesPage.tsx` | Student saved stays catalogue with deletion triggers |
+| `frontend/src/features/owner/pages/OwnerDashboard.tsx` | Landlord metrics dashboard displaying lists count and monthly projections |
+| `frontend/src/features/owner/pages/ManagePropertiesPage.tsx` | Landlord properties management catalogue supporting status modifications |
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `frontend/src/app/router.tsx` | Imported and mounted dashboard pages, removed unused Lucide icon imports, deleted dashboard placeholders |
+| `PHASE_STATUS.md` | Marked student and owner page deliverables as complete |
+| `SESSION_SUMMARY.md` | Logged Groups 3 & 4 completion status |
+| `task.md` | Marked Groups 3 & 4 tasks as complete |
+| `walkthrough.md` | Updated walkthrough details for Groups 3 & 4 |
+
+### Verification Results
+
+- ✅ Project-wide type validation (`npx tsc --noEmit`) passes with 0 errors
+- ✅ Vite production build (`npm run build`) builds successfully
+
+---
+
+## Session 12 — Phase 1.7 Frontend Pages (Group 5A)
+
+**Date:** 2026-06-13  
+**Duration:** Single session  
+**Phase:** Phase 1.7 Frontend Pages (Group 5A: Complete)
+
+### Objectives Completed
+
+- [x] Create PropertyForm.tsx foundation (Step 1 Setup)
+- [x] Create CreatePropertyPage.tsx (stay accommodation registration page)
+- [x] Update router.tsx (registered the create property page route)
+- [x] Run targeted TypeScript validation and production build verification
+
+### Files Created
+
+| File | Purpose |
+|------|---------|
+| `frontend/src/features/owner/schemas/propertySchema.ts` | Zod form validator for StaySync accommodation onboarding Step 1 |
+| `frontend/src/features/owner/components/PropertyForm.tsx` | Multi-step property creation wizard containing General Details forms |
+| `frontend/src/features/owner/pages/CreatePropertyPage.tsx` | Landlord page rendering the onboarding wizard forms |
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `frontend/src/app/router.tsx` | Mounted the CreatePropertyPage and registered /owner/properties/create route |
+| `PHASE_STATUS.md` | Marked Add Property page task status as in-progress |
+| `SESSION_SUMMARY.md` | Logged Group 5A completion status |
+| `task.md` | Marked Group 5A tasks as complete |
+| `walkthrough.md` | Updated walkthrough details for Group 5A |
+
+### Verification Results
+
+- ✅ Project-wide type validation (`npx tsc --noEmit`) passes with 0 errors
+- ✅ Vite production build (`npm run build`) builds successfully
 
 ---
 
 ## Next Session Plan
 
-### Session 8 — Phase 1.7 Frontend Pages
+### Session 13 — Phase 1.7 Frontend Pages (Group 5D)
 
 **Planned deliverables:**
-1. Landing/Home page
-2. Login page
-3. Registration page
-4. Owner Dashboard page
-5. Add Property page (multi-step form)
-6. Manage Properties page
-7. Property Detail page (owner view)
-8. Student Browse page
-9. Student Property View page
-10. Profile page
-11. 404 Not Found page
-
-**Estimated scope:** 11 tasks from Phase 1.7 deliverables
+1. Group 5D: Media uploads, amenities checklist integrations (Step 2)
 
 ---
 

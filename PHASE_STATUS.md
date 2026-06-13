@@ -134,15 +134,15 @@
 #### 1.7 Frontend Pages
 | #    | Task                                          | Status |
 | ---- | --------------------------------------------- | ------ |
-| 1.7.1 | Landing/Home page                              | ⬜ |
-| 1.7.2 | Login page                                     | ⬜ |
-| 1.7.3 | Registration page                              | ⬜ |
-| 1.7.4 | Owner Dashboard page                           | ⬜ |
-| 1.7.5 | Add Property page (multi-step form)            | ⬜ |
-| 1.7.6 | Manage Properties page                         | ⬜ |
+| 1.7.1 | Landing/Home page                              | ✅ |
+| 1.7.2 | Login page                                     | ✅ |
+| 1.7.3 | Registration page                              | ✅ |
+| 1.7.4 | Owner Dashboard page                           | ✅ |
+| 1.7.5 | Add Property page (multi-step form)            | 🔄 |
+| 1.7.6 | Manage Properties page                         | ✅ |
 | 1.7.7 | Property Detail page (owner view)              | ⬜ |
-| 1.7.8 | Student Browse page                            | ⬜ |
-| 1.7.9 | Student Property View page                     | ⬜ |
+| 1.7.8 | Student Browse page                            | ✅ |
+| 1.7.9 | Student Property View page                     | ✅ |
 | 1.7.10| Profile page                                   | ⬜ |
 | 1.7.11| 404 Not Found page                             | ⬜ |
 
