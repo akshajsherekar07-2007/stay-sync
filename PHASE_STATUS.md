@@ -19,7 +19,7 @@
 │  + Auth +    │      + Realtime +                │   + Analytics +   │
 │  Property    │      Notifications               │   Production      │
 │              │                                  │                   │
-│   🔄 IN PROG │         ⏳ QUEUED                 │    ⏳ QUEUED       │
+│   🔄 IN PROG │         🔄 IN PROG               │    ⏳ QUEUED       │
 │              │                                  │                   │
 └──────────────┴──────────────────────────────────┴───────────────────┘
 ```
@@ -168,7 +168,7 @@
 
 > **Goal:** Implement the platform's core USP — live accommodation hold management with real-time updates, notifications, and background automation.
 
-**Status:** ⏳ Queued  
+**Status:** 🔄 In Progress  
 **Target Completion:** —  
 **Dependencies:** Phase 1 complete
 
@@ -177,14 +177,16 @@
 #### 2.1 Hold Request System
 | #    | Task                                          | Status |
 | ---- | --------------------------------------------- | ------ |
-| 2.1.1 | Hold request creation (with anti-spam checks) | ⬜ |
-| 2.1.2 | Hold approval by owner                        | ⬜ |
-| 2.1.3 | Hold rejection by owner                       | ⬜ |
-| 2.1.4 | Hold cancellation by student                  | ⬜ |
-| 2.1.5 | Owner override (immediate occupancy)          | ⬜ |
-| 2.1.6 | Hold request listing (student + owner views)  | ⬜ |
-| 2.1.7 | Concurrency-safe bed status updates           | ⬜ |
-| 2.1.8 | Atomic transaction handling                   | ⬜ |
+| 2.1.1 | Database schema + migrations (hold_requests, waitlist, bookings, notifications, audit_logs) | ✅ |
+| 2.1.2 | SQLAlchemy Models | ⬜ |
+| 2.1.3 | Enums | ⬜ |
+| 2.1.4 | Pydantic Schemas | ⬜ |
+| 2.1.5 | Repositories | ⬜ |
+| 2.1.6 | Redis Client | ⬜ |
+| 2.1.7 | Audit Service | ⬜ |
+| 2.1.8 | Hold + Booking Services | ⬜ |
+| 2.1.9 | Routers | ⬜ |
+| 2.1.10| Verification | ⬜ |
 
 #### 2.2 Waitlist System
 | #    | Task                                          | Status |

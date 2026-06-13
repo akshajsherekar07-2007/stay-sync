@@ -28,6 +28,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import TimestampedBase
 
 if TYPE_CHECKING:
+    from app.models.booking import Booking
+    from app.models.hold_request import HoldRequest
     from app.models.property import Property
     from app.models.room import Room
 
@@ -123,19 +125,19 @@ class Bed(TimestampedBase):
         default=None,
     )
 
-    # Phase 2 FK targets — columns exist now, FK constraints added later
+    # Phase 2 FK targets — FK constraints added via migration 008
     current_hold_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True),
+        ForeignKey("hold_requests.id", ondelete="SET NULL"),
         nullable=True,
         default=None,
-        comment="FK to hold_requests.id — constraint added in Phase 2 migration",
     )
 
     current_booking_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True),
+        ForeignKey("bookings.id", ondelete="SET NULL"),
         nullable=True,
         default=None,
-        comment="FK to bookings.id — constraint added in Phase 2 migration",
     )
 
     version: Mapped[int] = mapped_column(
@@ -164,6 +166,18 @@ class Bed(TimestampedBase):
         "Property",
         lazy="select",
         foreign_keys=[property_id],
+    )
+
+    current_hold: Mapped[HoldRequest | None] = relationship(
+        "HoldRequest",
+        lazy="select",
+        foreign_keys=[current_hold_id],
+    )
+
+    current_booking: Mapped[Booking | None] = relationship(
+        "Booking",
+        lazy="select",
+        foreign_keys=[current_booking_id],
     )
 
     def __repr__(self) -> str:

@@ -676,9 +676,55 @@ Before starting Phase 1, the following decisions may need user input:
 
 ---
 
+## Session 13 — Phase 2.1.1 Database Foundation (Migrations)
+
+**Date:** 2026-06-14  
+**Duration:** Single session  
+**Phase:** Phase 2.1.1 Database Foundation (Complete)
+
+### Objectives Completed
+
+- [x] Create migration `006_hold_system.py` (hold_requests, waitlist_entries, bookings)
+- [x] Create migration `007_notifications_audit.py` (notifications, audit_logs)
+- [x] Create migration `008_bed_fk_updates.py` (FK constraints on beds)
+- [x] Execute and verify `alembic upgrade head`
+- [x] Execute and verify `alembic downgrade 005`
+- [x] Verify all required CHECK constraints, partial unique indexes, and JSONB defaults
+
+### Files Created
+
+| File | Purpose |
+|------|---------|
+| `backend/alembic/versions/006_hold_system.py` | Creates hold_requests, waitlist_entries, and bookings tables with partial unique indexes to prevent double booking. |
+| `backend/alembic/versions/007_notifications_audit.py` | Creates notifications and audit_logs tables (no soft delete/updated_at by design). |
+| `backend/alembic/versions/008_bed_fk_updates.py` | Adds deferred foreign key constraints to beds.current_hold_id and beds.current_booking_id. |
+
+### Verification Results
+
+- ✅ **Alembic Upgrade:** `005 -> 008` applied cleanly.
+- ✅ **Alembic Downgrade:** `008 -> 005` rolled back cleanly.
+- ✅ **Tables Created:** 5 (`hold_requests`, `waitlist_entries`, `bookings`, `notifications`, `audit_logs`).
+- ✅ **Columns Added:** 60.
+- ✅ **Indexes Created:** 28 (including 5 partial unique indexes for concurrency safety).
+- ✅ **Constraints:** 5 CHECK constraints (e.g., `hold_duration_hours BETWEEN 1 AND 72`).
+- ✅ **Foreign Keys:** 13 (11 inline + 2 deferred).
+- ✅ **Triggers:** 3 `updated_at` triggers added.
+
+### Key Decisions Made
+
+| # | Decision | Choice |
+|---|----------|--------|
+| 1 | UUID Generation | Used `gen_random_uuid()` (built-in) instead of `uuid_generate_v4()` to avoid extension dependencies. |
+| 2 | Immutable Tables | `notifications` and `audit_logs` use plain `Base` with no `updated_at` or `deleted_at` columns. |
+| 3 | JSONB Defaults | `notifications.data` defaults to `'{}'::jsonb` to prevent null-checks in queries. |
+| 4 | Soft Delete Isolation | Partial unique indexes specifically exclude soft-deleted rows (`deleted_at IS NULL`). |
+| 5 | FK Deletions | `hold_requests.resolved_by` and `bookings.hold_request_id` use `SET NULL` instead of `CASCADE` to preserve audit trails. |
+
+---
+
 ## Next Session Plan
 
-### Session 13 — Phase 1.7 Frontend Pages (Group 5D)
+### Session 14 — Phase 2.1.2 Models
 
 **Planned deliverables:**
 1. Group 5D: Media uploads, amenities checklist integrations (Step 2)

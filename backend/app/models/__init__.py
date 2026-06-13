@@ -23,6 +23,14 @@ Amenity         → amenities
 PropertyAmenity → property_amenities  (depends on properties, amenities)
 PropertyImage   → property_images     (depends on properties)
 SavedProperty   → saved_properties    (depends on users, properties)
+
+Phase 2.1 models
+-----------------
+HoldRequest    → hold_requests      (depends on beds, users, properties)
+WaitlistEntry  → waitlist_entries    (depends on beds, users, properties)
+Booking        → bookings           (depends on beds, users, properties, hold_requests)
+Notification   → notifications      (depends on users)
+AuditLog       → audit_logs         (depends on users)
 """
 
 # Preserve import order — parent tables first
@@ -37,6 +45,11 @@ from app.models.amenity import Amenity
 from app.models.property_amenity import PropertyAmenity
 from app.models.property_image import PropertyImage
 from app.models.saved_property import SavedProperty
+from app.models.hold_request import HoldRequest
+from app.models.waitlist_entry import WaitlistEntry
+from app.models.booking import Booking
+from app.models.notification import Notification
+from app.models.audit_log import AuditLog
 
 __all__ = [
     "User",
@@ -50,4 +63,10 @@ __all__ = [
     "PropertyAmenity",
     "PropertyImage",
     "SavedProperty",
+    "HoldRequest",
+    "WaitlistEntry",
+    "Booking",
+    "Notification",
+    "AuditLog",
 ]
+
