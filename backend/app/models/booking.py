@@ -20,6 +20,7 @@ from sqlalchemy import Date, DateTime, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.core.enums import BookingStatus
 from app.db.base import TimestampedBase
 
 if TYPE_CHECKING:
@@ -87,8 +88,8 @@ class Booking(TimestampedBase):
     status: Mapped[str] = mapped_column(
         String(20),
         nullable=False,
-        default="confirmed",
-        server_default="confirmed",
+        default=BookingStatus.CONFIRMED.value,
+        server_default=BookingStatus.CONFIRMED.value,
     )
 
     check_in_date: Mapped[date | None] = mapped_column(

@@ -20,6 +20,7 @@ from sqlalchemy import DateTime, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.core.enums import WaitlistStatus
 from app.db.base import TimestampedBase
 
 if TYPE_CHECKING:
@@ -81,8 +82,8 @@ class WaitlistEntry(TimestampedBase):
     status: Mapped[str] = mapped_column(
         String(20),
         nullable=False,
-        default="active",
-        server_default="active",
+        default=WaitlistStatus.ACTIVE.value,
+        server_default=WaitlistStatus.ACTIVE.value,
     )
 
     joined_at: Mapped[datetime] = mapped_column(

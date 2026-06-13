@@ -24,6 +24,7 @@ from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.core.enums import HoldStatus
 from app.db.base import TimestampedBase
 
 if TYPE_CHECKING:
@@ -86,8 +87,8 @@ class HoldRequest(TimestampedBase):
     status: Mapped[str] = mapped_column(
         String(20),
         nullable=False,
-        default="pending",
-        server_default="pending",
+        default=HoldStatus.PENDING.value,
+        server_default=HoldStatus.PENDING.value,
     )
 
     hold_duration_hours: Mapped[int] = mapped_column(
