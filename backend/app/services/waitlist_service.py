@@ -298,3 +298,5 @@ class WaitlistService:
     async def list_bed_queue(self, bed_id: uuid.UUID) -> list[WaitlistEntry]:
         """Ordered active queue for a bed."""
         return await self._waitlist_repo.list_active_for_bed(bed_id)
+
+        
