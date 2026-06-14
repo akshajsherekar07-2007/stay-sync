@@ -276,3 +276,37 @@ class HoldRequestRepository(BaseRepository[HoldRequest]):
         )
         result = await self._session.execute(stmt)
         return result.rowcount
+
+    # ── Cooldown check ───────────────────────────────────────────────────────
+
+    async def get_recent_resolved_for_bed(
+        self,
+        bed_id: uuid.UUID,
+        student_id: uuid.UUID,
+        since: datetime,
+    ) -> HoldRequest | None:
+        """Find a terminal-status hold on a specific bed by a specific student
+        that was created after ``since``.
+
+        Used for per-bed cooldown enforcement — prevents a student from
+        re-requesting the same bed within a cooldown window.
+
+        Args:
+            bed_id:     The target bed.
+            student_id: The requesting student.
+            since:      Lower-bound timestamp (e.g., now - 30 minutes).
+
+        Returns:
+            The most recent matching hold, or ``None`` if no cooldown applies.
+        """
+        stmt = (
+            select(HoldRequest)
+            .where(HoldRequest.bed_id == bed_id)
+            .where(HoldRequest.student_id == student_id)
+            .where(HoldRequest.requested_at >= since)
+            .where(HoldRequest.deleted_at.is_(None))
+            .order_by(HoldRequest.requested_at.desc())
+            .limit(1)
+        )
+        result = await self._session.execute(stmt)
+        return result.scalar_one_or_none()
