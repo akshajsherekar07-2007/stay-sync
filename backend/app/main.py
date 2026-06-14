@@ -14,6 +14,7 @@ from app.core.config import get_settings
 from app.core.logging import setup_logging
 from app.db.init_db import init_db
 from app.db.session import close_db
+from app.core.redis import init_redis, close_redis
 from app.middleware import (
     RateLimiterMiddleware,
     RequestIdMiddleware,
@@ -31,8 +32,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     if settings.is_development:
         print(f"[startup] {settings.APP_NAME} starting in {settings.ENVIRONMENT} mode")
     await init_db()
+    await init_redis()
     yield
     # ── Shutdown ─────────────────────────────────────────────
+    await close_redis()
     await close_db()
     if settings.is_development:
         print(f"[shutdown] {settings.APP_NAME} shutting down")
