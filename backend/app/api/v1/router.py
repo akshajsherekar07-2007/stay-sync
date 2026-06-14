@@ -33,7 +33,12 @@ api_v1_router.include_router(
 )
 
 # ── Phase 2 routers ──────────────────────────────────────────────────────────
-# from app.api.v1 import holds, waitlists, notifications
+from app.api.v1 import holds, waitlists, notifications, bookings
+
+api_v1_router.include_router(holds.router, prefix="/holds", tags=["Holds"])
+api_v1_router.include_router(bookings.router, prefix="/bookings", tags=["Bookings"])
+api_v1_router.include_router(waitlists.router, prefix="/waitlists", tags=["Waitlists"])
+api_v1_router.include_router(notifications.router, prefix="/notifications", tags=["Notifications"])
 
 # ── Phase 3 routers ──────────────────────────────────────────────────────────
 # from app.api.v1 import analytics
