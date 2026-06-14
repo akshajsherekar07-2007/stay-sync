@@ -33,6 +33,7 @@ from app.repositories.booking_repository import BookingRepository
 from app.repositories.hold_request_repository import HoldRequestRepository
 from app.repositories.notification_repository import NotificationRepository
 from app.repositories.property_repository import PropertyRepository
+from app.repositories.user_repository import UserRepository
 from app.repositories.waitlist_entry_repository import WaitlistEntryRepository
 from app.schemas.booking import BookingCreate, BookingRead
 from app.schemas.common import (
@@ -57,7 +58,6 @@ def _make_booking_service(db: AsyncSession) -> BookingService:
         waitlist_repo=WaitlistEntryRepository(db),
         bed_repo=BedRepository(db),
         hold_repo=HoldRequestRepository(db),
-        notification_service=notification_service,
         audit_service=audit_service,
     )
 
@@ -69,6 +69,7 @@ def _make_booking_service(db: AsyncSession) -> BookingService:
         waitlist_service=waitlist_service,
         notification_service=notification_service,
         audit_service=audit_service,
+        user_repo=UserRepository(db),
     )
 
 
@@ -171,12 +172,12 @@ async def list_my_bookings(
     return PaginatedResponse(
         data=[BookingRead.model_validate(item) for item in items],
         pagination=PaginationInfo(
+            page=page,
+            page_size=page_size,
             total_items=total,
             total_pages=total_pages,
-            current_page=page,
-            page_size=page_size,
             has_next=page < total_pages,
-            has_previous=page > 1,
+            has_prev=page > 1,  
         ),
         meta=build_meta(request_id),
     )
@@ -207,12 +208,12 @@ async def list_property_bookings(
     return PaginatedResponse(
         data=[BookingRead.model_validate(item) for item in items],
         pagination=PaginationInfo(
+            page=page,
+            page_size=page_size,
             total_items=total,
             total_pages=total_pages,
-            current_page=page,
-            page_size=page_size,
             has_next=page < total_pages,
-            has_previous=page > 1,
+            has_prev=page > 1,  
         ),
         meta=build_meta(request_id),
     )

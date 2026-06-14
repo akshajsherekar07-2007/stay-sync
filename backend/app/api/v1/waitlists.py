@@ -47,9 +47,8 @@ def _make_waitlist_service(db: AsyncSession) -> WaitlistService:
         waitlist_repo=WaitlistEntryRepository(db),
         bed_repo=BedRepository(db),
         hold_repo=HoldRequestRepository(db),
-        notification_service=NotificationService(NotificationRepository(db)),
         audit_service=AuditService(AuditLogRepository(db)),
-    )
+    )  
 
 
 @router.post(
@@ -87,9 +86,7 @@ async def join_waitlist(
         bed_id=data.bed_id,
         student_id=current_user.id,
         property_id=bed.property_id,
-        ip_address=ip_address,
-        user_agent=user_agent,
-    )
+    )   
     
     await db.commit()
     
@@ -122,13 +119,14 @@ async def list_my_entries(
     
     return PaginatedResponse(
         data=[WaitlistEntryRead.model_validate(item) for item in items],
+        # pyrefly: ignore [missing-argument]
         pagination=PaginationInfo(
             total_items=total,
             total_pages=total_pages,
-            current_page=page,
+            page=page,
             page_size=page_size,
             has_next=page < total_pages,
-            has_previous=page > 1,
+            has_prev=page > 1,
         ),
         meta=build_meta(request_id),
     )
@@ -208,11 +206,9 @@ async def cancel_entry(
     user_agent = request.headers.get("user-agent", "unknown")
 
     entry = await service.cancel_entry(
-        entry_id,
+        entry_id=entry_id,
         student_id=current_user.id,
-        ip_address=ip_address,
-        user_agent=user_agent,
-    )
+    )   
     
     await db.commit()
     

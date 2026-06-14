@@ -14,7 +14,7 @@ import logging
 import uuid
 from datetime import date, datetime, timezone
 
-from app.core.enums import BedStatus, BookingStatus, HoldStatus
+from app.core.enums import BedStatus, BookingStatus, HoldStatus, UserRole
 from app.core.exceptions import (
     BadRequestException,
     ConflictException,
@@ -26,6 +26,7 @@ from app.repositories.bed_repository import BedRepository
 from app.repositories.booking_repository import BookingRepository
 from app.repositories.hold_request_repository import HoldRequestRepository
 from app.repositories.property_repository import PropertyRepository
+from app.repositories.user_repository import UserRepository
 from app.services.audit_service import AuditService
 from app.services.notification_service import NotificationService
 from app.services.waitlist_service import WaitlistService
@@ -55,6 +56,7 @@ class BookingService:
         waitlist_service: WaitlistService,
         notification_service: NotificationService,
         audit_service: AuditService,
+        user_repo: UserRepository,
     ) -> None:
         self._booking_repo = booking_repo
         self._hold_repo = hold_repo
@@ -63,6 +65,7 @@ class BookingService:
         self._waitlist_service = waitlist_service
         self._notification_service = notification_service
         self._audit_service = audit_service
+        self._user_repo = user_repo
 
     # ── Create from hold ─────────────────────────────────────────────────────
 
@@ -233,6 +236,19 @@ class BookingService:
         Returns:
             The newly created Booking.
         """
+        # Validate student exists and has STUDENT role
+        student = await self._user_repo.get(student_id)
+        if student is None:
+            raise NotFoundException(
+                message="Student user not found.",
+                code="STUDENT_NOT_FOUND",
+            )
+        if student.role != UserRole.STUDENT.value:
+            raise BadRequestException(
+                message="User is not a student.",
+                code="INVALID_STUDENT",
+            )
+
         # Lock bed
         bed = await self._bed_repo.get_for_update(bed_id)
         if bed is None:

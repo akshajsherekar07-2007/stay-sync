@@ -59,7 +59,6 @@ def _make_hold_service(db: AsyncSession) -> tuple[HoldService, WaitlistService]:
         waitlist_repo=WaitlistEntryRepository(db),
         bed_repo=BedRepository(db),
         hold_repo=HoldRequestRepository(db),
-        notification_service=notification_service,
         audit_service=audit_service,
     )
 
@@ -154,12 +153,12 @@ async def list_my_holds(
     return PaginatedResponse(
         data=[HoldRequestRead.model_validate(item) for item in items],
         pagination=PaginationInfo(
+            page=page,
+            page_size=page_size,
             total_items=total,
             total_pages=total_pages,
-            current_page=page,
-            page_size=page_size,
             has_next=page < total_pages,
-            has_previous=page > 1,
+            has_prev=page > 1,
         ),
         meta=build_meta(request_id),
     )
@@ -190,13 +189,13 @@ async def list_property_holds(
     return PaginatedResponse(
         data=[HoldRequestRead.model_validate(item) for item in items],
         pagination=PaginationInfo(
-            total_items=total,
-            total_pages=total_pages,
-            current_page=page,
-            page_size=page_size,
-            has_next=page < total_pages,
-            has_previous=page > 1,
-        ),
+    page=page,
+    page_size=page_size,
+    total_items=total,
+    total_pages=total_pages,
+    has_next=page < total_pages,
+    has_prev=page > 1,
+),
         meta=build_meta(request_id),
     )
 

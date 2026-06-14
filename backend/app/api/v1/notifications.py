@@ -19,6 +19,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.exceptions import ForbiddenException, NotFoundException
 from app.dependencies.auth import get_current_user
 from app.dependencies.database import get_db
 from app.models.user import User
@@ -69,10 +70,10 @@ async def list_notifications(
         pagination=PaginationInfo(
             total_items=total,
             total_pages=total_pages,
-            current_page=page,
+            page=page,
             page_size=page_size,
             has_next=page < total_pages,
-            has_previous=page > 1,
+            has_prev=page > 1,
         ),
         meta=build_meta(request_id),
     )
@@ -110,7 +111,22 @@ async def mark_as_read(
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> SuccessResponse[NotificationRead]:
     service = _make_notification_service(db)
-    notification = await service.mark_as_read(notification_id, current_user.id)
+    
+    notification = await service._notification_repo.get(notification_id)
+    if not notification:
+        raise NotFoundException(
+            message="Notification not found.",
+            code="NOTIFICATION_NOT_FOUND",
+        )
+        
+    if notification.user_id != current_user.id:
+        raise ForbiddenException(
+            message="You do not own this notification.",
+            code="NOT_NOTIFICATION_OWNER",
+        )
+        
+    if not notification.is_read:
+        notification = await service.mark_as_read(notification_id)
     
     # Phase 2 services use flush-only, so we commit here.
     await db.commit()
