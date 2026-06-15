@@ -52,3 +52,10 @@ export enum HoldStatus {
   OVERRIDDEN = "overridden",
   CANCELLED = "cancelled",
 }
+
+export enum WaitlistStatus {
+  ACTIVE = "active",
+  PROMOTED = "promoted",
+  EXPIRED = "expired",
+  CANCELLED = "cancelled",
+}

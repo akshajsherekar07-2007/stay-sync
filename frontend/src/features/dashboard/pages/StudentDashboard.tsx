@@ -4,6 +4,8 @@ import { Heart, Building2, ArrowRight, Bed, Clock } from "lucide-react";
 
 import { useAuthStore } from "../../../stores/authStore";
 import { dashboardService } from "../../../services/dashboardService";
+import { waitlistService } from "../../../services/waitlistService";
+import { WaitlistCard } from "../components/WaitlistCard";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../../components/ui/Card";
 import { Button } from "../../../components/ui/Button";
 import { Badge } from "../../../components/ui/Badge";
@@ -17,7 +19,12 @@ export default function StudentDashboard() {
     queryFn: () => dashboardService.getStudentDashboardData(),
   });
 
-  if (isLoading) {
+  const { data: waitlistsData, isLoading: isWaitlistsLoading } = useQuery({
+    queryKey: ["myWaitlists"],
+    queryFn: () => waitlistService.getMyWaitlists(),
+  });
+
+  if (isLoading || isWaitlistsLoading) {
     return (
       <div className="flex justify-center items-center py-20 min-h-[50vh]">
         <LoadingSpinner size="lg" />
@@ -27,6 +34,7 @@ export default function StudentDashboard() {
 
   const activeHolds = data?.active_holds_count || 0;
   const savedProperties = data?.saved_properties || [];
+  const waitlists = waitlistsData?.data || [];
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-2">
@@ -133,6 +141,24 @@ export default function StudentDashboard() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Waitlist Section */}
+          <div className="space-y-4 pt-4">
+            <h3 className="text-lg font-bold text-text">My Waitlists</h3>
+            {waitlists.length === 0 ? (
+              <Card className="border-border bg-card">
+                <CardContent className="py-8 text-center bg-bg-secondary/30">
+                  <p className="text-sm text-text-secondary">You are not currently on any waitlists.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-4">
+                {waitlists.map((entry) => (
+                  <WaitlistCard key={entry.id} entry={entry} />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Right 1 Column: Saved Stays Quick View */}
