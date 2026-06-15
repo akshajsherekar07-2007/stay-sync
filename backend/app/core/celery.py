@@ -6,13 +6,17 @@ backend.  Configuration is sourced from the application settings singleton
 
 Usage — worker startup::
 
-    celery -A app.core.celery:celery_app worker --loglevel=info
+    celery -A app.core.celery:celery_app worker --loglevel=info --pool=solo
 
-Usage — beat startup (future phases)::
+Usage — beat startup::
 
     celery -A app.core.celery:celery_app beat --loglevel=info
 
+Run both processes simultaneously for full periodic-task support.
+
 The Celery instance auto-discovers tasks registered in ``app.tasks``.
+Beat schedules are defined in ``_build_beat_schedule()`` and applied inside
+``create_celery_app()``.
 """
 
 from __future__ import annotations
@@ -20,6 +24,7 @@ from __future__ import annotations
 import logging
 
 from celery import Celery
+from celery.schedules import crontab
 
 from app.core.config import get_settings
 
@@ -35,6 +40,65 @@ def _build_result_backend_url(redis_url: str) -> str:
     # Strip a trailing db number if present (e.g. "redis://localhost:6379/0")
     base = redis_url.rsplit("/", 1)[0]
     return f"{base}/1"
+
+
+def _seconds_to_crontab(interval_seconds: int) -> crontab:
+    """Convert an interval in whole minutes to a :class:`crontab` expression.
+
+    Args:
+        interval_seconds: Interval in seconds.  Must be a positive multiple of
+            60 — Beat schedules resolve to whole cron minutes.
+
+    Returns:
+        A :class:`~celery.schedules.crontab` that fires every N minutes.
+
+    Raises:
+        ValueError: If ``interval_seconds`` is not a positive multiple of 60.
+    """
+    if interval_seconds <= 0 or interval_seconds % 60 != 0:
+        raise ValueError(
+            f"interval_seconds must be a positive multiple of 60, got {interval_seconds}"
+        )
+    minutes = interval_seconds // 60
+    if minutes == 1:
+        # crontab(minute="*") fires every minute
+        return crontab(minute="*")
+    # crontab(minute="*/N") fires every N minutes
+    return crontab(minute=f"*/{minutes}")
+
+
+def _build_beat_schedule(settings) -> dict:
+    """Build the ``beat_schedule`` dict from application settings.
+
+    Keeping schedule construction in a dedicated helper makes
+    ``create_celery_app()`` readable and the schedule trivially testable
+    in isolation.
+
+    Returns:
+        A dict suitable for assignment to ``app.conf.beat_schedule``.
+    """
+    return {
+        # ── Bulk hold-expiry scan ─────────────────────────────
+        # Finds all approved holds whose expires_at is in the past and
+        # transitions each one to EXPIRED (releasing the bed and promoting
+        # waitlist candidates).
+        "hold-scan-and-expire": {
+            "task": "hold.scan_and_expire",
+            "schedule": _seconds_to_crontab(
+                settings.CELERY_BEAT_EXPIRE_SCAN_INTERVAL_SECONDS
+            ),
+        },
+        # ── Expiring-soon notification scan ──────────────────
+        # Finds approved holds expiring within HOLD_EXPIRY_WARNING_MINUTES
+        # (60 min) and sends in-app advance-warning notifications.
+        # NOTE: duplicate-notification dedup is deferred to Phase 2.2.4.
+        "hold-send-expiring-soon-notifications": {
+            "task": "hold.send_expiring_soon_notifications",
+            "schedule": _seconds_to_crontab(
+                settings.CELERY_BEAT_EXPIRING_SOON_INTERVAL_SECONDS
+            ),
+        },
+    }
 
 
 def create_celery_app() -> Celery:
@@ -78,19 +142,31 @@ def create_celery_app() -> Celery:
         broker_connection_retry_on_startup=True,
     )
 
-    # Auto-discover tasks registered in app/tasks/ sub-modules.
-    # Each future task module (e.g. app/tasks/hold_tasks.py) will be
-    # detected automatically — no manual imports required.
+    # ── Task discovery ────────────────────────────────────────────────────────
+    # conf.imports triggers eager import of each listed module so that
+    # @shared_task decorators execute and register tasks on this app.
     app.conf.imports = (
         "app.tasks.hold_tasks",
     )
 
     app.autodiscover_tasks(["app.tasks"])
 
+    # ── Beat schedule (Phase 2.2.3) ───────────────────────────────────────────
+    # Defines which tasks are executed periodically and how often.
+    # Beat is a separate process — start it alongside the worker:
+    #   celery -A app.core.celery:celery_app beat --loglevel=info
+    app.conf.beat_schedule = _build_beat_schedule(settings)
+
+    # Beat persists last-run timestamps in a local shelve file.
+    # The filename is fixed so it is always created in the working directory
+    # (wherever the Beat process starts) and easy to locate/delete.
+    app.conf.beat_schedule_filename = "celerybeat-schedule"
+
     logger.info(
-        "Celery app configured  broker=%s  backend=%s",
+        "Celery app configured  broker=%s  backend=%s  beat_schedules=%s",
         settings.REDIS_URL,
         app.conf.result_backend,
+        list(app.conf.beat_schedule.keys()),
     )
 
     return app
@@ -99,6 +175,7 @@ def create_celery_app() -> Celery:
 # Module-level singleton used by the ``celery`` CLI and task decorators.
 celery_app: Celery = create_celery_app()
 
-# Import task modules here to trigger registration of tasks on celery_app
+# Import task modules here to trigger registration of tasks on celery_app.
+# This ensures hold.* tasks are in celery_app.tasks immediately after
+# ``from app.core.celery import celery_app`` — no manual import required.
 import app.tasks.hold_tasks  # noqa: F401
-

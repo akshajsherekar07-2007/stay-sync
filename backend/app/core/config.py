@@ -57,9 +57,17 @@ class Settings(BaseSettings):
     # ── Redis ────────────────────────────────────────────────
     REDIS_URL: str = "redis://localhost:6379/0"
 
-    # ── Celery (Phase 2.2) ───────────────────────────────────
+    # ── Celery (Phase 2.2) ───────────────────────────────────────
     CELERY_RESULT_EXPIRES_SECONDS: int = 3600  # 1 hour
     CELERY_WORKER_PREFETCH_MULTIPLIER: int = 1  # one-at-a-time for fairness
+
+    # ── Celery Beat (Phase 2.2.3) ─────────────────────────────
+    # How often (seconds) the bulk hold-expiry scan runs.
+    # Must be a multiple of 60 (Beat resolves to whole cron minutes).
+    CELERY_BEAT_EXPIRE_SCAN_INTERVAL_SECONDS: int = 60  # every minute
+    # How often (seconds) the expiring-soon notification scan runs.
+    # Must be a multiple of 60.
+    CELERY_BEAT_EXPIRING_SOON_INTERVAL_SECONDS: int = 900  # every 15 minutes
 
     # ── CORS ─────────────────────────────────────────────────
     ALLOWED_ORIGINS: str = "http://localhost:5173,http://localhost:3000"
