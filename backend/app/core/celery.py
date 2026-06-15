@@ -81,6 +81,10 @@ def create_celery_app() -> Celery:
     # Auto-discover tasks registered in app/tasks/ sub-modules.
     # Each future task module (e.g. app/tasks/hold_tasks.py) will be
     # detected automatically — no manual imports required.
+    app.conf.imports = (
+        "app.tasks.hold_tasks",
+    )
+
     app.autodiscover_tasks(["app.tasks"])
 
     logger.info(
@@ -94,3 +98,7 @@ def create_celery_app() -> Celery:
 
 # Module-level singleton used by the ``celery`` CLI and task decorators.
 celery_app: Celery = create_celery_app()
+
+# Import task modules here to trigger registration of tasks on celery_app
+import app.tasks.hold_tasks  # noqa: F401
+

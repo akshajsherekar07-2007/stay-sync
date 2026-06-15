@@ -108,6 +108,30 @@ class NotificationService:
             data={"bed_id": str(bed_id)},
         )
 
+    async def notify_hold_expiring_soon(
+        self,
+        *,
+        student_id: uuid.UUID,
+        bed_id: uuid.UUID,
+        property_name: str,
+        bed_label: str,
+        expires_at: str,
+    ) -> Notification:
+        """Notify the student their hold is expiring soon."""
+        return await self._notification_repo.create(
+            user_id=student_id,
+            type=NotificationType.HOLD_EXPIRING_SOON,
+            title="Hold Expiring Soon",
+            message=(
+                f"Your hold on bed {bed_label} in {property_name} expires at "
+                f"{expires_at}. Please complete your booking or extend."
+            ),
+            data={
+                "bed_id": str(bed_id),
+                "expires_at": expires_at,
+            },
+        )
+
     async def notify_hold_overridden(
         self,
         *,

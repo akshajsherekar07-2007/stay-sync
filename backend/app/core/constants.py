@@ -13,6 +13,7 @@ BED_STATUS_OCCUPIED = "occupied"   # 🔴 RED
 MAX_ACTIVE_HOLDS_PER_STUDENT = 3
 HOLD_COOLDOWN_MINUTES = 30
 DEFAULT_HOLD_DURATION_HOURS = 24
+HOLD_EXPIRY_WARNING_MINUTES = 60  # notify student 1 hour before expiry
 
 # ── Pagination ───────────────────────────────────────────────
 DEFAULT_PAGE_SIZE = 20

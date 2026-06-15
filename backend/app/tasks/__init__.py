@@ -24,4 +24,16 @@ from __future__ import annotations
 #   from app.tasks import celery_app
 from app.core.celery import celery_app
 
-__all__ = ["celery_app"]
+# Explicit task imports for Celery registration
+from app.tasks.hold_tasks import (
+    expire_hold_task,
+    scan_and_expire_holds_task,
+    send_expiring_soon_notifications_task,
+)
+
+__all__ = [
+    "celery_app",
+    "expire_hold_task",
+    "scan_and_expire_holds_task",
+    "send_expiring_soon_notifications_task",
+]
