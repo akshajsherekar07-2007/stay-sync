@@ -22,7 +22,10 @@ httpx==0.28.1
 python-multipart==0.0.20
 
 # Redis
-redis==5.2.1
+redis>=5.2.1,<6.0.0
+
+# Task Queue
+celery[redis]==5.4.0
 
 # Supabase
 supabase==2.11.0
