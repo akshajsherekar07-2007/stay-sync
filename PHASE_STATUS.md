@@ -193,9 +193,9 @@
 | ---- | --------------------------------------------- | ------ |
 | 2.2.1 | Auto-add to waitlist when bed is held         | ⬜ |
 | 2.2.2 | Queue position tracking                       | ⬜ |
-| 2.2.3 | Auto-promotion when hold expires              | ⬜ |
-| 2.2.4 | Waitlist cancellation                         | ⬜ |
-| 2.2.5 | Waitlist status display on UI                 | ⬜ |
+| 2.2.3 | Auto-promotion when hold expires              | ✅ |
+| 2.2.4 | Waitlist cancellation                         | ✅ |
+| 2.2.5 | Waitlist status display on UI                 | ✅ |
 
 #### 2.3 Background Jobs
 | #    | Task                                          | Status |

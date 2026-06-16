@@ -5,6 +5,7 @@ import { Heart, Building2, ArrowRight, Bed, Clock } from "lucide-react";
 import { useAuthStore } from "../../../stores/authStore";
 import { dashboardService } from "../../../services/dashboardService";
 import { waitlistService } from "../../../services/waitlistService";
+import { holdService } from "../../../services/holdService";
 import { WaitlistCard } from "../components/WaitlistCard";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../../components/ui/Card";
 import { Button } from "../../../components/ui/Button";
@@ -24,7 +25,12 @@ export default function StudentDashboard() {
     queryFn: () => waitlistService.getMyWaitlists(),
   });
 
-  if (isLoading || isWaitlistsLoading) {
+  const { data: holdsData, isLoading: isHoldsLoading } = useQuery({
+    queryKey: ["myHolds"],
+    queryFn: () => holdService.listMyHolds(),
+  });
+
+  if (isLoading || isWaitlistsLoading || isHoldsLoading) {
     return (
       <div className="flex justify-center items-center py-20 min-h-[50vh]">
         <LoadingSpinner size="lg" />
@@ -32,7 +38,13 @@ export default function StudentDashboard() {
     );
   }
 
-  const activeHolds = data?.active_holds_count || 0;
+  // Find active holds based on status "approved" (which means actively held)
+  const allHolds = holdsData?.data || [];
+  const activeOrPendingHolds = allHolds.filter(h => h.status === "pending" || h.status === "approved");
+  const activeHoldsCount = activeOrPendingHolds.length;
+  
+  // Override dashboard data active_holds_count with real data
+  const activeHolds = activeHoldsCount || data?.active_holds_count || 0;
   const savedProperties = data?.saved_properties || [];
   const waitlists = waitlistsData?.data || [];
 
@@ -126,18 +138,41 @@ export default function StudentDashboard() {
             </CardHeader>
             <CardContent className="py-8 text-center bg-bg-secondary/30 border-t border-border/50">
               <div className="max-w-md mx-auto space-y-4">
-                <div className="h-12 w-12 flex items-center justify-center rounded-full bg-amber-500/10 text-amber-600 mx-auto">
-                  <Bed className="h-6 w-6" />
-                </div>
-                <h3 className="text-base font-bold text-text">No Bed Holds Requested</h3>
-                <p className="text-xs text-text-secondary leading-relaxed">
-                  Real-time bed hold requests, expiration countdowns, and automatic waitlist queue promotions will be fully integrated during **Phase 2 (Holds System)**.
-                </p>
-                <div className="pt-2">
-                  <Button asChild size="sm">
-                    <Link to="/properties">Search Stays</Link>
-                  </Button>
-                </div>
+                {activeOrPendingHolds.length > 0 ? (
+                  <div className="space-y-4">
+                    {activeOrPendingHolds.slice(0, 2).map((hold) => (
+                      <div key={hold.id} className="p-4 bg-bg border border-border rounded-lg text-left">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="font-bold text-sm">Hold Status: <Badge variant={hold.status === "approved" ? "success" : "warning"} className="ml-2 text-white capitalize">{hold.status}</Badge></span>
+                          <span className="text-xs text-text-secondary">Expires: {hold.expires_at ? new Date(hold.expires_at).toLocaleString() : "N/A"}</span>
+                        </div>
+                        <p className="text-xs text-text-secondary">
+                          Hold duration: {hold.hold_duration_hours} hours.
+                        </p>
+                      </div>
+                    ))}
+                    <div className="pt-2">
+                      <Button asChild size="sm" variant="outline">
+                        <Link to="/dashboard/holds">View All Holds</Link>
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="h-12 w-12 flex items-center justify-center rounded-full bg-amber-500/10 text-amber-600 mx-auto">
+                      <Bed className="h-6 w-6" />
+                    </div>
+                    <h3 className="text-base font-bold text-text">No Bed Holds Requested</h3>
+                    <p className="text-xs text-text-secondary leading-relaxed">
+                      You currently have no active or pending bed holds. Browse the catalog to request a bed hold.
+                    </p>
+                    <div className="pt-2">
+                      <Button asChild size="sm">
+                        <Link to="/properties">Search Stays</Link>
+                      </Button>
+                    </div>
+                  </>
+                )}
               </div>
             </CardContent>
           </Card>

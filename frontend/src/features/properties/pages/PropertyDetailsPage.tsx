@@ -25,6 +25,7 @@ import {
 import { useAuthStore } from "../../../stores/authStore";
 import { propertyService } from "../../../services/propertyService";
 import { savedPropertyService } from "../../../services/savedPropertyService";
+import { holdService } from "../../../services/holdService";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/Card";
 import { Button } from "../../../components/ui/Button";
 import { Badge } from "../../../components/ui/Badge";
@@ -146,12 +147,27 @@ export default function PropertyDetailsPage() {
     }
   };
 
-  const handleHoldBed = (bedNumber: string) => {
+  const handleHoldBed = async (bedId: string) => {
     if (!isAuthenticated) {
       toast.error("Please log in to request a bed hold.");
       return;
     }
-    toast.info(`Hold request for Bed ${bedNumber} is a Phase 2 feature!`);
+    
+    try {
+      await holdService.requestHold({ bed_id: bedId });
+      toast.success("Bed hold requested successfully!");
+      // Invalidate relevant queries to refresh the bed status
+      queryClient.invalidateQueries({ queryKey: ["roomBeds", selectedRoomId] });
+      queryClient.invalidateQueries({ queryKey: ["studentDashboardData"] });
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || "Failed to request bed hold.";
+      if (err.response?.status === 202) {
+         toast.success("Bed is currently held. You have been added to the waitlist.");
+         queryClient.invalidateQueries({ queryKey: ["roomBeds", selectedRoomId] });
+      } else {
+         toast.error(errorMessage);
+      }
+    }
   };
 
   if (isPropertyLoading) {
@@ -503,7 +519,7 @@ export default function PropertyDetailsPage() {
                                       size="sm"
                                       variant="outline"
                                       className="border-emerald-500 text-emerald-600 hover:bg-emerald-500 hover:text-white text-[10px] py-1 h-7 px-2.5 font-semibold cursor-pointer"
-                                      onClick={() => handleHoldBed(bed.bed_number)}
+                                      onClick={() => handleHoldBed(bed.id)}
                                     >
                                       Hold Bed
                                     </Button>

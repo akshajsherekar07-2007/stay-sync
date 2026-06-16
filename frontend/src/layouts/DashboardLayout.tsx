@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
-import { Menu, X, LayoutDashboard, Building2, Heart, LogOut, ChevronLeft, ChevronRight, Compass } from "lucide-react";
+import { Menu, X, LayoutDashboard, Building2, Heart, LogOut, ChevronLeft, ChevronRight, Compass, Clock } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 import { useAuth } from "../features/auth/hooks/useAuth";
 import { Button } from "../components/ui/Button";
@@ -30,11 +30,13 @@ export function DashboardLayout() {
   const menuItems = isOwner
     ? [
         { label: "Overview", to: "/owner/dashboard", icon: LayoutDashboard },
+        { label: "Hold Approvals", to: "/owner/holds", icon: Clock },
         { label: "My Properties", to: "/owner/properties", icon: Building2 },
       ]
     : [
         { label: "Overview", to: "/dashboard", icon: LayoutDashboard },
         { label: "Browse", to: "/properties", icon: Compass },
+        { label: "My Holds", to: "/dashboard/holds", icon: Clock },
         { label: "Saved Properties", to: "/saved-properties", icon: Heart },
       ];
 

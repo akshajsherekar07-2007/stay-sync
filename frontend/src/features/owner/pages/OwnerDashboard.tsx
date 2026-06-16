@@ -139,6 +139,18 @@ export default function OwnerDashboard() {
 
                 <div className="p-4 rounded-xl border border-border bg-bg-secondary/30 flex flex-col justify-between">
                   <div className="space-y-1 mb-4">
+                    <h4 className="text-sm font-bold text-text">Review Hold Requests</h4>
+                    <p className="text-xs text-text-secondary leading-relaxed">
+                      Manage pending bed hold requests from students. Approve or reject reservations before they expire.
+                    </p>
+                  </div>
+                  <Button size="sm" variant="default" asChild className="w-full">
+                    <Link to="/owner/holds">Manage Holds</Link>
+                  </Button>
+                </div>
+
+                <div className="p-4 rounded-xl border border-border bg-bg-secondary/30 flex flex-col justify-between">
+                  <div className="space-y-1 mb-4">
                     <h4 className="text-sm font-bold text-text">Properties Catalog</h4>
                     <p className="text-xs text-text-secondary leading-relaxed">
                       Edit details, delete draft listings, and toggle active status flags on your accommodations.
@@ -182,7 +194,7 @@ export default function OwnerDashboard() {
                 <div>
                   <span className="font-bold text-text block">Hold Expiration Timers</span>
                   <span className="text-text-secondary block mt-0.5">
-                    Beds held by students auto-expire or require manual check-ins (integrated in Phase 2).
+                    Pending bed holds automatically expire if not approved within their requested duration.
                   </span>
                 </div>
               </div>

@@ -18,6 +18,8 @@ import OwnerDashboard from "../features/owner/pages/OwnerDashboard";
 import ManagePropertiesPage from "../features/owner/pages/ManagePropertiesPage";
 import CreatePropertyPage from "../features/owner/pages/CreatePropertyPage";
 import EditPropertyPage from "../features/owner/pages/EditPropertyPage";
+import StudentHoldsPage from "../features/dashboard/pages/StudentHoldsPage";
+import OwnerHoldsPage from "../features/owner/pages/OwnerHoldsPage";
 
 export function AppRouter() {
   return (
@@ -42,12 +44,14 @@ export function AppRouter() {
             {/* Student-Only Routes */}
             <Route element={<RoleRoute allowedRoles={[UserRole.STUDENT]} />}>
               <Route path="/dashboard" element={<StudentDashboard />} />
+              <Route path="/dashboard/holds" element={<StudentHoldsPage />} />
               <Route path="/saved-properties" element={<SavedPropertiesPage />} />
             </Route>
 
             {/* Owner-Only Routes */}
             <Route element={<RoleRoute allowedRoles={[UserRole.OWNER]} />}>
               <Route path="/owner/dashboard" element={<OwnerDashboard />} />
+              <Route path="/owner/holds" element={<OwnerHoldsPage />} />
               <Route path="/owner/properties" element={<ManagePropertiesPage />} />
               <Route path="/owner/properties/create" element={<CreatePropertyPage />} />
               <Route path="/owner/properties/:id/edit" element={<EditPropertyPage />} />

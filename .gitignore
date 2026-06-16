@@ -48,6 +48,12 @@ docker-compose.override.yml
 htmlcov/
 .pytest_cache/
 
+# Celery Beat
+# Beat writes a local shelve DB to track last-run timestamps.
+# All platform variants (.db, .dir, .dat) are excluded.
+celerybeat-schedule
+celerybeat-schedule.*
+
 # Logs
 *.log
 logs/
