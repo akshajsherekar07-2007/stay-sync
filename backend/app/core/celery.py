@@ -91,12 +91,24 @@ def _build_beat_schedule(settings) -> dict:
         # ── Expiring-soon notification scan ──────────────────
         # Finds approved holds expiring within HOLD_EXPIRY_WARNING_MINUTES
         # (60 min) and sends in-app advance-warning notifications.
-        # NOTE: duplicate-notification dedup is deferred to Phase 2.2.4.
+        # Dedup via Redis SETNX prevents duplicate notifications (Phase 2.2.4).
         "hold-send-expiring-soon-notifications": {
             "task": "hold.send_expiring_soon_notifications",
             "schedule": _seconds_to_crontab(
                 settings.CELERY_BEAT_EXPIRING_SOON_INTERVAL_SECONDS
             ),
+        },
+        # ── Expired Token Cleanup (Phase 2) ──────────────────
+        # Hard-deletes expired refresh tokens from database daily (86400s).
+        "maintenance-cleanup-expired-tokens": {
+            "task": "maintenance.cleanup_expired_tokens",
+            "schedule": _seconds_to_crontab(86400),
+        },
+        # ── Stale Listings Detection (Phase 2) ───────────────
+        # Deactivates listings with no updates for 30+ days daily (86400s).
+        "maintenance-detect-stale-listings": {
+            "task": "maintenance.detect_stale_listings",
+            "schedule": _seconds_to_crontab(86400),
         },
     }
 

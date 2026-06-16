@@ -30,10 +30,16 @@ from app.tasks.hold_tasks import (
     scan_and_expire_holds_task,
     send_expiring_soon_notifications_task,
 )
+from app.tasks.maintenance_tasks import (
+    cleanup_expired_tokens_task,
+    detect_stale_listings_task,
+)
 
 __all__ = [
     "celery_app",
     "expire_hold_task",
     "scan_and_expire_holds_task",
     "send_expiring_soon_notifications_task",
+    "cleanup_expired_tokens_task",
+    "detect_stale_listings_task",
 ]

@@ -16,6 +16,8 @@ scan_and_expire_holds_task()
 
 send_expiring_soon_notifications_task()
     Notify students whose holds expire within the warning threshold.
+    Uses Redis SETNX deduplication (Phase 2.2.4) to ensure at most one
+    notification per hold per warning window.
 """
 
 from __future__ import annotations
@@ -26,6 +28,7 @@ import uuid
 from datetime import datetime, timedelta, timezone
 
 from celery import shared_task
+from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
@@ -243,8 +246,20 @@ def send_expiring_soon_notifications_task(self) -> dict:
     The warning threshold is configured via ``HOLD_EXPIRY_WARNING_MINUTES``
     (default 60 minutes).
 
+    Deduplication (Phase 2.2.4)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Because Celery Beat fires this task periodically (default every 15
+    minutes) and the warning window is 60 minutes, the same hold can
+    appear in multiple consecutive scans.  A Redis SETNX key per hold
+    ensures at most **one** notification per hold per warning window.
+
+    The key format is ``notif:hold_expiring_soon:{hold_id}`` with a TTL
+    of ``HOLD_EXPIRY_WARNING_MINUTES * 60`` seconds.  If Redis is
+    unavailable, the task **fails open** — notifications are sent without
+    dedup rather than silently suppressed.
+
     Returns:
-        A dict with the count of notifications sent.
+        A dict with counts of notified / skipped holds.
     """
     try:
         return asyncio.run(_send_expiring_soon_async())
@@ -254,9 +269,25 @@ def send_expiring_soon_notifications_task(self) -> dict:
 
 
 async def _send_expiring_soon_async() -> dict:
-    """Async implementation for expiring-soon notifications."""
+    """Async implementation for expiring-soon notifications with Redis dedup."""
+    settings = get_settings()
     session = _new_async_session()
     notified_count = 0
+    skipped_count = 0
+
+    # Redis client for dedup — constructed from the same URL as the app pool.
+    # Lifecycle is managed here, not through the FastAPI dependency.
+    redis_client: Redis | None = None
+    try:
+        redis_client = Redis.from_url(settings.REDIS_URL, decode_responses=True)
+    except Exception:
+        logger.warning(
+            "expiring_soon: could not connect to Redis for dedup; "
+            "proceeding without deduplication"
+        )
+
+    # TTL = full warning window so each hold gets at most one notification
+    dedup_ttl = HOLD_EXPIRY_WARNING_MINUTES * 60
 
     try:
         (
@@ -274,13 +305,37 @@ async def _send_expiring_soon_async() -> dict:
 
         if not expiring_holds:
             logger.info("expiring_soon: no holds expiring within %d minutes", HOLD_EXPIRY_WARNING_MINUTES)
-            return {"status": "ok", "notified": 0}
+            return {"status": "ok", "notified": 0, "skipped": 0}
 
         logger.info("expiring_soon: found %d holds expiring soon", len(expiring_holds))
 
         for hold in expiring_holds:
             try:
-                # Fetch property and bed for notification context
+                # ── Dedup check (Phase 2.2.4) ────────────────────────────
+                dedup_key = f"notif:hold_expiring_soon:{hold.id}"
+                is_new = True  # default: send (fail-open)
+
+                if redis_client is not None:
+                    try:
+                        is_new = await redis_client.set(
+                            dedup_key, "1", nx=True, ex=dedup_ttl
+                        )
+                    except Exception:
+                        logger.warning(
+                            "expiring_soon: Redis dedup failed for hold %s; "
+                            "proceeding without dedup",
+                            hold.id,
+                        )
+                        is_new = True  # fail-open
+
+                if not is_new:
+                    logger.debug(
+                        "expiring_soon: skipping duplicate for hold %s", hold.id
+                    )
+                    skipped_count += 1
+                    continue
+
+                # ── Send notification ────────────────────────────────────
                 prop = await property_repo.get(hold.property_id)
                 bed = await bed_repo.get(hold.bed_id)
 
@@ -305,7 +360,11 @@ async def _send_expiring_soon_async() -> dict:
 
         await session.commit()
 
-        result = {"status": "ok", "notified": notified_count}
+        result = {
+            "status": "ok",
+            "notified": notified_count,
+            "skipped": skipped_count,
+        }
         logger.info("expiring_soon complete: %s", result)
         return result
 
@@ -314,3 +373,5 @@ async def _send_expiring_soon_async() -> dict:
         raise
     finally:
         await session.close()
+        if redis_client is not None:
+            await redis_client.aclose()

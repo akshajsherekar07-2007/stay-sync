@@ -77,6 +77,9 @@ class Settings(BaseSettings):
     EMAIL_API_KEY: str = ""
     EMAIL_FROM_ADDRESS: str = "noreply@staysync.app"
 
+    # ── Stale Listings (Phase 2) ─────────────────────────────
+    PROPERTY_STALE_THRESHOLD_DAYS: int = 30
+
     # ── Google Maps ──────────────────────────────────────────
     GOOGLE_MAPS_API_KEY: str = ""
 

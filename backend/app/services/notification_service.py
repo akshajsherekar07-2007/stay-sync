@@ -9,12 +9,15 @@ The calling router is responsible for ``commit()``.
 
 from __future__ import annotations
 
+import logging
 import uuid
 from typing import Any
 
 from app.core.enums import NotificationType
 from app.models.notification import Notification
 from app.repositories.notification_repository import NotificationRepository
+
+logger = logging.getLogger(__name__)
 
 
 class NotificationService:
