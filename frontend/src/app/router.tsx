@@ -20,6 +20,7 @@ import CreatePropertyPage from "../features/owner/pages/CreatePropertyPage";
 import EditPropertyPage from "../features/owner/pages/EditPropertyPage";
 import StudentHoldsPage from "../features/dashboard/pages/StudentHoldsPage";
 import OwnerHoldsPage from "../features/owner/pages/OwnerHoldsPage";
+import NotificationPage from "../features/dashboard/pages/NotificationPage";
 
 export function AppRouter() {
   return (
@@ -55,6 +56,11 @@ export function AppRouter() {
               <Route path="/owner/properties" element={<ManagePropertiesPage />} />
               <Route path="/owner/properties/create" element={<CreatePropertyPage />} />
               <Route path="/owner/properties/:id/edit" element={<EditPropertyPage />} />
+            </Route>
+
+            {/* Authenticated Routes (Both Roles) */}
+            <Route element={<RoleRoute allowedRoles={[UserRole.STUDENT, UserRole.OWNER]} />}>
+              <Route path="/notifications" element={<NotificationPage />} />
             </Route>
           </Route>
         </Route>

@@ -6,6 +6,7 @@ import { useAuth } from "../features/auth/hooks/useAuth";
 import { Button } from "../components/ui/Button";
 import { Avatar, AvatarImage, AvatarFallback } from "../components/ui/Avatar";
 import { ThemeToggle } from "../components/common/ThemeToggle";
+import { NotificationBell } from "../components/layout/NotificationBell";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -74,6 +75,7 @@ export function RootLayout() {
                 </Link>
               )}
               <div className="flex items-center gap-4 border-l border-border pl-6">
+                {isAuthenticated && <NotificationBell />}
                 <ThemeToggle />
                 {isAuthenticated ? (
                   <DropdownMenu>
@@ -119,6 +121,7 @@ export function RootLayout() {
           ) : (
             // Mobile Hamburger Button
             <div className="flex items-center gap-4">
+              {isAuthenticated && <NotificationBell />}
               <ThemeToggle />
               <Button
                 variant="ghost"
