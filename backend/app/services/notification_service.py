@@ -21,10 +21,20 @@ logger = logging.getLogger(__name__)
 
 
 class NotificationService:
-    """Orchestrates in-app notification creation and management."""
+    """Orchestrates in-app notification creation and management.
 
-    def __init__(self, notification_repo: NotificationRepository) -> None:
+    Optionally accepts a ``ws_manager`` to broadcast real-time events
+    after creating database notifications.  If ``ws_manager`` is None,
+    notifications are database-only (backwards compatible).
+    """
+
+    def __init__(
+        self,
+        notification_repo: NotificationRepository,
+        ws_manager: Any | None = None,
+    ) -> None:
         self._notification_repo = notification_repo
+        self._ws_manager = ws_manager
 
     # ── Domain-specific notification creators ────────────────────────────────
 
@@ -38,7 +48,7 @@ class NotificationService:
         bed_label: str,
     ) -> Notification:
         """Notify the property owner that a hold was requested."""
-        return await self._notification_repo.create(
+        return await self._create_and_broadcast(
             user_id=owner_id,
             type=NotificationType.HOLD_REQUESTED,
             title="New Hold Request",
@@ -59,7 +69,7 @@ class NotificationService:
         expires_at: str,
     ) -> Notification:
         """Notify the student their hold was approved."""
-        return await self._notification_repo.create(
+        return await self._create_and_broadcast(
             user_id=student_id,
             type=NotificationType.HOLD_APPROVED,
             title="Hold Approved",
@@ -86,7 +96,7 @@ class NotificationService:
         msg = f"Your hold on bed {bed_label} in {property_name} has been rejected."
         if resolution_note:
             msg += f" Reason: {resolution_note}"
-        return await self._notification_repo.create(
+        return await self._create_and_broadcast(
             user_id=student_id,
             type=NotificationType.HOLD_REJECTED,
             title="Hold Rejected",
@@ -103,7 +113,7 @@ class NotificationService:
         bed_label: str,
     ) -> Notification:
         """Notify the student their hold expired."""
-        return await self._notification_repo.create(
+        return await self._create_and_broadcast(
             user_id=student_id,
             type=NotificationType.HOLD_EXPIRED,
             title="Hold Expired",
@@ -121,7 +131,7 @@ class NotificationService:
         expires_at: str,
     ) -> Notification:
         """Notify the student their hold is expiring soon."""
-        return await self._notification_repo.create(
+        return await self._create_and_broadcast(
             user_id=student_id,
             type=NotificationType.HOLD_EXPIRING_SOON,
             title="Hold Expiring Soon",
@@ -144,7 +154,7 @@ class NotificationService:
         bed_label: str,
     ) -> Notification:
         """Notify the original student their hold was overridden by the owner."""
-        return await self._notification_repo.create(
+        return await self._create_and_broadcast(
             user_id=student_id,
             type=NotificationType.HOLD_OVERRIDDEN,
             title="Hold Overridden",
@@ -165,7 +175,7 @@ class NotificationService:
         expires_at: str,
     ) -> Notification:
         """Notify the promoted student they got a hold from the waitlist."""
-        return await self._notification_repo.create(
+        return await self._create_and_broadcast(
             user_id=student_id,
             type=NotificationType.WAITLIST_PROMOTED,
             title="You've Been Promoted from the Waitlist",
@@ -188,7 +198,7 @@ class NotificationService:
         bed_label: str,
     ) -> Notification:
         """Notify the student their booking is confirmed."""
-        return await self._notification_repo.create(
+        return await self._create_and_broadcast(
             user_id=student_id,
             type=NotificationType.BOOKING_CONFIRMED,
             title="Booking Confirmed",
@@ -227,3 +237,48 @@ class NotificationService:
     async def count_unread(self, user_id: uuid.UUID) -> int:
         """Unread notification count for badge display."""
         return await self._notification_repo.count_unread(user_id)
+
+    # ── Internal: create + broadcast ─────────────────────────────────────────
+
+    async def _create_and_broadcast(
+        self,
+        *,
+        user_id: uuid.UUID,
+        type: NotificationType,
+        title: str,
+        message: str,
+        data: dict[str, Any] | None = None,
+    ) -> Notification:
+        """Create a DB notification and optionally broadcast via WebSocket."""
+        notification = await self._notification_repo.create(
+            user_id=user_id,
+            type=type,
+            title=title,
+            message=message,
+            data=data,
+        )
+
+        # Fire-and-forget WS broadcast (never block the DB flow)
+        if self._ws_manager is not None:
+            try:
+                from app.websocket.events import WSEventType, build_event
+
+                event = build_event(
+                    WSEventType.NOTIFICATION_CREATED,
+                    {
+                        "id": str(notification.id),
+                        "type": type.value if hasattr(type, "value") else str(type),
+                        "title": title,
+                        "message": message,
+                        "created_at": notification.created_at.isoformat()
+                        if notification.created_at
+                        else None,
+                    },
+                )
+                await self._ws_manager.send_to_user(str(user_id), event)
+            except Exception:
+                logger.warning(
+                    "WS broadcast failed for user %s (non-fatal)", user_id, exc_info=True
+                )
+
+        return notification

@@ -51,9 +51,12 @@ from app.services.waitlist_service import WaitlistService
 router = APIRouter()
 
 
-def _make_hold_service(db: AsyncSession) -> tuple[HoldService, WaitlistService]:
+def _make_hold_service(db: AsyncSession, ws_manager=None) -> tuple[HoldService, WaitlistService]:
     audit_service = AuditService(AuditLogRepository(db))
-    notification_service = NotificationService(NotificationRepository(db))
+    notification_service = NotificationService(
+        NotificationRepository(db),
+        ws_manager=ws_manager,
+    )
     
     waitlist_service = WaitlistService(
         waitlist_repo=WaitlistEntryRepository(db),
@@ -75,6 +78,35 @@ def _make_hold_service(db: AsyncSession) -> tuple[HoldService, WaitlistService]:
     return hold_service, waitlist_service
 
 
+async def _broadcast_bed_status(
+    request: Request,
+    property_id,
+    bed_id,
+    new_status: str,
+) -> None:
+    """Broadcast bed_status_changed to all property room subscribers (fire-and-forget)."""
+    try:
+        ws_manager = getattr(request.app.state, "ws_manager", None)
+        if ws_manager is None:
+            return
+        from app.websocket.events import WSEventType, build_event
+
+        event = build_event(
+            WSEventType.BED_STATUS_CHANGED,
+            {
+                "bed_id": str(bed_id),
+                "property_id": str(property_id),
+                "new_status": new_status,
+            },
+        )
+        await ws_manager.broadcast_to_property(str(property_id), event)
+    except Exception:
+        import logging
+        logging.getLogger(__name__).warning(
+            "WS broadcast bed_status_changed failed (non-fatal)", exc_info=True
+        )
+
+
 @router.post(
     "",
     summary="Request a new hold",
@@ -89,7 +121,8 @@ async def request_hold(
     current_user: Annotated[User, Depends(require_student)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
-    service, waitlist_service = _make_hold_service(db)
+    ws_manager = getattr(request.app.state, "ws_manager", None)
+    service, waitlist_service = _make_hold_service(db, ws_manager=ws_manager)
     
     ip_address = request.client.host if request.client else "127.0.0.1"
     user_agent = request.headers.get("user-agent", "unknown")
@@ -123,6 +156,10 @@ async def request_hold(
 
     # 201 Created
     response = SuccessResponse(data=HoldRequestRead.model_validate(hold), meta=meta)
+
+    # Broadcast bed status change after commit
+    await _broadcast_bed_status(request, hold.property_id, hold.bed_id, "held")
+
     return JSONResponse(
         status_code=status.HTTP_201_CREATED,
         content=response.model_dump(mode="json"),
@@ -242,7 +279,8 @@ async def approve_hold(
     current_user: Annotated[User, Depends(require_owner)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> SuccessResponse[HoldRequestRead]:
-    service, _ = _make_hold_service(db)
+    ws_manager = getattr(request.app.state, "ws_manager", None)
+    service, _ = _make_hold_service(db, ws_manager=ws_manager)
     
     ip_address = request.client.host if request.client else "127.0.0.1"
     user_agent = request.headers.get("user-agent", "unknown")
@@ -255,6 +293,9 @@ async def approve_hold(
     )
     
     await db.commit()
+
+    # Broadcast bed status change after commit
+    await _broadcast_bed_status(request, hold.property_id, hold.bed_id, "held")
     
     request_id: str = getattr(request.state, "request_id", "")
     return SuccessResponse(
@@ -275,7 +316,8 @@ async def reject_hold(
     current_user: Annotated[User, Depends(require_owner)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> SuccessResponse[HoldRequestRead]:
-    service, _ = _make_hold_service(db)
+    ws_manager = getattr(request.app.state, "ws_manager", None)
+    service, _ = _make_hold_service(db, ws_manager=ws_manager)
     
     ip_address = request.client.host if request.client else "127.0.0.1"
     user_agent = request.headers.get("user-agent", "unknown")
@@ -289,6 +331,9 @@ async def reject_hold(
     )
     
     await db.commit()
+
+    # Broadcast bed status change after commit (bed released → vacant)
+    await _broadcast_bed_status(request, hold.property_id, hold.bed_id, "vacant")
     
     request_id: str = getattr(request.state, "request_id", "")
     return SuccessResponse(
@@ -308,7 +353,8 @@ async def cancel_hold(
     current_user: Annotated[User, Depends(require_student)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> SuccessResponse[HoldRequestRead]:
-    service, _ = _make_hold_service(db)
+    ws_manager = getattr(request.app.state, "ws_manager", None)
+    service, _ = _make_hold_service(db, ws_manager=ws_manager)
     
     ip_address = request.client.host if request.client else "127.0.0.1"
     user_agent = request.headers.get("user-agent", "unknown")
@@ -321,6 +367,9 @@ async def cancel_hold(
     )
     
     await db.commit()
+
+    # Broadcast bed status change after commit (bed released → vacant)
+    await _broadcast_bed_status(request, hold.property_id, hold.bed_id, "vacant")
     
     request_id: str = getattr(request.state, "request_id", "")
     return SuccessResponse(
@@ -345,7 +394,8 @@ async def override_hold(
 ):
     from datetime import date
     
-    service, _ = _make_hold_service(db)
+    ws_manager = getattr(request.app.state, "ws_manager", None)
+    service, _ = _make_hold_service(db, ws_manager=ws_manager)
     
     ip_address = request.client.host if request.client else "127.0.0.1"
     user_agent = request.headers.get("user-agent", "unknown")
@@ -365,6 +415,9 @@ async def override_hold(
     )
     
     await db.commit()
+
+    # Broadcast bed status change after commit (bed overridden → occupied)
+    await _broadcast_bed_status(request, hold.property_id, hold.bed_id, "occupied")
     
     from app.schemas.booking import BookingRead
     

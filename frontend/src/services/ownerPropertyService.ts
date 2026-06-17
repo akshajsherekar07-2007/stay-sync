@@ -84,9 +84,6 @@ export const ownerPropertyService = {
       `/properties/${propertyId}/images`,
       formData,
       {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
         params: {
           entity_type: entityType,
           entity_id: entityId || propertyId,

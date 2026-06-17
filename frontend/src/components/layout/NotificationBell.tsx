@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Bell, Check, CheckCircle2 } from "lucide-react";
+import { useWebSocket } from "../../hooks/useWebSocket";
 
 // Helper for relative time
 function formatTimeAgo(dateString: string) {
@@ -31,13 +32,14 @@ export function NotificationBell() {
   const { isAuthenticated } = useAuthStore();
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
+  const { isConnected } = useWebSocket();
 
-  // Poll for unread count
+  // Poll for unread count — longer interval when WebSocket is active
   const { data: unreadCount = 0 } = useQuery({
     queryKey: ["unreadNotificationCount"],
     queryFn: () => notificationService.getUnreadCount(),
     enabled: isAuthenticated,
-    refetchInterval: 30000, // Poll every 30 seconds
+    refetchInterval: isConnected ? 120_000 : 30_000, // 2min with WS, 30s without
   });
 
   // Fetch latest notifications when dropdown is open

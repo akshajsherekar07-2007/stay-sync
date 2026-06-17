@@ -106,6 +106,7 @@ export default function PropertyForm({ propertyId: propIdFromProps, initialData,
     control,
     reset,
     trigger,
+    getValues,
     formState: { errors },
   } = useForm<PropertyWizardInput>({
     resolver: zodResolver(propertyWizardSchema),
@@ -283,14 +284,31 @@ export default function PropertyForm({ propertyId: propIdFromProps, initialData,
     try {
       // 1. Deletions (Beds → Rooms → Floors order)
       for (const bid of deletedBedIds) {
-        await ownerPropertyService.deleteBed(bid);
+        try {
+          await ownerPropertyService.deleteBed(bid);
+        } catch (e: any) {
+          if (e.response?.status !== 404) throw e;
+        }
       }
+      setDeletedBedIds([]);
+
       for (const rid of deletedRoomIds) {
-        await ownerPropertyService.deleteRoom(rid);
+        try {
+          await ownerPropertyService.deleteRoom(rid);
+        } catch (e: any) {
+          if (e.response?.status !== 404) throw e;
+        }
       }
+      setDeletedRoomIds([]);
+
       for (const fid of deletedFloorIds) {
-        await ownerPropertyService.deleteFloor(fid);
+        try {
+          await ownerPropertyService.deleteFloor(fid);
+        } catch (e: any) {
+          if (e.response?.status !== 404) throw e;
+        }
       }
+      setDeletedFloorIds([]);
 
       // 2. Cascaded Synchronization of Floors, Rooms, and Beds
       for (let fIdx = 0; fIdx < floorsData.length; fIdx++) {
@@ -357,6 +375,11 @@ export default function PropertyForm({ propertyId: propIdFromProps, initialData,
       toast.success("Inventory structure synchronized successfully!");
       queryClient.invalidateQueries({ queryKey: ["ownedProperties"] });
       queryClient.invalidateQueries({ queryKey: ["ownerDashboardData"] });
+      queryClient.invalidateQueries({ queryKey: ["fullProperty", propertyId] });
+      queryClient.invalidateQueries({ queryKey: ["property", propertyId] });
+      queryClient.invalidateQueries({ queryKey: ["propertyFloors", propertyId] });
+      queryClient.invalidateQueries({ queryKey: ["floorRooms"] });
+      queryClient.invalidateQueries({ queryKey: ["roomBeds"] });
       navigate("/owner/properties");
     } catch (err: any) {
       toast.error(err.response?.data?.error?.message || "Failed to synchronize inventory.");
@@ -814,6 +837,7 @@ export default function PropertyForm({ propertyId: propIdFromProps, initialData,
             <FloorsFormSection
               control={control}
               register={register}
+              getValues={getValues}
               isSubmitting={isSubmitting}
               setDeletedFloorIds={setDeletedFloorIds}
               setDeletedRoomIds={setDeletedRoomIds}
@@ -922,6 +946,7 @@ export default function PropertyForm({ propertyId: propIdFromProps, initialData,
 interface FloorsFormProps {
   control: any;
   register: any;
+  getValues: any;
   isSubmitting: boolean;
   setDeletedFloorIds: React.Dispatch<React.SetStateAction<string[]>>;
   setDeletedRoomIds: React.Dispatch<React.SetStateAction<string[]>>;
@@ -931,6 +956,7 @@ interface FloorsFormProps {
 function FloorsFormSection({
   control,
   register,
+  getValues,
   isSubmitting,
   setDeletedFloorIds,
   setDeletedRoomIds,
@@ -942,11 +968,12 @@ function FloorsFormSection({
   });
 
   const handleRemoveFloor = (index: number) => {
-    const floor = fields[index] as any;
-    if (floor.id) {
-      setDeletedFloorIds((prev) => [...prev, floor.id as string]);
+    // getValues() returns the raw data (without react-hook-form injected ids)
+    const rawFloor = getValues(`floors.${index}`);
+    if (rawFloor && rawFloor.id) {
+      setDeletedFloorIds((prev) => [...prev, rawFloor.id as string]);
       // Eagerly harvest deleted children IDs
-      floor.rooms?.forEach((room: any) => {
+      rawFloor.rooms?.forEach((room: any) => {
         if (room.id) {
           setDeletedRoomIds((prev) => [...prev, room.id as string]);
           room.beds?.forEach((bed: any) => {
@@ -1019,6 +1046,7 @@ function FloorsFormSection({
                 <RoomsFormSection
                   control={control}
                   register={register}
+                  getValues={getValues}
                   floorIndex={index}
                   isSubmitting={isSubmitting}
                   setDeletedRoomIds={setDeletedRoomIds}
@@ -1049,6 +1077,7 @@ function FloorsFormSection({
 interface RoomsFormProps {
   control: any;
   register: any;
+  getValues: any;
   floorIndex: number;
   isSubmitting: boolean;
   setDeletedRoomIds: React.Dispatch<React.SetStateAction<string[]>>;
@@ -1058,6 +1087,7 @@ interface RoomsFormProps {
 function RoomsFormSection({
   control,
   register,
+  getValues,
   floorIndex,
   isSubmitting,
   setDeletedRoomIds,
@@ -1069,11 +1099,12 @@ function RoomsFormSection({
   });
 
   const handleRemoveRoom = (index: number) => {
-    const room = fields[index] as any;
-    if (room.id) {
-      setDeletedRoomIds((prev) => [...prev, room.id as string]);
+    // Distinguish persisted vs new: raw data will lack 'id' if newly created
+    const rawRoom = getValues(`floors.${floorIndex}.rooms.${index}`);
+    if (rawRoom && rawRoom.id) {
+      setDeletedRoomIds((prev) => [...prev, rawRoom.id as string]);
       // Harvest child beds
-      room.beds?.forEach((bed: any) => {
+      rawRoom.beds?.forEach((bed: any) => {
         if (bed.id) {
           setDeletedBedIds((prev) => [...prev, bed.id as string]);
         }
@@ -1189,6 +1220,7 @@ function RoomsFormSection({
               <BedsFormSection
                 control={control}
                 register={register}
+                getValues={getValues}
                 floorIndex={floorIndex}
                 roomIndex={index}
                 isSubmitting={isSubmitting}
@@ -1219,6 +1251,7 @@ function RoomsFormSection({
 interface BedsFormProps {
   control: any;
   register: any;
+  getValues: any;
   floorIndex: number;
   roomIndex: number;
   isSubmitting: boolean;
@@ -1228,6 +1261,7 @@ interface BedsFormProps {
 function BedsFormSection({
   control,
   register,
+  getValues,
   floorIndex,
   roomIndex,
   isSubmitting,
@@ -1239,9 +1273,10 @@ function BedsFormSection({
   });
 
   const handleRemoveBed = (index: number) => {
-    const bed = fields[index];
-    if (bed.id) {
-      setDeletedBedIds((prev) => [...prev, bed.id as string]);
+    // Only add to deletion queue if it's a persisted DB bed (has a real ID in raw form values)
+    const rawBed = getValues(`floors.${floorIndex}.rooms.${roomIndex}.beds.${index}`);
+    if (rawBed && rawBed.id) {
+      setDeletedBedIds((prev) => [...prev, rawBed.id as string]);
     }
     remove(index);
   };

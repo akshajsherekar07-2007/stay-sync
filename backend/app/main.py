@@ -15,6 +15,7 @@ from app.core.logging import setup_logging
 from app.db.init_db import init_db
 from app.db.session import close_db
 from app.core.redis import init_redis, close_redis
+from app.websocket.manager import ConnectionManager
 from app.middleware import (
     RateLimiterMiddleware,
     RequestIdMiddleware,
@@ -33,6 +34,8 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         print(f"[startup] {settings.APP_NAME} starting in {settings.ENVIRONMENT} mode")
     await init_db()
     await init_redis()
+    # WebSocket manager stored on app.state for access from endpoints
+    app.state.ws_manager = ConnectionManager()
     yield
     # ── Shutdown ─────────────────────────────────────────────
     await close_redis()
@@ -79,6 +82,10 @@ def create_app() -> FastAPI:
 
     app.include_router(health_router)                               # /health, /health/live, /health/ready
     app.include_router(api_v1_router, prefix=settings.API_V1_PREFIX)
+
+    # ── WebSocket endpoint ───────────────────────────────────
+    from app.websocket.endpoint import router as ws_router
+    app.include_router(ws_router, prefix=settings.API_V1_PREFIX)
 
     return app
 
