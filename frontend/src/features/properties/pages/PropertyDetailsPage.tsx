@@ -367,7 +367,7 @@ export default function PropertyDetailsPage() {
                 <>
                   {/* Floor Level Selector */}
                   <div className="space-y-4">
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 p-1.5 bg-bg/50 rounded-2xl w-fit">
                       {floors.map((floor) => (
                         <button
                           key={floor.id}
@@ -375,10 +375,10 @@ export default function PropertyDetailsPage() {
                             setSelectedFloorId(floor.id);
                             setSelectedRoomId(null);
                           }}
-                          className={`px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 cursor-pointer border ${
+                          className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 cursor-pointer ${
                             selectedFloorId === floor.id
-                              ? "bg-text text-bg border-text shadow-md scale-100"
-                              : "bg-white text-text-secondary border-border/60 hover:border-text/30 hover:text-text hover:bg-bg-secondary"
+                              ? "bg-white text-text shadow-sm ring-1 ring-border/50 scale-100"
+                              : "text-text-secondary hover:text-text hover:bg-white/50"
                           }`}
                         >
                           {floor.name || `Floor ${floor.floor_number}`}

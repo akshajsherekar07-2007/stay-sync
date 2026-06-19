@@ -11,7 +11,7 @@ export function RoomCard({ room, isSelected, onClick }: RoomCardProps) {
   return (
     <button
       onClick={onClick}
-      className={`p-4 rounded-xl border border-transparent text-left transition-all duration-200 flex flex-col justify-between cursor-pointer w-full group relative overflow-hidden ${
+      className={`p-4 rounded-2xl border border-transparent text-left transition-all duration-200 flex flex-col justify-between cursor-pointer w-full group relative overflow-hidden ${
         isSelected
           ? "bg-primary/10 shadow-md ring-2 ring-primary/40"
           : "bg-card shadow-sm hover:shadow-lg hover:ring-1 hover:ring-primary/30 hover:bg-bg-secondary"

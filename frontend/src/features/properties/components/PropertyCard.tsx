@@ -18,7 +18,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
 
   return (
     <Link to={`/property/${property.id}`} className="group block h-full outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-2xl active:scale-[0.98] transition-all duration-300">
-      <Card className="overflow-hidden border-0 bg-white shadow-sm group-hover:shadow-xl transition-all duration-300 flex flex-col h-full rounded-2xl">
+      <Card className="overflow-hidden border-0 bg-white ring-1 ring-border/40 shadow-sm group-hover:shadow-2xl group-hover:-translate-y-1 transition-all duration-300 flex flex-col h-full rounded-2xl">
         {/* Cover image area - Airbnb Style (4/3 aspect ratio) */}
         <div className="relative aspect-[4/3] overflow-hidden bg-bg-tertiary">
           {property.primary_image_url ? (

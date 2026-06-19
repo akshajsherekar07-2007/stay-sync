@@ -45,29 +45,31 @@ export function DashboardLayout() {
       {/* Sidebar - Desktop */}
       {isDesktop && (
         <aside
-          className={`relative flex flex-col border-r border-border bg-bg-secondary transition-all duration-300 ${
+          className={`relative flex flex-col border-r border-white/[0.06] bg-sidebar-bg transition-all duration-300 ${
             collapsed ? "w-16" : "w-64"
           }`}
         >
           {/* Collapsible toggle */}
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="absolute -right-3 top-6 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-bg shadow-sm hover:bg-bg-secondary cursor-pointer"
+            className="absolute -right-3 top-6 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-bg shadow-sm hover:bg-bg-secondary cursor-pointer z-10"
             aria-label={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
             {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </button>
 
           {/* Branding / Header */}
-          <div className="flex h-16 items-center px-4 font-sans font-bold tracking-tight text-primary border-b border-border/50">
-            <Link to="/" className="flex items-center gap-2">
-              <Building2 className="h-6 w-6 shrink-0" aria-hidden="true" />
+          <div className="flex h-16 items-center px-4 font-sans font-bold tracking-tight text-white border-b border-white/[0.06]">
+            <Link to="/" className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary shadow-lg shadow-primary/20">
+                <Building2 className="h-4 w-4 shrink-0 text-white" aria-hidden="true" />
+              </div>
               {!collapsed && <span className="text-lg">StaySync</span>}
             </Link>
           </div>
 
           {/* Navigation Links */}
-          <nav className="flex-1 space-y-1 p-3">
+          <nav className="flex-1 space-y-1 p-3 mt-2">
             {menuItems.map((item) => {
               const Icon = item.icon;
               const active = location.pathname === item.to;
@@ -75,10 +77,10 @@ export function DashboardLayout() {
                 <Link
                   key={item.to}
                   to={item.to}
-                  className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
                     active
-                      ? "bg-primary text-white shadow-sm"
-                      : "text-text-secondary hover:bg-bg-tertiary hover:text-text"
+                      ? "bg-sidebar-active-bg text-sidebar-active shadow-sm"
+                      : "text-sidebar-text/70 hover:bg-sidebar-hover hover:text-sidebar-text"
                   }`}
                 >
                   <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
@@ -89,10 +91,10 @@ export function DashboardLayout() {
           </nav>
 
           {/* Footer / Logout */}
-          <div className="border-t border-border/50 p-3">
+          <div className="border-t border-white/[0.06] p-3">
             <button
               onClick={handleLogout}
-              className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-danger hover:bg-danger/10 transition-colors cursor-pointer"
+              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-rose-400/80 hover:bg-rose-500/10 hover:text-rose-400 transition-all duration-200 cursor-pointer"
             >
               <LogOut className="h-5 w-5 shrink-0" aria-hidden="true" />
               {!collapsed && <span>Log Out</span>}

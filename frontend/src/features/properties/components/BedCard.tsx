@@ -35,11 +35,11 @@ export function BedCard({ bed, myActiveHold, onHoldRequest, isHolding = false }:
 
   return (
     <div
-      className={`flex items-center justify-between p-4 rounded-xl border bg-card transition-all duration-300 ${getStatusStyles()}`}
+      className={`flex items-center justify-between p-5 rounded-2xl border bg-card transition-all duration-300 ${getStatusStyles()}`}
     >
-      <div className="flex items-center gap-3.5">
-        <div className={`h-10 w-10 flex items-center justify-center rounded-lg ${getIconStyles()}`}>
-          <Bed className="h-5 w-5" />
+      <div className="flex items-center gap-4">
+        <div className={`h-12 w-12 flex items-center justify-center rounded-xl ${getIconStyles()}`}>
+          <Bed className="h-6 w-6" />
         </div>
         <div className="flex flex-col">
           <span className="text-sm font-extrabold text-text tracking-tight">Bed {bed.bed_number}</span>

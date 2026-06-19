@@ -41,41 +41,41 @@ export default function HomePage() {
   return (
     <div className="flex flex-col w-full pb-16 bg-bg text-text">
       {/* ── Hero Section ── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-primary-dark/5 to-bg py-20 lg:py-32 px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary/[0.06] via-primary-dark/[0.03] to-bg py-28 lg:py-40 px-4 sm:px-6 lg:px-8">
         <div className="absolute inset-y-0 right-0 -z-10 w-full max-w-3xl opacity-20 dark:opacity-10 blur-3xl">
           <div className="aspect-[1155/678] w-[72.1875rem] bg-gradient-to-tr from-primary to-primary-light" />
         </div>
 
         <div className="mx-auto max-w-7xl text-center">
-          <Badge variant="outline" className="mb-4 animate-fade-in border-primary/30 text-primary bg-primary/5 px-4 py-1">
+          <Badge variant="outline" className="mb-6 animate-fade-in border-primary/20 text-primary bg-primary/5 px-4 py-1.5 text-xs tracking-wide">
             ✨ Real-time Student Housing Reservations
           </Badge>
-          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl max-w-4xl mx-auto leading-tight">
+          <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl max-w-5xl mx-auto leading-[1.1]">
             Premium Student Accommodations, <span className="bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">Simplified.</span>
           </h1>
-          <p className="mt-6 text-lg text-text-secondary max-w-2xl mx-auto">
+          <p className="mt-8 text-lg sm:text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed">
             StaySync connects students with verified high-quality PGs, hostels, and shared flats. Discover, save, and hold beds instantly in real-time.
           </p>
 
           {/* Search form bar */}
-          <form onSubmit={handleSearchSubmit} className="mt-10 max-w-2xl mx-auto flex flex-col sm:flex-row gap-3 p-2 rounded-xl bg-card border border-border shadow-md">
+          <form onSubmit={handleSearchSubmit} className="mt-12 max-w-2xl mx-auto flex flex-col sm:flex-row gap-3 p-2.5 rounded-2xl bg-card ring-1 ring-border/40 shadow-lg">
             <div className="relative flex-grow">
-              <Search className="absolute left-3 top-3 h-5 w-5 text-text-tertiary" />
+              <Search className="absolute left-3.5 top-3.5 h-5 w-5 text-text-tertiary" />
               <Input
                 type="text"
                 placeholder="Search by city, state, or property name..."
-                className="pl-10 border-none bg-transparent shadow-none focus-visible:ring-0"
+                className="pl-10 border-none bg-transparent shadow-none focus-visible:ring-0 h-12"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button type="submit" size="lg" className="w-full sm:w-auto font-semibold">
+            <Button type="submit" size="lg" className="w-full sm:w-auto font-bold px-8">
               Search Stays
             </Button>
           </form>
 
           {/* Popular Cities */}
-          <div className="mt-8 flex flex-wrap justify-center gap-2 text-sm text-text-secondary">
+          <div className="mt-10 flex flex-wrap justify-center gap-2 text-sm text-text-secondary">
             <span>Popular Cities:</span>
             {["Mumbai", "Delhi", "Bangalore", "Pune"].map((city) => (
               <button
@@ -92,33 +92,33 @@ export default function HomePage() {
       </section>
 
       {/* ── Value Props / Features ── */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 border-y border-border bg-bg-secondary">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-bg">
         <div className="mx-auto max-w-7xl">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="flex flex-col items-center text-center p-6 bg-card border border-border rounded-xl shadow-xs transition-transform hover:-translate-y-1">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary mb-4">
-                <Shield className="h-6 w-6" />
+            <div className="flex flex-col items-center text-center p-8 bg-card rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-5">
+                <Shield className="h-7 w-7" />
               </div>
               <h3 className="text-lg font-bold">Verified Listings</h3>
-              <p className="mt-2 text-sm text-text-secondary leading-relaxed">
+              <p className="mt-3 text-sm text-text-secondary leading-relaxed">
                 Every listed PG and flat undergoes verification checkpoints, ensuring security, safety, and amenities accuracy.
               </p>
             </div>
-            <div className="flex flex-col items-center text-center p-6 bg-card border border-border rounded-xl shadow-xs transition-transform hover:-translate-y-1">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary mb-4">
-                <CheckCircle2 className="h-6 w-6" />
+            <div className="flex flex-col items-center text-center p-8 bg-card rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-5">
+                <CheckCircle2 className="h-7 w-7" />
               </div>
               <h3 className="text-lg font-bold">Instant Bed Holds</h3>
-              <p className="mt-2 text-sm text-text-secondary leading-relaxed">
+              <p className="mt-3 text-sm text-text-secondary leading-relaxed">
                 Secure your bed immediately with a live hold reservation while wrapping up document steps. No deposit loops.
               </p>
             </div>
-            <div className="flex flex-col items-center text-center p-6 bg-card border border-border rounded-xl shadow-xs transition-transform hover:-translate-y-1">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary mb-4">
-                <Building className="h-6 w-6" />
+            <div className="flex flex-col items-center text-center p-8 bg-card rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-5">
+                <Building className="h-7 w-7" />
               </div>
               <h3 className="text-lg font-bold">Flexible Formats</h3>
-              <p className="mt-2 text-sm text-text-secondary leading-relaxed">
+              <p className="mt-3 text-sm text-text-secondary leading-relaxed">
                 Choose sharing types, PG amenities lists, and gender preferences. Tailored specifically for student workloads.
               </p>
             </div>

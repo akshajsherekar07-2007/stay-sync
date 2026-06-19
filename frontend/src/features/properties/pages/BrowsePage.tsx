@@ -95,8 +95,8 @@ export default function BrowsePage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* ── Filters Sidebar ── */}
         <div className="lg:col-span-1 space-y-6">
-          <Card className="border-border/60 bg-card shadow-sm sticky top-6">
-            <CardHeader className="flex flex-row items-center justify-between border-b border-border/40 pb-4 bg-bg-secondary/30 rounded-t-xl">
+          <Card className="bg-card shadow-sm sticky top-6 ring-1 ring-border/30">
+            <CardHeader className="flex flex-row items-center justify-between pb-4">
               <div className="flex items-center gap-2.5">
                 <SlidersHorizontal className="h-4.5 w-4.5 text-primary" />
                 <CardTitle className="text-base font-extrabold tracking-tight">Filters</CardTitle>
@@ -130,7 +130,7 @@ export default function BrowsePage() {
                 <Label htmlFor="type-filter">Property Type</Label>
                 <select
                   id="type-filter"
-                  className="w-full flex h-10 rounded-md border border-input-border bg-input px-3 py-2 text-sm text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                  className="w-full flex h-11 rounded-xl border border-input-border bg-input px-4 py-2 text-sm text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 transition-all duration-200 appearance-none cursor-pointer"
                   value={propertyType}
                   onChange={(e) => {
                     setPropertyType(e.target.value);
@@ -150,7 +150,7 @@ export default function BrowsePage() {
                 <Label htmlFor="gender-filter">Gender Preference</Label>
                 <select
                   id="gender-filter"
-                  className="w-full flex h-10 rounded-md border border-input-border bg-input px-3 py-2 text-sm text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                  className="w-full flex h-11 rounded-xl border border-input-border bg-input px-4 py-2 text-sm text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 transition-all duration-200 appearance-none cursor-pointer"
                   value={genderPreference}
                   onChange={(e) => {
                     setGenderPreference(e.target.value);
@@ -206,7 +206,7 @@ export default function BrowsePage() {
             <Input
               type="text"
               placeholder="Search by college name, property title, or address..."
-              className="pl-12 h-12 border-border/60 shadow-sm rounded-xl bg-card focus-visible:ring-primary/20 text-base"
+              className="pl-12 h-12 shadow-sm rounded-2xl bg-card ring-1 ring-border/30 border-transparent focus-visible:ring-primary/20 text-base"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
             />

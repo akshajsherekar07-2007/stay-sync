@@ -199,9 +199,47 @@ export function RootLayout() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-bg-secondary py-8 text-center text-sm text-text-secondary">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p>© {new Date().getFullYear()} StaySync. All rights reserved.</p>
+      <footer className="bg-sidebar-bg text-sidebar-text">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {/* Brand Column */}
+            <div className="space-y-4">
+              <Link to="/" className="flex items-center gap-2.5 font-bold text-white text-lg">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary shadow-lg shadow-primary/20">
+                  <Home className="h-4 w-4 text-white" />
+                </div>
+                StaySync
+              </Link>
+              <p className="text-sm text-sidebar-text/60 leading-relaxed max-w-xs">
+                Connecting students with verified, high-quality accommodations. Hold beds in real-time and move in with confidence.
+              </p>
+            </div>
+
+            {/* Quick Links */}
+            <div className="space-y-4">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-sidebar-text/40">Platform</h4>
+              <nav className="flex flex-col space-y-3">
+                <Link to="/properties" className="text-sm text-sidebar-text/70 hover:text-white transition-colors">Browse Properties</Link>
+                <Link to="/register" className="text-sm text-sidebar-text/70 hover:text-white transition-colors">Create Account</Link>
+                <Link to="/login" className="text-sm text-sidebar-text/70 hover:text-white transition-colors">Sign In</Link>
+              </nav>
+            </div>
+
+            {/* Legal */}
+            <div className="space-y-4">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-sidebar-text/40">Company</h4>
+              <nav className="flex flex-col space-y-3">
+                <span className="text-sm text-sidebar-text/70">Privacy Policy</span>
+                <span className="text-sm text-sidebar-text/70">Terms of Service</span>
+                <span className="text-sm text-sidebar-text/70">Contact Support</span>
+              </nav>
+            </div>
+          </div>
+
+          <div className="mt-12 pt-8 border-t border-white/[0.06] flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p className="text-xs text-sidebar-text/40">© {new Date().getFullYear()} StaySync. All rights reserved.</p>
+            <p className="text-xs text-sidebar-text/40">Built for students, by students.</p>
+          </div>
         </div>
       </footer>
     </div>
