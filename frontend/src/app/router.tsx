@@ -18,6 +18,7 @@ import OwnerDashboard from "../features/owner/pages/OwnerDashboard";
 import ManagePropertiesPage from "../features/owner/pages/ManagePropertiesPage";
 import CreatePropertyPage from "../features/owner/pages/CreatePropertyPage";
 import EditPropertyPage from "../features/owner/pages/EditPropertyPage";
+import ManageBedsPage from "../features/owner/pages/ManageBedsPage";
 import StudentHoldsPage from "../features/dashboard/pages/StudentHoldsPage";
 import OwnerHoldsPage from "../features/owner/pages/OwnerHoldsPage";
 import NotificationPage from "../features/dashboard/pages/NotificationPage";
@@ -60,6 +61,7 @@ export function AppRouter() {
             <Route path="/owner/properties" element={<ManagePropertiesPage />} />
             <Route path="/owner/properties/create" element={<CreatePropertyPage />} />
             <Route path="/owner/properties/:id/edit" element={<EditPropertyPage />} />
+            <Route path="/owner/properties/:id/beds" element={<ManageBedsPage />} />
           </Route>
 
           {/* Authenticated Routes (Both Roles) */}

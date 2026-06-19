@@ -10,7 +10,6 @@ venv\Scripts\activate     # Windows
 
 # Install dependencies
 pip install -r requirements/dev.txt
-
 # Copy environment config
 cp .env.example .env
 

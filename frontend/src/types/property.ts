@@ -151,6 +151,7 @@ export interface BedRead {
   label: string | null;
   status: string;
   price: number | null;
+  current_hold_id: string | null;
   version: number;
   sort_order: number;
   created_at: string;

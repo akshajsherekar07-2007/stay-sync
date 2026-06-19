@@ -2,10 +2,11 @@
 
 Endpoints
 ---------
-POST   /rooms/{room_id}/beds → Create bed (Owner)
-GET    /rooms/{room_id}/beds → List beds (Public)
-PATCH  /beds/{id}            → Update bed (Owner)
-DELETE /beds/{id}            → Soft delete bed (Owner)
+POST   /rooms/{room_id}/beds   → Create bed (Owner)
+GET    /rooms/{room_id}/beds   → List beds (Public)
+PATCH  /beds/{id}              → Update bed (Owner)
+PATCH  /beds/{id}/status       → Update bed status (Owner, with hold guard)
+DELETE /beds/{id}              → Soft delete bed (Owner)
 """
 
 from __future__ import annotations
@@ -22,7 +23,7 @@ from app.models.user import User
 from app.repositories.bed_repository import BedRepository
 from app.repositories.property_repository import PropertyRepository
 from app.repositories.room_repository import RoomRepository
-from app.schemas.bed import BedCreate, BedRead, BedUpdate
+from app.schemas.bed import BedCreate, BedRead, BedStatusUpdate, BedUpdate
 from app.schemas.common import MessageResponse, SuccessResponse, build_meta
 from app.services.bed_service import BedService
 
@@ -113,6 +114,32 @@ async def update_bed(
     )
 
 
+# ── PATCH /beds/{bed_id}/status ──────────────────────────────────────────────
+
+
+@router.patch(
+    "/beds/{bed_id}/status",
+    response_model=SuccessResponse[BedRead],
+    status_code=status.HTTP_200_OK,
+    summary="Update bed status",
+    description="Manually change a bed's status (vacant/held/occupied). Blocked if the bed has an active student hold.",
+)
+async def update_bed_status(
+    request: Request,
+    bed_id: uuid.UUID,
+    data: BedStatusUpdate,
+    current_user: Annotated[User, Depends(require_owner)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> SuccessResponse[BedRead]:
+    service = _make_bed_service(db)
+    bed = await service.update_bed_status(bed_id, current_user.id, data, db)
+    request_id: str = getattr(request.state, "request_id", "")
+    return SuccessResponse(
+        data=BedRead.model_validate(bed),
+        meta=build_meta(request_id),
+    )
+
+
 # ── DELETE /beds/{bed_id} ────────────────────────────────────────────────────
 
 
@@ -136,3 +163,4 @@ async def delete_bed(
         message="Bed deleted successfully.",
         meta=build_meta(request_id),
     )
+

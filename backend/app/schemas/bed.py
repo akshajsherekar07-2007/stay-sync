@@ -30,6 +30,12 @@ class BedUpdate(BaseModel):
     sort_order: int | None = None
 
 
+class BedStatusUpdate(BaseModel):
+    """Request body for changing bed status (owner manual override)."""
+
+    status: str = Field(..., pattern=r"^(vacant|held|occupied)$")
+
+
 # ── Response schemas ──────────────────────────────────────────────────────────
 
 
@@ -45,7 +51,9 @@ class BedRead(BaseModel):
     label: str | None
     status: str
     price: Decimal | None
+    current_hold_id: uuid.UUID | None
     version: int
     sort_order: int
     created_at: datetime
     updated_at: datetime
+

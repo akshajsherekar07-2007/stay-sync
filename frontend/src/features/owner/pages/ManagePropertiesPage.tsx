@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { Building2, Plus, Edit, Trash2, Power, PowerOff, MapPin, Eye } from "lucide-react";
+import { Building2, Plus, Edit, Trash2, Power, PowerOff, MapPin, Eye, BedDouble } from "lucide-react";
 import { toast } from "sonner";
 
 import { ownerPropertyService } from "../../../services/ownerPropertyService";
@@ -179,6 +179,14 @@ export default function ManagePropertiesPage() {
                         Activate
                       </>
                     )}
+                  </Button>
+
+                  {/* Manage Beds */}
+                  <Button variant="outline" size="sm" asChild className="flex items-center gap-1.5 bg-bg hover:bg-bg-secondary text-text-secondary hover:text-text">
+                    <Link to={`/owner/properties/${property.id}/beds`}>
+                      <BedDouble className="h-4 w-4" />
+                      Manage Beds
+                    </Link>
                   </Button>
 
                   {/* Edit details */}

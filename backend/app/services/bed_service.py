@@ -7,14 +7,16 @@ Bed counts are maintained by the DB trigger ``sync_property_bed_counts``.
 from __future__ import annotations
 
 import uuid
+from datetime import datetime, timezone
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.enums import HoldStatus
 from app.core.exceptions import ForbiddenException, NotFoundException
 from app.repositories.bed_repository import BedRepository
 from app.repositories.property_repository import PropertyRepository
 from app.repositories.room_repository import RoomRepository
-from app.schemas.bed import BedCreate, BedUpdate
+from app.schemas.bed import BedCreate, BedStatusUpdate, BedUpdate
 
 
 class BedService:
@@ -85,6 +87,59 @@ class BedService:
 
         return bed
 
+    async def update_bed_status(
+        self,
+        bed_id: uuid.UUID,
+        owner_id: uuid.UUID,
+        data: BedStatusUpdate,
+        db: AsyncSession,
+    ):
+        """Manually update a bed's status (owner override).
+
+        Guards:
+        - Owner must own the parent property.
+        - If the bed has an active approved hold (non-expired), the owner
+          is blocked from changing the status. The student must cancel
+          or the hold must expire first.
+
+        Returns the updated Bed.
+        """
+        bed = await self._get_bed(bed_id)
+        await self._verify_property_ownership(bed.property_id, owner_id)
+
+        # Guard: check for active student hold
+        if bed.current_hold_id is not None:
+            from app.models.hold_request import HoldRequest
+            from sqlalchemy import select
+
+            stmt = select(HoldRequest).where(HoldRequest.id == bed.current_hold_id)
+            result = await db.execute(stmt)
+            hold = result.scalar_one_or_none()
+
+            if hold is not None:
+                is_approved = hold.status == HoldStatus.APPROVED.value
+                is_not_expired = hold.expires_at is not None and hold.expires_at > datetime.now(timezone.utc)
+                if is_approved and is_not_expired:
+                    raise ForbiddenException(
+                        message="This bed has an active student hold. You cannot change its status until the hold expires or is cancelled.",
+                        code="BED_HAS_ACTIVE_HOLD",
+                    )
+
+        # Use optimistic locking for safety
+        updated_bed = await self._bed_repo.update_status_optimistic(
+            bed_id=bed.id,
+            expected_version=bed.version,
+            status=data.status,
+        )
+        if updated_bed is None:
+            raise ForbiddenException(
+                message="Bed was modified concurrently. Please refresh and try again.",
+                code="BED_VERSION_CONFLICT",
+            )
+        await db.commit()
+        await db.refresh(updated_bed)
+        return updated_bed
+
     async def delete_bed(
         self,
         bed_id: uuid.UUID,
@@ -103,6 +158,10 @@ class BedService:
     async def list_beds(self, room_id: uuid.UUID):
         """List all beds for a room."""
         return await self._bed_repo.list_by_room(room_id)
+
+    async def list_beds_by_property(self, property_id: uuid.UUID):
+        """List all beds for a property."""
+        return await self._bed_repo.list_by_property(property_id)
 
     # ── Internal helpers ──────────────────────────────────────────────────────
 

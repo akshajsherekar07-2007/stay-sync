@@ -211,5 +211,13 @@ export const ownerPropertyService = {
     const response = await apiClient.delete<MessageResponse>(`/beds/${bedId}`);
     return response.data;
   },
-};
 
+  /**
+   * Update a bed's status (vacant/held/occupied).
+   * Will be rejected by the backend if the bed has an active student hold.
+   */
+  async updateBedStatus(bedId: string, status: string): Promise<ApiResponse<BedRead>> {
+    const response = await apiClient.patch<ApiResponse<BedRead>>(`/beds/${bedId}/status`, { status });
+    return response.data;
+  },
+};
