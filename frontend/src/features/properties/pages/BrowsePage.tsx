@@ -85,7 +85,7 @@ export default function BrowsePage() {
   const pagination = data?.pagination;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 w-full bg-bg text-text">
+    <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 bg-bg text-text">
       {/* Page Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-extrabold tracking-tight">Browse Accommodations</h1>

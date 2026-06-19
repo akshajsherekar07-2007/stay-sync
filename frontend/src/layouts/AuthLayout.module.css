@@ -63,33 +63,8 @@
   pointer-events: none;
 }
 
-.brand {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 1.875rem;
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  color: white;
-}
-
-.brandIcon {
-  display: flex;
-  height: 3rem;
-  width: 3rem;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.75rem;
-  background-color: var(--color-primary);
-  box-shadow: 0 20px 25px -5px rgba(13, 148, 136, 0.3), 0 8px 10px -6px rgba(13, 148, 136, 0.3);
-}
-
-.brandIcon svg {
-  height: 1.5rem;
-  width: 1.5rem;
-  color: white;
+.logoLight {
+  --logo-text-color: #ffffff;
 }
 
 .mockupWrapper {
@@ -271,29 +246,4 @@
   .mobileBrand { display: none; }
 }
 
-.mobileBrandLink {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-text);
-  text-decoration: none;
-}
 
-.mobileBrandIcon {
-  display: flex;
-  height: 2.5rem;
-  width: 2.5rem;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.75rem;
-  background-color: var(--color-primary);
-  box-shadow: var(--shadow-md);
-}
-
-.mobileBrandIcon svg {
-  height: 1.25rem;
-  width: 1.25rem;
-  color: white;
-}

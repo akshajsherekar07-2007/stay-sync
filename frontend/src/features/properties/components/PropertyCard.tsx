@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { MapPin, Building } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/Card";
-import { Badge } from "../../../components/ui/Badge";
 import type { PropertyListItem } from "../../../types/property";
 import styles from "./PropertyCard.module.css";
 

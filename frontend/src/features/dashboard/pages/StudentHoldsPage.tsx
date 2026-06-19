@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { Clock, ArrowLeft } from "lucide-react";
+import { Clock, ArrowLeft, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { holdService } from "../../../services/holdService";
@@ -16,6 +16,21 @@ export default function StudentHoldsPage() {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const pageSize = 10;
+
+  const [clearedHolds, setClearedHolds] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem("student_cleared_holds");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const handleClear = (holdId: string) => {
+    const newCleared = [...clearedHolds, holdId];
+    setClearedHolds(newCleared);
+    localStorage.setItem("student_cleared_holds", JSON.stringify(newCleared));
+  };
 
   const { data, isLoading } = useQuery({
     queryKey: ["myHolds", page, pageSize],
@@ -34,11 +49,25 @@ export default function StudentHoldsPage() {
     },
   });
 
-  const holds = data?.data || [];
+  const rawHolds = data?.data || [];
   const pagination = data?.pagination;
 
+  const visibleHolds = rawHolds.filter(hold => {
+    // Hide rejected holds that the student has cleared
+    if (clearedHolds.includes(hold.id)) return false;
+
+    // Hide approved holds that have passed their 24h expiration
+    if (hold.status === HoldStatus.APPROVED && hold.expires_at) {
+      if (new Date(hold.expires_at).getTime() < Date.now()) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="w-full mx-auto space-y-6 pb-8">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
           <Link to="/dashboard">
@@ -52,11 +81,11 @@ export default function StudentHoldsPage() {
         <div className="flex justify-center py-12">
           <LoadingSpinner size="lg" />
         </div>
-      ) : holds.length === 0 ? (
+      ) : visibleHolds.length === 0 ? (
         <EmptyState
           icon={<Clock className="h-10 w-10 text-primary" />}
           title="No Holds Found"
-          description="You haven't requested any bed holds yet."
+          description="You haven't requested any bed holds yet or they have all expired/been cleared."
           action={
             <Button asChild>
               <Link to="/properties">Browse Properties</Link>
@@ -65,7 +94,7 @@ export default function StudentHoldsPage() {
         />
       ) : (
         <div className="space-y-4">
-          {holds.map((hold) => (
+          {visibleHolds.map((hold) => (
             <Card key={hold.id} className="bg-card border-border shadow-xs overflow-hidden">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between p-5 border-b border-border/50 bg-bg-secondary/20">
                 <div>
@@ -87,7 +116,7 @@ export default function StudentHoldsPage() {
                     Requested on {new Date(hold.requested_at).toLocaleDateString()}
                   </div>
                 </div>
-                <div className="mt-3 sm:mt-0 text-right">
+                <div className="mt-3 sm:mt-0 flex gap-2 justify-end">
                   {hold.status === HoldStatus.PENDING && (
                     <Button
                       variant="destructive"
@@ -99,8 +128,18 @@ export default function StudentHoldsPage() {
                       Cancel Request
                     </Button>
                   )}
+                  {(hold.status === HoldStatus.REJECTED || hold.status === HoldStatus.CANCELLED) && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleClear(hold.id)}
+                      className="flex items-center gap-1.5 text-text-secondary hover:text-text bg-bg hover:bg-bg-secondary"
+                    >
+                      <XCircle className="h-4 w-4" /> Clear
+                    </Button>
+                  )}
                   {hold.status === HoldStatus.APPROVED && hold.expires_at && (
-                    <div className="text-xs">
+                    <div className="text-xs text-right">
                       <span className="text-text-secondary">Expires: </span>
                       <span className="font-bold text-amber-600">
                         {new Date(hold.expires_at).toLocaleString()}
@@ -117,8 +156,8 @@ export default function StudentHoldsPage() {
                   </div>
                   {hold.resolution_note && (
                     <div className="col-span-2">
-                      <span className="block text-text-secondary text-xs">Owner Note</span>
-                      <span className="font-medium text-text bg-bg-secondary p-2 rounded block mt-1">
+                      <span className="block text-text-secondary text-xs flex items-center gap-2">Owner Note</span>
+                      <span className="font-medium text-text bg-bg-secondary/50 border border-border/50 px-3 py-2 rounded-lg inline-block mt-1">
                         {hold.resolution_note}
                       </span>
                     </div>

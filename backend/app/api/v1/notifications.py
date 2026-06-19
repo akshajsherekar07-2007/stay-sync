@@ -159,3 +159,25 @@ async def mark_all_as_read(
         message=f"Marked {count} notifications as read.",
         meta=build_meta(request_id),
     )
+
+
+@router.delete(
+    "/clear-all",
+    response_model=MessageResponse,
+    summary="Clear all notifications",
+)
+async def clear_all_notifications(
+    request: Request,
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> MessageResponse:
+    service = _make_notification_service(db)
+    count = await service.clear_all_notifications(current_user.id)
+    
+    await db.commit()
+    
+    request_id: str = getattr(request.state, "request_id", "")
+    return MessageResponse(
+        message=f"Cleared {count} notifications.",
+        meta=build_meta(request_id),
+    )

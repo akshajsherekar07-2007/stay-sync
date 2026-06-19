@@ -24,7 +24,7 @@ export default function OwnerDashboard() {
   };
 
   return (
-    <div className="space-y-10 max-w-7xl mx-auto px-4 sm:px-6 py-8">
+    <div className="space-y-10 w-full mx-auto pb-8">
       {/* Welcome Banner */}
       <div className="relative overflow-hidden mb-4">
         <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text mb-2">
@@ -103,77 +103,85 @@ export default function OwnerDashboard() {
         </div>
       </div>
 
-      {/* Main Grid split */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left 2 Columns: Fast actions */}
-        <div className="lg:col-span-2 space-y-6">
-          <h2 className="text-xl font-bold tracking-tight text-text mb-4">Administrative Actions</h2>
-          
-          <div className="grid gap-4 sm:grid-cols-3">
-            {/* Action 1 */}
-            <Link to="/owner/properties/create" className="group block bg-white rounded-2xl p-6 border border-border/60 shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
-              <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-4">
-                <Building2 className="h-5 w-5" />
+      {/* Quick Actions */}
+      <div className="mt-12 space-y-6">
+        <h2 className="text-xl font-bold tracking-tight text-text">Quick Actions</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Action 1 */}
+          <Link to="/owner/properties/create" className="group block bg-white rounded-2xl p-6 border border-border/60 shadow-sm hover:shadow-md hover:border-primary/30 transition-all cursor-pointer">
+            <div className="flex items-start justify-between mb-4">
+              <div className="h-12 w-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                <Building2 className="h-6 w-6" />
               </div>
-              <h4 className="text-sm font-bold text-text group-hover:text-primary transition-colors">List New Property</h4>
-              <p className="text-xs text-text-secondary mt-2 leading-relaxed">
-                Add a new property, setup rooms, and configure bed inventory.
-              </p>
-            </Link>
-
-            {/* Action 2 */}
-            <Link to="/owner/holds" className="group block bg-white rounded-2xl p-6 border border-border/60 shadow-sm hover:shadow-md hover:border-amber-500/30 transition-all">
-              <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-4">
-                <Clock className="h-5 w-5" />
-              </div>
-              <h4 className="text-sm font-bold text-text group-hover:text-amber-600 transition-colors">Review Holds</h4>
-              <p className="text-xs text-text-secondary mt-2 leading-relaxed">
-                Approve or reject active bed hold requests from students.
-              </p>
-            </Link>
-
-            {/* Action 3 */}
-            <Link to="/owner/properties" className="group block bg-white rounded-2xl p-6 border border-border/60 shadow-sm hover:shadow-md hover:border-text/30 transition-all">
-              <div className="h-10 w-10 rounded-xl bg-bg-secondary text-text-secondary flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-4">
-                <ShieldCheck className="h-5 w-5" />
-              </div>
-              <h4 className="text-sm font-bold text-text group-hover:text-text transition-colors">Manage Catalog</h4>
-              <p className="text-xs text-text-secondary mt-2 leading-relaxed">
-                Edit existing listings, update photos, and toggle visibility.
-              </p>
-            </Link>
-          </div>
-        </div>
-
-        {/* Right 1 Column: Summary details */}
-        <div className="space-y-6">
-          <h2 className="text-xl font-bold tracking-tight text-text mb-4">System Alerts</h2>
-          
-          <div className="bg-white rounded-2xl p-6 border border-border/60 shadow-sm space-y-6">
-            <div className="flex gap-4">
-              <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-sm border border-primary/10">
-                <Sparkles className="h-4 w-4" />
-              </div>
-              <div className="space-y-1">
-                <span className="text-sm font-bold text-text block">Inventory Setup</span>
-                <span className="text-xs text-text-secondary block leading-relaxed">
-                  Make sure to configure rooms and beds after listing a property so students can book.
-                </span>
+              <div className="h-8 w-8 rounded-full flex items-center justify-center bg-bg text-text-tertiary group-hover:bg-primary/5 group-hover:text-primary transition-colors border border-transparent group-hover:border-primary/20">
+                <ArrowRight className="h-4 w-4 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
               </div>
             </div>
+            <h4 className="text-lg font-bold text-text group-hover:text-primary transition-colors">List New Property</h4>
+            <p className="text-sm text-text-secondary mt-2 leading-relaxed">
+              Add a new property, setup rooms, and configure bed inventory.
+            </p>
+          </Link>
 
-            <div className="w-full h-px bg-border/60" />
+          {/* Action 2 */}
+          <Link to="/owner/holds" className="group block bg-white rounded-2xl p-6 border border-border/60 shadow-sm hover:shadow-md hover:border-amber-500/30 transition-all cursor-pointer">
+            <div className="flex items-start justify-between mb-4">
+              <div className="h-12 w-12 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                <Clock className="h-6 w-6" />
+              </div>
+              <div className="h-8 w-8 rounded-full flex items-center justify-center bg-bg text-text-tertiary group-hover:bg-amber-500/5 group-hover:text-amber-600 transition-colors border border-transparent group-hover:border-amber-500/20">
+                <ArrowRight className="h-4 w-4 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
+              </div>
+            </div>
+            <h4 className="text-lg font-bold text-text group-hover:text-amber-600 transition-colors">Review Holds</h4>
+            <p className="text-sm text-text-secondary mt-2 leading-relaxed">
+              Approve or reject active bed hold requests from students.
+            </p>
+          </Link>
 
-            <div className="flex gap-4">
-              <div className="h-8 w-8 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 shadow-sm border border-amber-500/10">
-                <Clock className="h-4 w-4" />
+          {/* Action 3 */}
+          <Link to="/owner/properties" className="group block bg-white rounded-2xl p-6 border border-border/60 shadow-sm hover:shadow-md hover:border-text/30 transition-all cursor-pointer">
+            <div className="flex items-start justify-between mb-4">
+              <div className="h-12 w-12 rounded-xl bg-bg-secondary text-text-secondary flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                <ShieldCheck className="h-6 w-6" />
               </div>
-              <div className="space-y-1">
-                <span className="text-sm font-bold text-text block">Hold Expirations</span>
-                <span className="text-xs text-text-secondary block leading-relaxed">
-                  Pending bed holds automatically expire if not approved within 24 hours.
-                </span>
+              <div className="h-8 w-8 rounded-full flex items-center justify-center bg-bg text-text-tertiary group-hover:bg-text-secondary/10 group-hover:text-text transition-colors border border-transparent group-hover:border-border">
+                <ArrowRight className="h-4 w-4 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
               </div>
+            </div>
+            <h4 className="text-lg font-bold text-text group-hover:text-text transition-colors">Manage Catalog</h4>
+            <p className="text-sm text-text-secondary mt-2 leading-relaxed">
+              Edit existing listings, update photos, and toggle visibility.
+            </p>
+          </Link>
+        </div>
+      </div>
+
+      {/* System Alerts */}
+      <div className="mt-12 space-y-6">
+        <h2 className="text-xl font-bold tracking-tight text-text">System Alerts</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white rounded-2xl p-6 border border-border/60 shadow-sm flex gap-4 items-start hover:shadow-md transition-shadow">
+            <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 border border-primary/10">
+              <Sparkles className="h-5 w-5" />
+            </div>
+            <div>
+              <span className="text-base font-bold text-text block mb-1">Inventory Setup</span>
+              <span className="text-sm text-text-secondary block leading-relaxed">
+                Make sure to configure rooms and beds after listing a property so students can book.
+              </span>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl p-6 border border-border/60 shadow-sm flex gap-4 items-start hover:shadow-md transition-shadow">
+            <div className="h-10 w-10 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 border border-amber-500/10">
+              <Clock className="h-5 w-5" />
+            </div>
+            <div>
+              <span className="text-base font-bold text-text block mb-1">Hold Expirations</span>
+              <span className="text-sm text-text-secondary block leading-relaxed">
+                Pending bed holds automatically expire if not approved within 24 hours.
+              </span>
             </div>
           </div>
         </div>

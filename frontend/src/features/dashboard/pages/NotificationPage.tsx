@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, Bell, Check } from "lucide-react";
+import styles from "./NotificationPage.module.css";
 
 // Helper for relative time
 function formatTimeAgo(dateString: string) {
@@ -18,11 +19,8 @@ function formatTimeAgo(dateString: string) {
 }
 
 import { notificationService } from "../../../services/notificationService";
-import { Button } from "../../../components/ui/Button";
-import { Card, CardContent } from "../../../components/ui/Card";
+import { apiClient } from "../../../lib/axios";
 import { LoadingSpinner } from "../../../components/common/LoadingSpinner";
-import { Badge } from "../../../components/ui/Badge";
-import { EmptyState } from "../../../components/common/EmptyState";
 
 export default function NotificationPage() {
   const queryClient = useQueryClient();
@@ -57,127 +55,126 @@ export default function NotificationPage() {
   const pagination = data?.pagination;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold text-text flex items-center gap-2">
-          <Bell className="h-6 w-6 text-primary" />
+    <div className={styles.pageContainer}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>
+          <Bell style={{ height: "1.5rem", width: "1.5rem", color: "var(--color-primary)" }} />
           Notifications
         </h1>
         
-        <div className="flex items-center gap-3">
-          <div className="bg-bg-secondary p-1 rounded-lg inline-flex">
+        <div className={styles.actions}>
+          <div className={styles.filterGroup}>
             <button
               onClick={() => { setFilterUnread(false); setPage(1); }}
-              className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-colors cursor-pointer ${
-                !filterUnread ? "bg-bg text-text shadow-sm" : "text-text-secondary hover:text-text"
-              }`}
+              className={`${styles.filterBtn} ${!filterUnread ? styles.filterBtnActive : ""}`}
             >
               All
             </button>
             <button
               onClick={() => { setFilterUnread(true); setPage(1); }}
-              className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-colors cursor-pointer ${
-                filterUnread ? "bg-bg text-text shadow-sm" : "text-text-secondary hover:text-text"
-              }`}
+              className={`${styles.filterBtn} ${filterUnread ? styles.filterBtnActive : ""}`}
             >
               Unread
             </button>
           </div>
           
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="text-xs h-8"
+          <button 
+            className={styles.actionBtn}
             onClick={() => markAllReadMutation.mutate()}
-            disabled={markAllReadMutation.isPending}
+            disabled={markAllReadMutation.isPending || notifications.length === 0}
           >
-            <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />
+            <CheckCircle2 style={{ height: "0.875rem", width: "0.875rem", marginRight: "0.375rem" }} />
             Mark all read
-          </Button>
+          </button>
+          
+          <button 
+            className={`${styles.actionBtn} ${styles.actionBtnDanger}`}
+            onClick={async () => {
+              await apiClient.delete("/notifications/clear-all");
+              queryClient.invalidateQueries({ queryKey: ["allNotifications"] });
+              queryClient.invalidateQueries({ queryKey: ["latestNotifications"] });
+              queryClient.setQueryData(["unreadNotificationCount"], 0);
+            }}
+            disabled={notifications.length === 0}
+          >
+            Clear all
+          </button>
         </div>
       </div>
 
-      <Card className="bg-card border-border shadow-xs">
-        <CardContent className="p-0">
-          {isLoading ? (
-            <div className="flex justify-center py-20">
-              <LoadingSpinner size="lg" />
-            </div>
-          ) : notifications.length === 0 ? (
-            <div className="p-1">
-              <EmptyState
-                icon={<Bell className="h-10 w-10 text-primary" />}
-                title="No notifications found"
-                description={filterUnread ? "You have read all your notifications." : "You have no notifications yet."}
-              />
-            </div>
-          ) : (
-            <div className="divide-y divide-border/50">
-              {notifications.map((notification) => (
-                <div 
-                  key={notification.id} 
-                  className={`p-5 flex flex-col sm:flex-row sm:items-start gap-4 transition-colors ${
-                    !notification.is_read ? "bg-primary/5 hover:bg-primary/10" : "bg-bg hover:bg-bg-secondary/50"
-                  }`}
-                >
-                  <div className="flex-1 space-y-1.5">
-                    <div className="flex items-center gap-2">
-                      {!notification.is_read && (
-                        <span className="h-2 w-2 rounded-full bg-primary shrink-0" />
-                      )}
-                      <h4 className={`text-sm ${!notification.is_read ? "font-bold text-text" : "font-medium text-text-secondary"}`}>
-                        {notification.title}
-                      </h4>
-                      <Badge variant="outline" className="text-[10px] uppercase py-0 leading-tight tracking-wider ml-2">
-                        {notification.type.replace("_", " ")}
-                      </Badge>
-                    </div>
-                    <p className={`text-sm leading-relaxed ${!notification.is_read ? "text-text" : "text-text-secondary"}`}>
-                      {notification.message}
-                    </p>
-                    <p className="text-xs text-text-tertiary font-medium">
-                      {formatTimeAgo(notification.created_at)}
-                    </p>
+      <div className={styles.card}>
+        {isLoading ? (
+          <div className={styles.loading}>
+            <LoadingSpinner size="lg" />
+          </div>
+        ) : notifications.length === 0 ? (
+          <div className={styles.empty}>
+            <Bell style={{ height: "2.5rem", width: "2.5rem", color: "var(--color-primary)", marginBottom: "1rem" }} />
+            <h3 style={{ fontSize: "1.125rem", fontWeight: "600", color: "var(--color-text)", marginBottom: "0.5rem" }}>No notifications found</h3>
+            <p>{filterUnread ? "You have read all your notifications." : "You have no notifications yet."}</p>
+          </div>
+        ) : (
+          <div className={styles.list}>
+            {notifications.map((notification) => (
+              <div 
+                key={notification.id} 
+                className={`${styles.item} ${!notification.is_read ? styles.unread : styles.read}`}
+              >
+                <div className={styles.itemContent}>
+                  <div className={styles.itemHeader}>
+                    {!notification.is_read && (
+                      <div className={styles.dot} />
+                    )}
+                    <h4 className={styles.itemTitle}>
+                      {notification.title}
+                    </h4>
+                    <span className={styles.badge}>
+                      {notification.type.replace("_", " ")}
+                    </span>
                   </div>
-                  
-                  {!notification.is_read && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="shrink-0 text-xs h-8 cursor-pointer"
-                      onClick={() => markReadMutation.mutate(notification.id)}
-                      disabled={markReadMutation.isPending}
-                    >
-                      <Check className="h-3.5 w-3.5 mr-1.5" />
-                      Mark read
-                    </Button>
-                  )}
+                  <p className={styles.itemMessage}>
+                    {notification.message}
+                  </p>
+                  <p className={styles.itemTime}>
+                    {formatTimeAgo(notification.created_at)}
+                  </p>
                 </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                
+                {!notification.is_read && (
+                  <button
+                    className={styles.markReadBtn}
+                    onClick={() => markReadMutation.mutate(notification.id)}
+                    disabled={markReadMutation.isPending}
+                  >
+                    <Check style={{ height: "0.875rem", width: "0.875rem", marginRight: "0.375rem" }} />
+                    Mark read
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
       
       {pagination && pagination.total_pages > 1 && (
-        <div className="flex justify-between items-center pb-8">
-          <Button
-            variant="outline"
+        <div className={styles.pagination}>
+          <button
+            className={styles.actionBtn}
             disabled={!pagination.has_prev}
             onClick={() => setPage(page - 1)}
           >
             Previous
-          </Button>
-          <span className="text-sm text-text-secondary font-medium">
+          </button>
+          <span className={styles.pageInfo}>
             Page {pagination.page} of {pagination.total_pages}
           </span>
-          <Button
-            variant="outline"
+          <button
+            className={styles.actionBtn}
             disabled={!pagination.has_next}
             onClick={() => setPage(page + 1)}
           >
             Next
-          </Button>
+          </button>
         </div>
       )}
     </div>

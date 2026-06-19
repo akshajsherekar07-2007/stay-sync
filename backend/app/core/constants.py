@@ -10,7 +10,7 @@ BED_STATUS_HELD = "held"           # 🟡 YELLOW
 BED_STATUS_OCCUPIED = "occupied"   # 🔴 RED
 
 # ── Hold System Limits ───────────────────────────────────────
-MAX_ACTIVE_HOLDS_PER_STUDENT = 3
+MAX_ACTIVE_HOLDS_PER_STUDENT = 100
 HOLD_COOLDOWN_MINUTES = 30
 DEFAULT_HOLD_DURATION_HOURS = 24
 HOLD_EXPIRY_WARNING_MINUTES = 60  # notify student 1 hour before expiry
@@ -20,7 +20,7 @@ DEFAULT_PAGE_SIZE = 20
 MAX_PAGE_SIZE = 100
 
 # ── File Upload ──────────────────────────────────────────────
-MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024  # 5 MB
+MAX_IMAGE_SIZE_BYTES = 50 * 1024 * 1024  # 50 MB
 ALLOWED_IMAGE_MIME_TYPES = frozenset({
     "image/jpeg",
     "image/png",

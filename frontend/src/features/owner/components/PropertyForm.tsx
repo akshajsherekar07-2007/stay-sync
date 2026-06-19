@@ -399,8 +399,8 @@ export default function PropertyForm({ propertyId: propIdFromProps, initialData,
       }
       toast.success("Images uploaded successfully.");
       refetchImages();
-    } catch (err) {
-      toast.error("Failed to upload images.");
+    } catch (err: any) {
+      toast.error(err.response?.data?.error?.message || "Failed to upload images.");
     } finally {
       setUploadingImage(false);
     }
@@ -745,7 +745,7 @@ export default function PropertyForm({ propertyId: propIdFromProps, initialData,
                   </div>
                   <div>
                     <span className="text-sm font-semibold text-primary hover:underline">Click to upload images</span>
-                    <span className="text-text-secondary text-xs block mt-1">Accepts JPG, PNG, and WEBP. Max size 5MB per file.</span>
+                    <span className="text-text-secondary text-xs block mt-1">Accepts JPG, PNG, and WEBP. Max size 50MB per file.</span>
                   </div>
                 </label>
               </div>

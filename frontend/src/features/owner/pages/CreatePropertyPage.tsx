@@ -1,4 +1,5 @@
 import PropertyForm from "../components/PropertyForm";
+import "./CreatePropertyPage.css";
 
 export default function CreatePropertyPage() {
   return (

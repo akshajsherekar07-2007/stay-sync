@@ -1,6 +1,7 @@
 import { Link, Navigate, Outlet } from "react-router-dom";
 import { Building2 } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
+import { Logo } from "../components/common/Logo";
 import styles from "./AuthLayout.module.css";
 
 export function AuthLayout() {
@@ -22,10 +23,7 @@ export function AuthLayout() {
         <div className={styles.glowOrb2} />
 
         <div className={styles.brand}>
-          <div className={styles.brandIcon}>
-            <Building2 aria-hidden="true" />
-          </div>
-          <span>StaySync</span>
+          <Logo className={styles.logoLight} />
         </div>
 
         {/* Abstract Product Mockup */}
@@ -75,12 +73,7 @@ export function AuthLayout() {
         <div className={styles.formWrapper}>
           {/* Mobile Branding */}
           <div className={styles.mobileBrand}>
-            <Link to="/" className={styles.mobileBrandLink}>
-              <div className={styles.mobileBrandIcon}>
-                <Building2 aria-hidden="true" />
-              </div>
-              <span>StaySync</span>
-            </Link>
+            <Logo />
           </div>
           {/* Routed components (Login / Register form) */}
           <Outlet />

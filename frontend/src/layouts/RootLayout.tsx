@@ -7,6 +7,7 @@ import { Button } from "../components/ui/Button";
 import { Avatar, AvatarImage, AvatarFallback } from "../components/ui/Avatar";
 import { ThemeToggle } from "../components/common/ThemeToggle";
 import { NotificationBell } from "../components/layout/NotificationBell";
+import { Logo } from "../components/common/Logo";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -44,7 +45,8 @@ export function RootLayout() {
     : user?.email?.slice(0, 2).toUpperCase() || "U";
 
   const isPropertiesActive = location.pathname.startsWith("/properties");
-  const isDashboardActive = location.pathname.startsWith("/dashboard") || location.pathname.startsWith("/owner/dashboard");
+  const isDashboardRoute = location.pathname.startsWith("/dashboard") || location.pathname.startsWith("/owner");
+  const isDashboardActive = isDashboardRoute;
 
   return (
     <div className={styles.layout}>
@@ -52,23 +54,21 @@ export function RootLayout() {
       <header className={styles.header}>
         <div className={styles.headerContainer}>
           {/* Branding */}
-          <Link to="/" className={styles.brand}>
-            <div className={styles.brandIconWrapper}>
-              <Home className={styles.brandIcon} aria-hidden="true" />
-            </div>
-            <span className={styles.brandText}>Stay</span><span className={styles.brandTextPrimary}>Sync</span>
-          </Link>
+          <Logo />
+
 
           {/* Desktop Navigation */}
           {isDesktop ? (
             <nav className={styles.desktopNav}>
-              <Link
-                to="/properties"
-                className={`${styles.navLink} ${isPropertiesActive ? styles.navLinkActive : ""}`}
-              >
-                Browse Properties
-                <span className={styles.navLinkIndicator}></span>
-              </Link>
+              {user?.role !== "owner" && (
+                <Link
+                  to="/properties"
+                  className={`${styles.navLink} ${isPropertiesActive ? styles.navLinkActive : ""}`}
+                >
+                  Browse Properties
+                  <span className={styles.navLinkIndicator}></span>
+                </Link>
+              )}
               {isAuthenticated && (
                 <Link
                   to={user?.role === "owner" ? "/owner/dashboard" : "/dashboard"}
@@ -143,13 +143,15 @@ export function RootLayout() {
       {!isDesktop && mobileMenuOpen && (
         <div className={styles.mobileDrawer}>
           <nav className={styles.mobileNav}>
-            <Link
-              to="/properties"
-              className={`${styles.mobileNavLink} ${isPropertiesActive ? styles.mobileNavLinkActive : ""}`}
-            >
-              <Search className={styles.mobileNavIcon} aria-hidden="true" />
-              <span>Browse Properties</span>
-            </Link>
+            {user?.role !== "owner" && (
+              <Link
+                to="/properties"
+                className={`${styles.mobileNavLink} ${isPropertiesActive ? styles.mobileNavLinkActive : ""}`}
+              >
+                <Search className={styles.mobileNavIcon} aria-hidden="true" />
+                <span>Browse Properties</span>
+              </Link>
+            )}
             {isAuthenticated ? (
               <>
                 <Link
@@ -189,49 +191,51 @@ export function RootLayout() {
       </main>
 
       {/* Footer */}
-      <footer className={styles.footer}>
-        <div className={styles.footerContainer}>
-          <div className={styles.footerGrid}>
-            {/* Brand Column */}
-            <div className={styles.footerBrandCol}>
-              <Link to="/" className={styles.footerBrand}>
-                <div className={styles.footerBrandIcon}>
-                  <Home aria-hidden="true" />
-                </div>
-                StaySync
-              </Link>
-              <p className={styles.footerDesc}>
-                Connecting students with verified, high-quality accommodations. Hold beds in real-time and move in with confidence.
-              </p>
+      {!isDashboardRoute && (
+        <footer className={styles.footer}>
+          <div className={styles.footerContainer}>
+            <div className={styles.footerGrid}>
+              {/* Brand Column */}
+              <div className={styles.footerBrandCol}>
+                <Link to="/" className={styles.footerBrand}>
+                  <div className={styles.footerBrandIcon}>
+                    <Home aria-hidden="true" />
+                  </div>
+                  StaySync
+                </Link>
+                <p className={styles.footerDesc}>
+                  Connecting students with verified, high-quality accommodations. Hold beds in real-time and move in with confidence.
+                </p>
+              </div>
+
+              {/* Quick Links */}
+              <div className={styles.footerNavCol}>
+                <h4 className={styles.footerNavTitle}>Platform</h4>
+                <nav className={styles.footerNav}>
+                  <Link to="/properties" className={styles.footerNavLink}>Browse Properties</Link>
+                  <Link to="/register" className={styles.footerNavLink}>Create Account</Link>
+                  <Link to="/login" className={styles.footerNavLink}>Sign In</Link>
+                </nav>
+              </div>
+
+              {/* Legal */}
+              <div className={styles.footerNavCol}>
+                <h4 className={styles.footerNavTitle}>Company</h4>
+                <nav className={styles.footerNav}>
+                  <span className={styles.footerNavLink}>Privacy Policy</span>
+                  <span className={styles.footerNavLink}>Terms of Service</span>
+                  <span className={styles.footerNavLink}>Contact Support</span>
+                </nav>
+              </div>
             </div>
 
-            {/* Quick Links */}
-            <div className={styles.footerNavCol}>
-              <h4 className={styles.footerNavTitle}>Platform</h4>
-              <nav className={styles.footerNav}>
-                <Link to="/properties" className={styles.footerNavLink}>Browse Properties</Link>
-                <Link to="/register" className={styles.footerNavLink}>Create Account</Link>
-                <Link to="/login" className={styles.footerNavLink}>Sign In</Link>
-              </nav>
-            </div>
-
-            {/* Legal */}
-            <div className={styles.footerNavCol}>
-              <h4 className={styles.footerNavTitle}>Company</h4>
-              <nav className={styles.footerNav}>
-                <span className={styles.footerNavLink}>Privacy Policy</span>
-                <span className={styles.footerNavLink}>Terms of Service</span>
-                <span className={styles.footerNavLink}>Contact Support</span>
-              </nav>
+            <div className={styles.footerBottom}>
+              <p className={styles.footerCopyright}>© {new Date().getFullYear()} StaySync. All rights reserved.</p>
+              <p className={styles.footerCopyright}>Built for students, by students.</p>
             </div>
           </div>
-
-          <div className={styles.footerBottom}>
-            <p className={styles.footerCopyright}>© {new Date().getFullYear()} StaySync. All rights reserved.</p>
-            <p className={styles.footerCopyright}>Built for students, by students.</p>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      )}
     </div>
   );
 }

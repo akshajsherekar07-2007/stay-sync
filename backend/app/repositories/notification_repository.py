@@ -182,3 +182,15 @@ class NotificationRepository:
         )
         result = await self._session.execute(stmt)
         return result.rowcount
+
+    # ── Delete ───────────────────────────────────────────────────────────────
+
+    async def delete_all_for_user(self, user_id: uuid.UUID) -> int:
+        """Delete all notifications for a user.
+
+        Returns the number of notifications deleted.
+        """
+        from sqlalchemy import delete
+        stmt = delete(Notification).where(Notification.user_id == user_id)
+        result = await self._session.execute(stmt)
+        return result.rowcount

@@ -238,6 +238,10 @@ class NotificationService:
         """Unread notification count for badge display."""
         return await self._notification_repo.count_unread(user_id)
 
+    async def clear_all_notifications(self, user_id: uuid.UUID) -> int:
+        """Delete all notifications for a user."""
+        return await self._notification_repo.delete_all_for_user(user_id)
+
     # ── Internal: create + broadcast ─────────────────────────────────────────
 
     async def _create_and_broadcast(

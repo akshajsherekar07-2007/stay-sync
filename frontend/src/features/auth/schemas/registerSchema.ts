@@ -10,6 +10,14 @@ export const registerSchema = z
       message: "Role must be either student or owner",
     }),
     full_name: fullNameSchema,
+    phone: z.string().optional(),
+    age: z.string().optional(),
+    aadhar: z.string().optional(),
+    emergencyContact: z.string().optional(),
+    collegeName: z.string().optional(),
+    collegeYear: z.string().optional(),
+    businessName: z.string().optional(),
+    officeNumber: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

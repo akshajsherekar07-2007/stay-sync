@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Heart, Building2, ArrowRight, Bed, Clock, ShieldCheck, CalendarClock, Zap } from "lucide-react";
@@ -11,6 +12,21 @@ import { DashboardSkeleton } from "../../../components/common/DashboardSkeleton"
 
 export default function StudentDashboard() {
   const { user } = useAuthStore();
+
+  const [clearedWaitlists, setClearedWaitlists] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem("student_cleared_waitlists");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const handleClearWaitlist = (waitlistId: string) => {
+    const newCleared = [...clearedWaitlists, waitlistId];
+    setClearedWaitlists(newCleared);
+    localStorage.setItem("student_cleared_waitlists", JSON.stringify(newCleared));
+  };
 
   const { data, isLoading } = useQuery({
     queryKey: ["studentDashboardData"],
@@ -39,10 +55,11 @@ export default function StudentDashboard() {
   
   const activeHolds = activeHoldsCount || data?.active_holds_count || 0;
   const savedProperties = data?.saved_properties || [];
-  const waitlists = waitlistsData?.data || [];
+  const rawWaitlists = waitlistsData?.data || [];
+  const waitlists = rawWaitlists.filter(w => !clearedWaitlists.includes(w.id));
 
   return (
-    <div className="space-y-10 max-w-7xl mx-auto px-4 sm:px-6 py-8">
+    <div className="space-y-10 w-full mx-auto pb-8">
       {/* Welcome Banner */}
       <div className="relative overflow-hidden mb-4">
         <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text mb-2">
@@ -102,127 +119,144 @@ export default function StudentDashboard() {
         </div>
       </div>
 
-      {/* Main Grid: Holds, Waitlist, Wishlist */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left 2 Columns: Holds & Waitlist */}
-        <div className="lg:col-span-2 space-y-10">
+      {/* Main Content Area */}
+      <div className="space-y-8 mt-8">
+        
+        {/* Active Holds Section */}
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold tracking-tight text-text">Active Holds Summary</h2>
+            {activeOrPendingHolds.length > 0 && (
+              <Link to="/dashboard/holds" className="text-sm font-semibold text-primary hover:text-primary-dark hover:underline">
+                View all holds →
+              </Link>
+            )}
+          </div>
           
-          <section>
-            <h2 className="text-xl font-bold tracking-tight text-text mb-4">Active Holds Summary</h2>
-            <div className="bg-white rounded-2xl border border-border/60 shadow-sm p-6 overflow-hidden">
-              {activeOrPendingHolds.length > 0 ? (
-                <div className="space-y-4">
-                  {activeOrPendingHolds.slice(0, 2).map((hold) => (
-                    <div key={hold.id} className="p-5 bg-bg-secondary hover:bg-white hover:shadow-md border border-border/40 transition-all duration-300 rounded-[20px] flex items-center justify-between group">
-                      <div className="flex items-center gap-4">
-                        <div className={`h-10 w-10 rounded-xl flex items-center justify-center shadow-sm ${
-                          hold.status === 'approved' ? 'bg-emerald-50 text-emerald-600 border border-emerald-500/20' : 'bg-amber-50 text-amber-600 border border-amber-500/20'
-                        }`}>
-                          <CalendarClock className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <span className="font-bold text-sm text-text block mb-1">
-                            Status: 
-                            <span className={`ml-2 text-xs uppercase tracking-wider px-2 py-0.5 rounded font-bold ${hold.status === "approved" ? "bg-emerald-500 text-white" : "bg-amber-500 text-white"}`}>
-                              {hold.status}
-                            </span>
-                          </span>
-                          <span className="text-[11px] text-text-secondary font-medium">
-                            Expires: <strong className="text-text">{hold.expires_at ? new Date(hold.expires_at).toLocaleDateString() : "N/A"}</strong>
-                          </span>
-                        </div>
+          <div className="bg-white rounded-2xl border border-border/60 shadow-sm overflow-hidden">
+            {activeOrPendingHolds.length > 0 ? (
+              <div className="divide-y divide-border/40">
+                {activeOrPendingHolds.slice(0, 3).map((hold) => (
+                  <div key={hold.id} className="p-5 hover:bg-bg-secondary/30 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className={`h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm ${
+                        hold.status === 'approved' ? 'bg-emerald-50 text-emerald-600 border border-emerald-500/20' : 'bg-amber-50 text-amber-600 border border-amber-500/20'
+                      }`}>
+                        <CalendarClock className="h-6 w-6" />
                       </div>
-                      <div className="text-right">
-                        <p className="text-[11px] text-text-secondary font-bold">
-                          Duration: {hold.hold_duration_hours}h
-                        </p>
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-bold text-text text-base">Bed Hold</span>
+                          <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-bold ${hold.status === "approved" ? "bg-emerald-500 text-white" : "bg-amber-500 text-white"}`}>
+                            {hold.status}
+                          </span>
+                        </div>
+                        <div className="text-xs font-medium text-text-secondary">
+                          Expires: <strong className="text-text">{hold.expires_at ? new Date(hold.expires_at).toLocaleDateString() : "N/A"}</strong>
+                        </div>
                       </div>
                     </div>
-                  ))}
-                  <div className="pt-2">
-                    <Link to="/dashboard/holds" className="text-sm font-semibold text-primary hover:underline">
-                      View all holds
-                    </Link>
+                    <div className="text-left sm:text-right bg-bg-secondary/50 px-4 py-2 rounded-xl border border-border/50">
+                      <p className="text-xs text-text-secondary font-semibold uppercase tracking-wider mb-0.5">
+                        Duration
+                      </p>
+                      <p className="text-sm font-bold text-text">
+                        {hold.hold_duration_hours} hours
+                      </p>
+                    </div>
                   </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="h-12 w-12 flex items-center justify-center rounded-2xl bg-bg-secondary text-text-tertiary mx-auto mb-4 border border-border/60">
+                  <Bed className="h-5 w-5" />
                 </div>
-              ) : (
-                <div className="text-center py-10">
-                  <div className="h-12 w-12 flex items-center justify-center rounded-2xl bg-bg-secondary text-text-tertiary mx-auto mb-4 border border-border/60">
-                    <Bed className="h-5 w-5" />
-                  </div>
-                  <h3 className="text-sm font-bold text-text">No Bed Holds Requested</h3>
-                  <p className="text-xs text-text-secondary mt-1 max-w-sm mx-auto">
-                    You currently have no active or pending bed holds.
-                  </p>
-                  <div className="mt-6">
-                    <Link to="/properties" className="text-sm font-semibold text-white bg-text hover:bg-text/90 px-5 py-2.5 rounded-xl shadow-sm transition-all">
-                      Search Stays
-                    </Link>
-                  </div>
+                <h3 className="text-base font-bold text-text">No Bed Holds Requested</h3>
+                <p className="text-sm text-text-secondary mt-1 max-w-sm mx-auto">
+                  You currently have no active or pending bed holds.
+                </p>
+                <div className="mt-6">
+                  <Link to="/properties" className="text-sm font-bold text-white bg-text hover:bg-text/90 px-6 py-2.5 rounded-xl shadow-sm transition-all">
+                    Search Stays
+                  </Link>
                 </div>
-              )}
-            </div>
-          </section>
+              </div>
+            )}
+          </div>
+        </section>
 
-          {/* Waitlist Section */}
+        {/* 2-Column Grid: Waitlists & Saved Stays */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          
+          {/* Waitlists */}
           <section>
             <h2 className="text-xl font-bold tracking-tight text-text mb-4 flex items-center gap-2">
               <Zap className="h-5 w-5 text-primary" />
               My Waitlists
             </h2>
-            {waitlists.length === 0 ? (
-              <div className="bg-white rounded-2xl border border-border/60 shadow-sm p-12 text-center">
-                <div className="h-12 w-12 flex items-center justify-center rounded-2xl bg-bg-secondary text-text-tertiary mx-auto mb-3 border border-border/60">
-                  <Clock className="h-5 w-5" />
+            <div className="bg-white rounded-2xl border border-border/60 shadow-sm overflow-hidden">
+              {waitlists.length === 0 ? (
+                <div className="p-10 text-center">
+                  <div className="h-12 w-12 flex items-center justify-center rounded-2xl bg-bg-secondary text-text-tertiary mx-auto mb-3 border border-border/60">
+                    <Clock className="h-5 w-5" />
+                  </div>
+                  <h4 className="text-sm font-bold text-text mb-1">No Active Waitlists</h4>
+                  <p className="text-xs text-text-secondary font-medium">You are not currently on any waitlists.</p>
                 </div>
-                <h4 className="text-sm font-bold text-text mb-1">No Active Waitlists</h4>
-                <p className="text-xs text-text-secondary font-medium">You are not currently on any waitlists.</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {waitlists.map((entry) => (
-                  <WaitlistCard key={entry.id} entry={entry} />
-                ))}
-              </div>
-            )}
+              ) : (
+                <div className="p-4 space-y-4 bg-bg/30">
+                  {waitlists.map((entry) => (
+                    <WaitlistCard 
+                      key={entry.id} 
+                      entry={entry} 
+                      onClear={() => handleClearWaitlist(entry.id)}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           </section>
-        </div>
 
-        {/* Right 1 Column: Saved Stays & Notifications */}
-        <div className="space-y-10">
           {/* Saved Stays */}
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold tracking-tight text-text">Saved Stays</h2>
-              <Link to="/saved-properties" className="text-xs font-semibold text-primary hover:underline">
-                View All
-              </Link>
+              <h2 className="text-xl font-bold tracking-tight text-text flex items-center gap-2">
+                <Heart className="h-5 w-5 text-rose-500" />
+                Saved Stays
+              </h2>
+              {savedProperties.length > 0 && (
+                <Link to="/saved-properties" className="text-sm font-semibold text-primary hover:text-primary-dark hover:underline">
+                  View All →
+                </Link>
+              )}
             </div>
             
-            <div className="bg-white rounded-2xl border border-border/60 shadow-sm p-5">
+            <div className="bg-white rounded-2xl border border-border/60 shadow-sm overflow-hidden">
               {savedProperties.length === 0 ? (
-                <div className="text-center py-6">
-                  <Heart className="h-8 w-8 text-text-tertiary mx-auto mb-3 opacity-30" />
-                  <p className="text-xs text-text-secondary font-medium">No properties saved yet.</p>
+                <div className="p-10 text-center">
+                  <Heart className="h-10 w-10 text-text-tertiary mx-auto mb-3 opacity-30" />
+                  <p className="text-sm text-text-secondary font-medium">No properties saved yet.</p>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="divide-y divide-border/40">
                   {savedProperties.slice(0, 3).map((property) => (
-                    <div key={property.id} className="group flex gap-4 items-center">
-                      <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-bg-secondary shrink-0 border border-border/60">
+                    <div key={property.id} className="group flex gap-4 items-center p-5 hover:bg-bg-secondary/30 transition-colors">
+                      <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-bg-secondary shrink-0 border border-border/60 shadow-sm">
                         {property.primary_image_url ? (
                           <img src={property.primary_image_url} alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
                         ) : (
-                          <Building2 className="h-5 w-5 text-text-tertiary m-auto absolute inset-0" />
+                          <Building2 className="h-6 w-6 text-text-tertiary m-auto absolute inset-0" />
                         )}
                       </div>
                       <div className="flex flex-col min-w-0">
-                        <h4 className="font-bold text-sm text-text truncate group-hover:text-primary transition-colors">
+                        <h4 className="font-bold text-base text-text truncate group-hover:text-primary transition-colors">
                           <Link to={`/property/${property.id}`} className="focus:outline-none before:absolute before:inset-0">
                             {property.name}
                           </Link>
                         </h4>
-                        <span className="text-xs text-text-secondary block font-medium">
+                        <span className="text-xs text-text-secondary block font-medium mt-1 flex items-center gap-1">
+                          <MapPin className="h-3 w-3" />
                           {property.city}, {property.state}
                         </span>
                       </div>
@@ -233,42 +267,44 @@ export default function StudentDashboard() {
             </div>
           </section>
 
-          {/* Account Alerts */}
-          <section>
-            <h2 className="text-xl font-bold tracking-tight text-text mb-4">System Alerts</h2>
-            <div className="bg-white rounded-2xl border border-border/60 shadow-sm p-6 space-y-6">
-              <div className="flex gap-4">
-                <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-sm border border-primary/10">
-                  <Clock className="h-4 w-4" />
+        </div>
+
+        {/* System Alerts */}
+        <section>
+          <h2 className="text-xl font-bold tracking-tight text-text mb-4">System Alerts</h2>
+          <div className="bg-white rounded-2xl border border-border/60 shadow-sm overflow-hidden">
+            <div className="divide-y divide-border/40">
+              <div className="flex gap-5 p-6 hover:bg-bg-secondary/30 transition-colors">
+                <div className="h-10 w-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-sm border border-primary/20">
+                  <Clock className="h-5 w-5" />
                 </div>
-                <div className="space-y-1 text-sm">
-                  <Link to="/dashboard/holds" className="font-bold text-text hover:text-primary transition-colors block">
+                <div className="space-y-1">
+                  <Link to="/dashboard/holds" className="text-sm font-bold text-text hover:text-primary transition-colors block">
                     Check Reservation Status
                   </Link>
-                  <span className="text-text-secondary text-xs block leading-relaxed">
-                    Verify hold request expiration timers and approval messages.
+                  <span className="text-text-secondary text-xs block leading-relaxed max-w-2xl">
+                    Verify hold request expiration timers and approval messages. Keep track of your deadlines to avoid losing your spot.
                   </span>
                 </div>
               </div>
 
-              <div className="w-full h-px bg-border/60" />
-
-              <div className="flex gap-4">
-                <div className="h-8 w-8 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 shadow-sm border border-emerald-500/10">
-                  <ShieldCheck className="h-4 w-4" />
+              <div className="flex gap-5 p-6 hover:bg-bg-secondary/30 transition-colors">
+                <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 shadow-sm border border-emerald-500/20">
+                  <ShieldCheck className="h-5 w-5" />
                 </div>
-                <div className="space-y-1 text-sm">
-                  <Link to="/notifications" className="font-bold text-text hover:text-primary transition-colors block">
+                <div className="space-y-1">
+                  <Link to="/notifications" className="text-sm font-bold text-text hover:text-primary transition-colors block">
                     Recent Activity Log
                   </Link>
-                  <span className="text-text-secondary text-xs block leading-relaxed">
-                    View direct system notifications regarding check-in dates.
+                  <span className="text-text-secondary text-xs block leading-relaxed max-w-2xl">
+                    View direct system notifications regarding check-in dates and changes to your accommodation.
                   </span>
                 </div>
               </div>
             </div>
-          </section>
-        </div>
+          </div>
+        </section>
+
       </div>
     </div>
   );

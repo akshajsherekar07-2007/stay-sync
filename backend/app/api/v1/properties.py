@@ -381,7 +381,7 @@ async def list_images(
     response_model=SuccessResponse[ImageRead],
     status_code=status.HTTP_201_CREATED,
     summary="Upload image",
-    description="Upload an image for a property (max 5MB, jpg/png/webp).",
+    description="Upload an image for a property (max 50MB, jpg/png/webp).",
 )
 async def upload_image(
     request: Request,

@@ -2,7 +2,7 @@
 
 Handles image upload to Supabase Storage, metadata persistence,
 reordering, primary image management, and deletion.
-Enforces 5MB size limit and 20-images-per-property cap.
+Enforces 50MB size limit and 20-images-per-property cap.
 """
 
 from __future__ import annotations
@@ -61,7 +61,7 @@ class ImageService:
         Validates:
         - Property ownership
         - MIME type is allowed
-        - File size ≤ 5MB
+        - File size ≤ 50MB
         - Image count ≤ 20 per property
 
         Returns the created PropertyImage instance.

@@ -3,6 +3,16 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Bell, Check, CheckCircle2 } from "lucide-react";
 import { useWebSocket } from "../../hooks/useWebSocket";
+import { notificationService } from "../../services/notificationService";
+import { apiClient } from "../../lib/axios";
+import { useAuthStore } from "../../stores/authStore";
+import { Button } from "../ui/Button";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+} from "../ui/DropdownMenu";
+import styles from "./NotificationBell.module.css";
 
 // Helper for relative time
 function formatTimeAgo(dateString: string) {
@@ -18,15 +28,6 @@ function formatTimeAgo(dateString: string) {
   const diffInDays = Math.floor(diffInHours / 24);
   return `${diffInDays}d ago`;
 }
-
-import { notificationService } from "../../services/notificationService";
-import { useAuthStore } from "../../stores/authStore";
-import { Button } from "../ui/Button";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-} from "../ui/DropdownMenu";
 
 export function NotificationBell() {
   const { isAuthenticated } = useAuthStore();
@@ -94,91 +95,95 @@ export function NotificationBell() {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full cursor-pointer">
-          <Bell className="h-5 w-5 text-text-secondary" />
+        <Button variant="ghost" size="icon" style={{ position: "relative", borderRadius: "50%", cursor: "pointer" }}>
+          <Bell style={{ height: "1.25rem", width: "1.25rem", color: "var(--color-text-secondary)" }} />
           {unreadCount > 0 && (
-            <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-danger text-[9px] font-bold text-white shadow-sm ring-2 ring-bg">
+            <span style={{
+              position: "absolute", top: "0.375rem", right: "0.25rem", display: "flex", alignItems: "center", justifyContent: "center",
+              height: "1rem", width: "1rem", borderRadius: "50%", backgroundColor: "var(--color-danger)",
+              color: "#fff", fontSize: "0.5625rem", fontWeight: "bold", border: "2px solid var(--color-bg)"
+            }}>
               {unreadCount > 99 ? '99+' : unreadCount}
             </span>
           )}
         </Button>
       </DropdownMenuTrigger>
       
-      <DropdownMenuContent align="end" className="w-80 sm:w-96 p-0 border-border bg-bg shadow-lg">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
-          <h3 className="font-semibold text-text text-sm">Notifications</h3>
-          {unreadCount > 0 && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="text-xs text-primary hover:text-primary-dark h-auto py-1 px-2 cursor-pointer"
-              onClick={(e) => {
-                e.preventDefault();
-                markAllReadMutation.mutate();
-              }}
-              disabled={markAllReadMutation.isPending}
-            >
-              <CheckCircle2 className="h-3 w-3 mr-1" />
-              Mark all read
-            </Button>
-          )}
+      <DropdownMenuContent align="end" className={styles.dropdownContent} style={{ padding: 0 }}>
+        <div className={styles.header}>
+          <h3 className={styles.headerTitle}>Notifications</h3>
+          <div className={styles.headerActions}>
+            {unreadCount > 0 && (
+              <button 
+                className={`${styles.actionButton} ${styles.actionButtonPrimary}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  markAllReadMutation.mutate();
+                }}
+                disabled={markAllReadMutation.isPending}
+              >
+                <CheckCircle2 style={{ height: "0.75rem", width: "0.75rem", marginRight: "0.25rem" }} />
+                Mark all read
+              </button>
+            )}
+            {notifications.length > 0 && (
+              <button 
+                className={`${styles.actionButton} ${styles.actionButtonDanger}`}
+                onClick={async (e) => {
+                  e.preventDefault();
+                  await apiClient.delete("/notifications/clear-all");
+                  queryClient.invalidateQueries({ queryKey: ["latestNotifications"] });
+                  queryClient.invalidateQueries({ queryKey: ["allNotifications"] });
+                  queryClient.setQueryData(["unreadNotificationCount"], 0);
+                }}
+              >
+                Clear all
+              </button>
+            )}
+          </div>
         </div>
         
-        <div className="max-h-[300px] overflow-y-auto">
+        <div className={styles.notificationList}>
           {isLoading ? (
-            <div className="p-4 text-center text-xs text-text-tertiary">Loading notifications...</div>
+            <div className={styles.emptyState}>Loading notifications...</div>
           ) : notifications.length === 0 ? (
-            <div className="p-8 text-center flex flex-col items-center">
-              <Bell className="h-8 w-8 text-text-tertiary mb-2 opacity-50" />
-              <p className="text-sm text-text-secondary">You have no notifications</p>
+            <div className={styles.emptyState}>
+              <Bell style={{ height: "2rem", width: "2rem", marginBottom: "0.5rem", opacity: 0.5 }} />
+              <p>You have no notifications</p>
             </div>
           ) : (
-            <div className="flex flex-col">
-              {notifications.map((notification) => (
-                <div 
-                  key={notification.id} 
-                  className={`flex items-start gap-3 p-3 border-b border-border/30 transition-colors ${
-                    !notification.is_read ? "bg-primary/5 hover:bg-primary/10" : "bg-bg hover:bg-bg-secondary"
-                  }`}
-                >
-                  <div className="flex-1 min-w-0 space-y-1">
-                    <p className={`text-sm ${!notification.is_read ? "font-semibold text-text" : "font-medium text-text-secondary"}`}>
-                      {notification.title}
-                    </p>
-                    <p className={`text-xs line-clamp-2 ${!notification.is_read ? "text-text-secondary" : "text-text-tertiary"}`}>
-                      {notification.message}
-                    </p>
-                    <p className="text-[10px] text-text-tertiary font-medium">
-                      {formatTimeAgo(notification.created_at)}
-                    </p>
-                  </div>
-                  {!notification.is_read && (
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-6 w-6 shrink-0 rounded-full hover:bg-primary/20 hover:text-primary cursor-pointer text-text-tertiary"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        markReadMutation.mutate(notification.id);
-                      }}
-                      title="Mark as read"
-                    >
-                      <Check className="h-3 w-3" />
-                    </Button>
-                  )}
+            notifications.map((notification) => (
+              <div 
+                key={notification.id} 
+                className={`${styles.notificationItem} ${!notification.is_read ? styles.unread : styles.read}`}
+              >
+                <div className={styles.itemContent}>
+                  <p className={styles.itemTitle}>{notification.title}</p>
+                  <p className={styles.itemMessage}>{notification.message}</p>
+                  <p className={styles.itemTime}>{formatTimeAgo(notification.created_at)}</p>
                 </div>
-              ))}
-            </div>
+                {!notification.is_read && (
+                  <button 
+                    className={styles.markReadBtn}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      markReadMutation.mutate(notification.id);
+                    }}
+                    title="Mark as read"
+                  >
+                    <Check style={{ height: "0.75rem", width: "0.75rem" }} />
+                  </button>
+                )}
+              </div>
+            ))
           )}
         </div>
         
-        <div className="p-2 border-t border-border/50">
-          <Button asChild variant="ghost" className="w-full text-xs h-8 text-text-secondary hover:text-text cursor-pointer">
-            <Link to="/notifications" onClick={() => setIsOpen(false)}>
-              View all notifications
-            </Link>
-          </Button>
+        <div className={styles.footer}>
+          <Link to="/notifications" className={styles.viewAll} onClick={() => setIsOpen(false)}>
+            View all notifications
+          </Link>
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

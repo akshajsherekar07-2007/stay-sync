@@ -12,9 +12,10 @@ import { Badge } from "../../../components/ui/Badge";
 
 interface WaitlistCardProps {
   entry: WaitlistEntryRead;
+  onClear?: () => void;
 }
 
-export function WaitlistCard({ entry }: WaitlistCardProps) {
+export function WaitlistCard({ entry, onClear }: WaitlistCardProps) {
   const queryClient = useQueryClient();
 
   // Fetch property details for this waitlist entry
@@ -55,88 +56,77 @@ export function WaitlistCard({ entry }: WaitlistCardProps) {
   };
 
   return (
-    <Card className="border-border bg-card overflow-hidden transition-all hover:border-border-hover">
-      <CardContent className="p-0">
-        <div className="flex flex-col sm:flex-row border-b border-border/50">
-          {/* Status & Position Column */}
-          <div className="bg-bg-secondary/40 p-4 sm:w-1/3 flex flex-col items-center justify-center border-b sm:border-b-0 sm:border-r border-border/50">
-            <div className="text-center">
-              <span className="text-xs font-semibold text-text-secondary uppercase tracking-wider block mb-1">Queue Position</span>
-              {entry.status === WaitlistStatus.ACTIVE ? (
-                <div className="text-4xl font-extrabold text-primary flex items-center justify-center gap-1">
-                  <span className="text-xl text-primary/50">#</span>{entry.position}
-                </div>
-              ) : (
-                <div className="text-2xl font-bold text-text-secondary">—</div>
-              )}
+    <div className="group flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-white rounded-xl border border-border/60 shadow-sm hover:border-primary/30 transition-all hover:shadow-md">
+      <div className="flex items-center gap-4 flex-1">
+        {/* Status / Position Block */}
+        <div className="shrink-0 bg-bg-secondary rounded-lg p-3 flex flex-col items-center justify-center min-w-[80px] border border-border/40">
+          <span className="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1">Queue</span>
+          {entry.status === WaitlistStatus.ACTIVE ? (
+            <div className="text-xl font-black text-primary flex items-center justify-center">
+              <span className="text-sm text-primary/50 mr-0.5">#</span>{entry.position}
             </div>
-            <div className="mt-3">
-              {getStatusBadge(entry.status)}
+          ) : (
+            <div className="text-xl font-bold text-text-secondary">—</div>
+          )}
+        </div>
+        
+        {/* Details Block */}
+        <div className="flex flex-col justify-center flex-1 min-w-0">
+          {isPropertyLoading ? (
+            <div className="animate-pulse space-y-2">
+              <div className="h-4 bg-bg-tertiary rounded w-1/2"></div>
+              <div className="h-3 bg-bg-tertiary rounded w-1/3"></div>
             </div>
-          </div>
-
-          {/* Property Info Column */}
-          <div className="p-4 sm:w-2/3 flex flex-col justify-between space-y-4">
+          ) : property ? (
             <div>
-              {isPropertyLoading ? (
-                <div className="animate-pulse space-y-2">
-                  <div className="h-5 bg-bg-tertiary rounded w-3/4"></div>
-                  <div className="h-4 bg-bg-tertiary rounded w-1/2"></div>
-                </div>
-              ) : property ? (
-                <>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="font-bold text-text text-base line-clamp-1 flex items-center gap-1.5">
-                        <Building2 className="h-4 w-4 text-text-secondary shrink-0" />
-                        {property.name}
-                      </h3>
-                      <p className="text-xs text-text-secondary mt-1 flex items-center gap-1">
-                        <MapPin className="h-3 w-3 shrink-0" />
-                        {property.city}, {property.state}
-                      </p>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <div className="text-sm text-text-secondary">Property information unavailable</div>
-              )}
-
-              <div className="mt-4 pt-3 border-t border-border/40 grid grid-cols-2 gap-2">
-                <div>
-                  <span className="block text-[10px] text-text-tertiary uppercase">Joined On</span>
-                  <span className="text-xs text-text flex items-center gap-1">
-                    <Clock className="h-3 w-3 text-text-secondary" />
-                    {new Date(entry.joined_at).toLocaleDateString()}
-                  </span>
-                </div>
-                <div>
-                  <span className="block text-[10px] text-text-tertiary uppercase">Bed ID</span>
-                  <span className="text-xs text-text font-mono" title={entry.bed_id}>
-                    {entry.bed_id.split('-')[0]}...
-                  </span>
-                </div>
-              </div>
+              <h3 className="font-bold text-text text-base truncate flex items-center gap-1.5">
+                <Building2 className="h-4 w-4 text-text-secondary shrink-0" />
+                {property.name}
+              </h3>
+              <p className="text-xs text-text-secondary mt-1 flex items-center gap-1 truncate">
+                <MapPin className="h-3 w-3 shrink-0" />
+                {property.city}, {property.state}
+              </p>
             </div>
+          ) : (
+            <div className="text-sm text-text-secondary">Property information unavailable</div>
+          )}
 
-            {/* Actions */}
-            {entry.status === WaitlistStatus.ACTIVE && (
-              <div className="flex justify-end pt-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="text-danger border-danger/20 hover:bg-danger/10 hover:text-danger h-8 text-xs"
-                  onClick={() => cancelMutation.mutate()}
-                  disabled={cancelMutation.isPending}
-                >
-                  <XCircle className="h-3.5 w-3.5 mr-1" />
-                  {cancelMutation.isPending ? "Cancelling..." : "Leave Waitlist"}
-                </Button>
-              </div>
-            )}
+          <div className="flex items-center gap-3 mt-3">
+             {getStatusBadge(entry.status)}
+             <span className="text-[11px] font-medium text-text-secondary flex items-center gap-1">
+               <Clock className="h-3 w-3" />
+               {new Date(entry.joined_at).toLocaleDateString()}
+             </span>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+
+      {/* Actions */}
+      <div className="flex items-center sm:justify-end shrink-0 gap-2">
+        {entry.status === WaitlistStatus.ACTIVE && (
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="text-danger hover:bg-danger/10 hover:text-danger h-8 text-xs font-semibold rounded-lg sm:opacity-0 sm:group-hover:opacity-100 transition-opacity w-full sm:w-auto border border-danger/10 sm:border-none"
+            onClick={() => cancelMutation.mutate()}
+            disabled={cancelMutation.isPending}
+          >
+            <XCircle className="h-3.5 w-3.5 mr-1" />
+            {cancelMutation.isPending ? "Cancelling..." : "Leave"}
+          </Button>
+        )}
+        {entry.status === WaitlistStatus.CANCELLED && onClear && (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={onClear}
+            className="flex items-center gap-1.5 text-text-secondary hover:text-text bg-bg hover:bg-bg-secondary w-full sm:w-auto"
+          >
+            <XCircle className="h-4 w-4" /> Clear
+          </Button>
+        )}
+      </div>
+    </div>
   );
 }

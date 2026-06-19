@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Eye, EyeOff, Lock, Mail, User, Building2 } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, User, Building2, Phone, Hash, Shield, PhoneCall, GraduationCap, Calendar, Briefcase } from "lucide-react";
 
 import { Input } from "../../../components/ui/Input";
 import { Label } from "../../../components/ui/Label";
@@ -14,6 +14,7 @@ import { useAuthStore } from "../../../stores/authStore";
 import { cn } from "../../../lib/utils";
 import { UserRole } from "../../../types/enums";
 import type { RegisterRequest } from "../../../types/auth";
+import styles from "./RegisterPage.module.css";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -68,203 +69,359 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="w-full">
-      <div className="mb-8 text-center md:text-left">
-        <h1 className="text-3xl font-extrabold tracking-tight text-text mb-2">
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>
           Create an account
         </h1>
-        <p className="text-text-secondary text-sm">
+        <p className={styles.subtitle}>
           Join StaySync to book or list premium properties.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         {/* Role selection toggle cards */}
-        <div className="space-y-2">
-          <Label className="text-xs uppercase tracking-wider text-text-secondary font-semibold">
+        <div className={styles.formGroup}>
+          <Label className={styles.label}>
             I am a...
           </Label>
-          <div className="grid grid-cols-2 gap-3">
+          <div className={styles.roleGrid}>
             <button
               type="button"
               onClick={() => setValue("role", "student")}
-              className={cn(
-                "group flex flex-col items-center justify-center p-4 rounded-xl border-2 text-center transition-all duration-300 cursor-pointer shadow-sm",
-                role === "student"
-                  ? "border-primary bg-primary/5 text-primary scale-[0.98]"
-                  : "border-border/60 bg-white text-text-secondary hover:border-primary/40 hover:shadow-md"
-              )}
+              className={cn(styles.roleCard, role === "student" && styles.roleCardActive)}
               disabled={isLoading}
             >
-              <User className={cn("h-6 w-6 mb-2 transition-transform duration-300", role === "student" ? "scale-110" : "group-hover:scale-110")} />
-              <span className="text-sm font-bold">Student</span>
+              <User className={styles.roleIcon} />
+              <span className={styles.roleText}>Student</span>
             </button>
             <button
               type="button"
               onClick={() => setValue("role", "owner")}
-              className={cn(
-                "group flex flex-col items-center justify-center p-4 rounded-xl border-2 text-center transition-all duration-300 cursor-pointer shadow-sm",
-                role === "owner"
-                  ? "border-primary bg-primary/5 text-primary scale-[0.98]"
-                  : "border-border/60 bg-white text-text-secondary hover:border-primary/40 hover:shadow-md"
-              )}
+              className={cn(styles.roleCard, role === "owner" && styles.roleCardActive)}
               disabled={isLoading}
             >
-              <Building2 className={cn("h-6 w-6 mb-2 transition-transform duration-300", role === "owner" ? "scale-110" : "group-hover:scale-110")} />
-              <span className="text-sm font-bold">Owner</span>
+              <Building2 className={styles.roleIcon} />
+              <span className={styles.roleText}>Owner</span>
             </button>
           </div>
           {errors.role && (
-            <p className="text-xs text-danger font-medium animate-fade-in">
+            <p className={styles.errorMessage}>
               {errors.role.message}
             </p>
           )}
         </div>
 
-        {/* Full Name */}
-        <div className="space-y-2">
-          <Label htmlFor="full_name" required className="text-xs uppercase tracking-wider text-text-secondary font-semibold">
-            Full Name
-          </Label>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-text-tertiary">
-              <User className="h-4 w-4" />
-            </span>
-            <Input
-              id="full_name"
-              type="text"
-              placeholder="John Doe"
-              className="pl-10 h-12 bg-white"
-              error={!!errors.full_name}
-              disabled={isLoading}
-              {...registerField("full_name")}
-            />
-          </div>
-          {errors.full_name && (
-            <p className="text-xs text-danger font-medium animate-fade-in">
-              {errors.full_name.message}
-            </p>
-          )}
-        </div>
-
-        {/* Email Address */}
-        <div className="space-y-2">
-          <Label htmlFor="email" required className="text-xs uppercase tracking-wider text-text-secondary font-semibold">
-            Email Address
-          </Label>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-text-tertiary">
-              <Mail className="h-4 w-4" />
-            </span>
-            <Input
-              id="email"
-              type="email"
-              placeholder="name@example.com"
-              className="pl-10 h-12 bg-white"
-              error={!!errors.email}
-              disabled={isLoading}
-              {...registerField("email")}
-            />
-          </div>
-          {errors.email && (
-            <p className="text-xs text-danger font-medium animate-fade-in">
-              {errors.email.message}
-            </p>
-          )}
-        </div>
-
-        {/* Passwords grid */}
-        <div className="grid gap-5 sm:grid-cols-2">
-          {/* Password */}
-          <div className="space-y-2">
-            <Label htmlFor="password" required className="text-xs uppercase tracking-wider text-text-secondary font-semibold">
-              Password
-            </Label>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-text-tertiary">
-                <Lock className="h-4 w-4" />
-              </span>
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
-                className="pl-10 pr-10 h-12 bg-white"
-                error={!!errors.password}
-                disabled={isLoading}
-                {...registerField("password")}
-              />
-              <button
-                type="button"
-                className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-text-tertiary hover:text-text-secondary focus:outline-none"
-                onClick={() => setShowPassword(!showPassword)}
-                disabled={isLoading}
-                tabIndex={-1}
-              >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4" aria-hidden="true" />
-                ) : (
-                  <Eye className="h-4 w-4" aria-hidden="true" />
-                )}
-              </button>
+        {/* Section: Personal Details */}
+        <div className={styles.section}>
+          <h3 className={styles.sectionHeader}>Personal Details</h3>
+          <div className={styles.passwordGrid}>
+            <div className={styles.formGroup}>
+              <Label htmlFor="full_name" required className={styles.label}>
+                Full Name
+              </Label>
+              <div className={styles.inputWrapper}>
+                <span className={styles.inputIconLeft}>
+                  <User className="h-4 w-4" />
+                </span>
+                <Input
+                  id="full_name"
+                  type="text"
+                  placeholder="John Doe"
+                  className={styles.inputWithIconLeft}
+                  error={!!errors.full_name}
+                  disabled={isLoading}
+                  {...registerField("full_name")}
+                />
+              </div>
+              {errors.full_name && (
+                <p className={styles.errorMessage}>{errors.full_name.message}</p>
+              )}
             </div>
-            {errors.password && (
-              <p className="text-xs text-danger font-medium animate-fade-in">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
 
-          {/* Confirm Password */}
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword" required className="text-xs uppercase tracking-wider text-text-secondary font-semibold">
-              Confirm Password
-            </Label>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-text-tertiary">
-                <Lock className="h-4 w-4" />
-              </span>
-              <Input
-                id="confirmPassword"
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="••••••••"
-                className="pl-10 pr-10 h-12 bg-white"
-                error={!!errors.confirmPassword}
-                disabled={isLoading}
-                {...registerField("confirmPassword")}
-              />
-              <button
-                type="button"
-                className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-text-tertiary hover:text-text-secondary focus:outline-none"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                disabled={isLoading}
-                tabIndex={-1}
-              >
-                {showConfirmPassword ? (
-                  <EyeOff className="h-4 w-4" aria-hidden="true" />
-                ) : (
-                  <Eye className="h-4 w-4" aria-hidden="true" />
-                )}
-              </button>
+            <div className={styles.formGroup}>
+              <Label htmlFor="phone" className={styles.label}>
+                Phone Number <span className={styles.optionalText}>(optional)</span>
+              </Label>
+              <div className={styles.inputWrapper}>
+                <span className={styles.inputIconLeft}>
+                  <Phone className="h-4 w-4" />
+                </span>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="+91 98765 43210"
+                  className={styles.inputWithIconLeft}
+                  disabled={isLoading}
+                  {...registerField("phone")}
+                />
+              </div>
             </div>
-            {errors.confirmPassword && (
-              <p className="text-xs text-danger font-medium animate-fade-in">
-                {errors.confirmPassword.message}
-              </p>
+
+            <div className={styles.formGroup}>
+              <Label htmlFor="age" className={styles.label}>
+                Age <span className={styles.optionalText}>(optional)</span>
+              </Label>
+              <div className={styles.inputWrapper}>
+                <span className={styles.inputIconLeft}>
+                  <Hash className="h-4 w-4" />
+                </span>
+                <Input
+                  id="age"
+                  type="number"
+                  placeholder="e.g. 21"
+                  className={styles.inputWithIconLeft}
+                  disabled={isLoading}
+                  {...registerField("age")}
+                />
+              </div>
+            </div>
+
+            <div className={styles.formGroup}>
+              <Label htmlFor="aadhar" className={styles.label}>
+                Aadhar Number <span className={styles.optionalText}>(optional)</span>
+              </Label>
+              <div className={styles.inputWrapper}>
+                <span className={styles.inputIconLeft}>
+                  <Shield className="h-4 w-4" />
+                </span>
+                <Input
+                  id="aadhar"
+                  type="text"
+                  placeholder="XXXX XXXX XXXX"
+                  className={styles.inputWithIconLeft}
+                  disabled={isLoading}
+                  {...registerField("aadhar")}
+                />
+              </div>
+            </div>
+
+            {role === "student" && (
+              <div className={cn(styles.formGroup, styles.colSpan2)}>
+                <Label htmlFor="emergencyContact" className={styles.label}>
+                  Emergency Contact <span className={styles.optionalText}>(optional)</span>
+                </Label>
+                <div className={styles.inputWrapper}>
+                  <span className={styles.inputIconLeft}>
+                    <PhoneCall className="h-4 w-4" />
+                  </span>
+                  <Input
+                    id="emergencyContact"
+                    type="tel"
+                    placeholder="+91 98765 43210 (Parent/Guardian)"
+                    className={styles.inputWithIconLeft}
+                    disabled={isLoading}
+                    {...registerField("emergencyContact")}
+                  />
+                </div>
+              </div>
             )}
           </div>
         </div>
 
-        <Button type="submit" className="w-full h-12 text-base mt-4" loading={isLoading}>
+        {/* Section: Role Specific */}
+        <div className={styles.section}>
+          <h3 className={styles.sectionHeader}>
+            {role === "student" ? "College Details" : "Business Details"}
+          </h3>
+          <div className={styles.passwordGrid}>
+            {role === "student" && (
+              <>
+                <div className={styles.formGroup}>
+                  <Label htmlFor="collegeName" className={styles.label}>
+                    College Name <span className={styles.optionalText}>(optional)</span>
+                  </Label>
+                  <div className={styles.inputWrapper}>
+                    <span className={styles.inputIconLeft}>
+                      <GraduationCap className="h-4 w-4" />
+                    </span>
+                    <Input
+                      id="collegeName"
+                      type="text"
+                      placeholder="e.g. IIT Bombay"
+                      className={styles.inputWithIconLeft}
+                      disabled={isLoading}
+                      {...registerField("collegeName")}
+                    />
+                  </div>
+                </div>
+                <div className={styles.formGroup}>
+                  <Label htmlFor="collegeYear" className={styles.label}>
+                    College Year <span className={styles.optionalText}>(optional)</span>
+                  </Label>
+                  <div className={styles.inputWrapper}>
+                    <span className={styles.inputIconLeft}>
+                      <Calendar className="h-4 w-4" />
+                    </span>
+                    <Input
+                      id="collegeYear"
+                      type="text"
+                      placeholder="e.g. 2nd Year"
+                      className={styles.inputWithIconLeft}
+                      disabled={isLoading}
+                      {...registerField("collegeYear")}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {role === "owner" && (
+              <>
+                <div className={cn(styles.formGroup, styles.colSpan2)}>
+                  <Label htmlFor="businessName" className={styles.label}>
+                    Business / Agency Name <span className={styles.optionalText}>(optional)</span>
+                  </Label>
+                  <div className={styles.inputWrapper}>
+                    <span className={styles.inputIconLeft}>
+                      <Briefcase className="h-4 w-4" />
+                    </span>
+                    <Input
+                      id="businessName"
+                      type="text"
+                      placeholder="e.g. StaySync PG Accommodations"
+                      className={styles.inputWithIconLeft}
+                      disabled={isLoading}
+                      {...registerField("businessName")}
+                    />
+                  </div>
+                </div>
+
+                <div className={cn(styles.formGroup, styles.colSpan2)}>
+                  <Label htmlFor="officeNumber" className={styles.label}>
+                    Office Number <span className={styles.optionalText}>(optional)</span>
+                  </Label>
+                  <div className={styles.inputWrapper}>
+                    <span className={styles.inputIconLeft}>
+                      <PhoneCall className="h-4 w-4" />
+                    </span>
+                    <Input
+                      id="officeNumber"
+                      type="tel"
+                      placeholder="+91 98765 43210"
+                      className={styles.inputWithIconLeft}
+                      disabled={isLoading}
+                      {...registerField("officeNumber")}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Section: Account Security */}
+        <div className={styles.section}>
+          <h3 className={styles.sectionHeader}>Account Security</h3>
+          <div className={styles.passwordGrid}>
+            <div className={cn(styles.formGroup, styles.colSpan2)}>
+              <Label htmlFor="email" required className={styles.label}>
+                Email Address
+              </Label>
+              <div className={styles.inputWrapper}>
+                <span className={styles.inputIconLeft}>
+                  <Mail className="h-4 w-4" />
+                </span>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="name@example.com"
+                  className={styles.inputWithIconLeft}
+                  error={!!errors.email}
+                  disabled={isLoading}
+                  {...registerField("email")}
+                />
+              </div>
+              {errors.email && (
+                <p className={styles.errorMessage}>{errors.email.message}</p>
+              )}
+            </div>
+
+            <div className={styles.formGroup}>
+              <Label htmlFor="password" required className={styles.label}>
+                Password
+              </Label>
+              <div className={styles.inputWrapper}>
+                <span className={styles.inputIconLeft}>
+                  <Lock className="h-4 w-4" />
+                </span>
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  className={cn(styles.inputWithIconLeft, styles.inputWithIconRight)}
+                  error={!!errors.password}
+                  disabled={isLoading}
+                  {...registerField("password")}
+                />
+                <button
+                  type="button"
+                  className={styles.inputIconRight}
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={isLoading}
+                  tabIndex={-1}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" aria-hidden="true" />
+                  ) : (
+                    <Eye className="h-4 w-4" aria-hidden="true" />
+                  )}
+                </button>
+              </div>
+              {errors.password && (
+                <p className={styles.errorMessage}>{errors.password.message}</p>
+              )}
+            </div>
+
+            <div className={styles.formGroup}>
+              <Label htmlFor="confirmPassword" required className={styles.label}>
+                Confirm Password
+              </Label>
+              <div className={styles.inputWrapper}>
+                <span className={styles.inputIconLeft}>
+                  <Lock className="h-4 w-4" />
+                </span>
+                <Input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  className={cn(styles.inputWithIconLeft, styles.inputWithIconRight)}
+                  error={!!errors.confirmPassword}
+                  disabled={isLoading}
+                  {...registerField("confirmPassword")}
+                />
+                <button
+                  type="button"
+                  className={styles.inputIconRight}
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  disabled={isLoading}
+                  tabIndex={-1}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-4 w-4" aria-hidden="true" />
+                  ) : (
+                    <Eye className="h-4 w-4" aria-hidden="true" />
+                  )}
+                </button>
+              </div>
+              {errors.confirmPassword && (
+                <p className={styles.errorMessage}>{errors.confirmPassword.message}</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <Button type="submit" className={styles.submitBtn} loading={isLoading}>
           Create Account
         </Button>
       </form>
 
-      <div className="mt-8 text-center text-sm text-text-secondary">
+      <div className={styles.footer}>
         <p>
           Already have an account?{" "}
           <Link
             to="/login"
-            className="font-semibold text-primary hover:text-primary-dark hover:underline transition-colors"
+            className={styles.signInLink}
           >
             Sign In
           </Link>

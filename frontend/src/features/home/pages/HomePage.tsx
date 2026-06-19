@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, Navigate } from "react-router-dom";
 import { Search, MapPin, Shield, CheckCircle2, ChevronRight, Building } from "lucide-react";
 
 import { propertyService } from "../../../services/propertyService";
@@ -11,7 +11,10 @@ import { Badge } from "../../../components/ui/Badge";
 import { LoadingSpinner } from "../../../components/common/LoadingSpinner";
 import styles from "./HomePage.module.css";
 
+import { useAuthStore } from "../../../stores/authStore";
+
 export default function HomePage() {
+  const { isAuthenticated, user } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
@@ -38,6 +41,10 @@ export default function HomePage() {
   };
 
   const featuredListings = data || [];
+
+  if (isAuthenticated && user?.role === "owner") {
+    return <Navigate to="/owner/dashboard" replace />;
+  }
 
   return (
     <div className={styles.container}>

@@ -39,34 +39,34 @@ export function AppRouter() {
           </Route>
         </Route>
 
-        {/* Protected Dashboard Routes */}
-        <Route element={<ProtectedRoute />}>
-          <Route element={<DashboardLayout />}>
-            {/* Student-Only Routes */}
-            <Route element={<RoleRoute allowedRoles={[UserRole.STUDENT]} />}>
-              <Route path="/dashboard" element={<StudentDashboard />} />
-              <Route path="/dashboard/holds" element={<StudentHoldsPage />} />
-              <Route path="/saved-properties" element={<SavedPropertiesPage />} />
-            </Route>
+        {/* Fallback Route for non-dashboard paths */}
+        <Route path="*" element={<PlaceholderNotFound />} />
+      </Route>
 
-            {/* Owner-Only Routes */}
-            <Route element={<RoleRoute allowedRoles={[UserRole.OWNER]} />}>
-              <Route path="/owner/dashboard" element={<OwnerDashboard />} />
-              <Route path="/owner/holds" element={<OwnerHoldsPage />} />
-              <Route path="/owner/properties" element={<ManagePropertiesPage />} />
-              <Route path="/owner/properties/create" element={<CreatePropertyPage />} />
-              <Route path="/owner/properties/:id/edit" element={<EditPropertyPage />} />
-            </Route>
+      {/* Protected Dashboard Routes - Independent of RootLayout */}
+      <Route element={<ProtectedRoute />}>
+        <Route element={<DashboardLayout />}>
+          {/* Student-Only Routes */}
+          <Route element={<RoleRoute allowedRoles={[UserRole.STUDENT]} />}>
+            <Route path="/dashboard" element={<StudentDashboard />} />
+            <Route path="/dashboard/holds" element={<StudentHoldsPage />} />
+            <Route path="/saved-properties" element={<SavedPropertiesPage />} />
+          </Route>
 
-            {/* Authenticated Routes (Both Roles) */}
-            <Route element={<RoleRoute allowedRoles={[UserRole.STUDENT, UserRole.OWNER]} />}>
-              <Route path="/notifications" element={<NotificationPage />} />
-            </Route>
+          {/* Owner-Only Routes */}
+          <Route element={<RoleRoute allowedRoles={[UserRole.OWNER]} />}>
+            <Route path="/owner/dashboard" element={<OwnerDashboard />} />
+            <Route path="/owner/holds" element={<OwnerHoldsPage />} />
+            <Route path="/owner/properties" element={<ManagePropertiesPage />} />
+            <Route path="/owner/properties/create" element={<CreatePropertyPage />} />
+            <Route path="/owner/properties/:id/edit" element={<EditPropertyPage />} />
+          </Route>
+
+          {/* Authenticated Routes (Both Roles) */}
+          <Route element={<RoleRoute allowedRoles={[UserRole.STUDENT, UserRole.OWNER]} />}>
+            <Route path="/notifications" element={<NotificationPage />} />
           </Route>
         </Route>
-
-        {/* Fallback Route */}
-        <Route path="*" element={<PlaceholderNotFound />} />
       </Route>
     </Routes>
   );

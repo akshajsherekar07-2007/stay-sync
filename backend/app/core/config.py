@@ -88,7 +88,7 @@ class Settings(BaseSettings):
 
     # ── Supabase Storage (Phase 1.5) ─────────────────────────
     SUPABASE_STORAGE_BUCKET: str = "property-images"
-    MAX_IMAGE_SIZE_BYTES: int = 5_242_880  # 5 MB
+    MAX_IMAGE_SIZE_BYTES: int = 52_428_800  # 50 MB
     ALLOWED_IMAGE_MIMES: str = "image/jpeg,image/png,image/webp"
 
     # ── Computed properties ───────────────────────────────────

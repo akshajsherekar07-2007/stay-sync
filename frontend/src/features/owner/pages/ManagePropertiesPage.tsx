@@ -79,18 +79,20 @@ export default function ManagePropertiesPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto px-2">
-      {/* Header and Add Button */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-10 w-full mx-auto pb-8">
+      {/* Welcome Banner */}
+      <div className="relative overflow-hidden mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">My Properties</h1>
-          <p className="text-text-secondary text-sm mt-1">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text mb-2">
+            My Properties
+          </h1>
+          <p className="text-sm text-text-secondary">
             Manage your listed student accommodations, track bed holds, and toggle status configurations.
           </p>
         </div>
-        <Button asChild className="flex items-center gap-1.5 self-start sm:self-auto font-semibold">
+        <Button asChild size="lg" className="shrink-0 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5">
           <Link to="/owner/properties/create">
-            <Plus className="h-4 w-4" />
+            <Plus className="h-5 w-5 mr-2" />
             Add New Property
           </Link>
         </Button>
@@ -108,48 +110,49 @@ export default function ManagePropertiesPage() {
           }
         />
       ) : (
-        <div className="space-y-4">
-          {ownedProperties.map((property) => (
-            <Card key={property.id} className="overflow-hidden border border-border bg-card shadow-xs transition-colors hover:border-border/80">
-              <CardContent className="p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+        <div className="bg-white rounded-2xl border border-border/60 shadow-sm overflow-hidden">
+          <div className="divide-y divide-border/40">
+            {ownedProperties.map((property) => (
+              <div key={property.id} className="p-4 sm:p-6 hover:bg-bg-secondary/30 transition-colors flex flex-col lg:flex-row lg:items-center justify-between gap-6 group">
                 
                 {/* Visual Thumbnail & Metadata */}
-                <div className="flex gap-4 items-start sm:items-center min-w-0">
-                  <div className="relative w-20 h-16 sm:w-24 sm:h-18 rounded-lg overflow-hidden bg-bg-tertiary shrink-0 border border-border/40">
+                <div className="flex gap-4 sm:gap-6 items-start sm:items-center min-w-0">
+                  <div className="relative w-24 h-16 sm:w-32 sm:h-20 rounded-xl overflow-hidden bg-bg-secondary shrink-0 border border-border/40 shadow-xs">
                     {property.primary_image_url ? (
                       <img src={property.primary_image_url} alt="" className="h-full w-full object-cover" />
                     ) : (
-                      <Building2 className="h-6 w-6 text-text-tertiary m-auto absolute inset-0" />
+                      <Building2 className="h-8 w-8 text-text-tertiary m-auto absolute inset-0" />
                     )}
                   </div>
                   
-                  <div className="min-w-0 space-y-1">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <h3 className="text-base font-bold text-text truncate max-w-sm sm:max-w-md">
+                  <div className="min-w-0 space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-lg font-bold text-text truncate">
                         {property.name}
                       </h3>
                       {getStatusBadge(property.status)}
                     </div>
                     
-                    <div className="flex items-center gap-1 text-xs text-text-secondary">
-                      <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
+                    <div className="flex items-center gap-1.5 text-sm text-text-secondary">
+                      <MapPin className="h-4 w-4 text-primary shrink-0" />
                       <span className="truncate">{property.city}, {property.state}</span>
                     </div>
 
-                    <div className="text-xs text-text-secondary flex gap-3 flex-wrap">
+                    <div className="text-sm text-text-secondary flex gap-4 flex-wrap">
                       <span>Rent Range: <span className="font-semibold text-text">₹{property.min_price?.toLocaleString("en-IN") || "N/A"}+</span></span>
-                      <span>Beds: <span className="font-semibold text-text">{property.available_beds} vacant / {property.total_beds} total</span></span>
+                      <span className="text-border">|</span>
+                      <span>Beds: <span className="font-semibold text-text">{property.available_beds}</span> vacant <span className="text-text-tertiary mx-1">/</span> {property.total_beds} total</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Operations / Actions */}
-                <div className="flex flex-wrap items-center gap-2 w-full md:w-auto border-t md:border-t-0 pt-3 md:pt-0 border-border/50 justify-end shrink-0">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full lg:w-auto pt-2 lg:pt-0 shrink-0">
                   {/* Public View Link */}
-                  <Button variant="outline" size="sm" asChild className="flex items-center gap-1">
+                  <Button variant="outline" size="sm" asChild className="flex items-center gap-1.5 bg-bg hover:bg-bg-secondary text-text-secondary hover:text-text">
                     <Link to={`/property/${property.id}`}>
                       <Eye className="h-4 w-4" />
-                      View Public
+                      View
                     </Link>
                   </Button>
 
@@ -157,10 +160,10 @@ export default function ManagePropertiesPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className={`flex items-center gap-1 cursor-pointer ${
+                    className={`flex items-center gap-1.5 cursor-pointer bg-bg ${
                       property.status === "active"
-                        ? "border-amber-500/30 text-amber-600 hover:bg-amber-500/5"
-                        : "border-emerald-500/30 text-emerald-600 hover:bg-emerald-500/5"
+                        ? "border-amber-500/30 text-amber-600 hover:bg-amber-500/5 hover:border-amber-500/50"
+                        : "border-emerald-500/30 text-emerald-600 hover:bg-emerald-500/5 hover:border-emerald-500/50"
                     }`}
                     onClick={() => handleToggleStatus(property.id, property.status)}
                     disabled={isUpdatingStatusId === property.id}
@@ -179,7 +182,7 @@ export default function ManagePropertiesPage() {
                   </Button>
 
                   {/* Edit details */}
-                  <Button variant="outline" size="sm" asChild className="flex items-center gap-1">
+                  <Button variant="outline" size="sm" asChild className="flex items-center gap-1.5 bg-bg hover:bg-bg-secondary text-text-secondary hover:text-text">
                     <Link to={`/owner/properties/${property.id}/edit`}>
                       <Edit className="h-4 w-4" />
                       Edit
@@ -189,17 +192,18 @@ export default function ManagePropertiesPage() {
                   {/* Soft Delete */}
                   <Button
                     variant="outline"
-                    size="sm"
-                    className="border-danger/30 text-danger hover:bg-danger/5 hover:text-danger cursor-pointer"
+                    size="icon"
+                    className="h-9 w-9 border-danger/30 text-danger hover:bg-danger/10 hover:border-danger/50 cursor-pointer bg-bg"
                     onClick={() => handleDelete(property.id)}
                     disabled={isDeletingId === property.id}
+                    title="Delete Property"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

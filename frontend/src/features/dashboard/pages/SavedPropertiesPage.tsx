@@ -44,7 +44,7 @@ export default function SavedPropertiesPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto px-2">
+    <div className="space-y-6 w-full mx-auto pb-8">
       {/* Header Section */}
       <div>
         <h1 className="text-3xl font-extrabold tracking-tight">Saved Properties</h1>
