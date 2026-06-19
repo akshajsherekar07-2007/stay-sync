@@ -1,169 +1,90 @@
 /* ═══════════════════════════════════════════════════════════════
-   StaySync — Trust & Shelter Design System
-   ═══════════════════════════════════════════════════════════════
-   
-   Single source of truth for all design tokens and base styles.
-   
-   ARCHITECTURE:
-   ┌─────────────────────────────────────────────────────────────┐
-   │  @theme { }       Tailwind v4 utility class generation     │
-   │                   ALL tokens live here so Tailwind can      │
-   │                   generate utilities (bg-*, text-*, shadow- │
-   │                   *, rounded-*, z-*, animate-*).            │
-   │                   Values MUST be concrete — hex, rgba, rem, │
-   │                   px — NEVER var() self-references.         │
-   ├─────────────────────────────────────────────────────────────┤
-   │  Base Styles      Reset, body, html, scrollbar, keyframes  │
-   └─────────────────────────────────────────────────────────────┘
-   
-   RULES:
-   1. ALL design tokens go in @theme — colors, shadows, radii,
-      z-index, animations. If Tailwind generates a utility for
-      it, it MUST be in @theme.
-   2. @theme values must be static — hex, rgba, rem, px.
-      NEVER use var() inside @theme (causes circular refs).
-   3. :root is only for non-Tailwind custom properties that
-      components read via var() in inline styles.
-   4. No scoped :root overrides that redefine design tokens.
-   5. Third-party overrides (Sonner, etc.) go in themes.css.
-   
-   ══════════════════════════════════════════════════════════════ */
+   StaySync — Trust & Shelter Design System (Vanilla CSS)
+   ═══════════════════════════════════════════════════════════════ */
 
-@import "tailwindcss";
 @import "./themes.css";
 
-
-/* ── TAILWIND v4 THEME ────────────────────────────────────────
-   Everything here generates Tailwind utility classes.
-   
-   Naming → Utility:
-     --color-primary      →  bg-primary, text-primary, border-primary
-     --color-bg           →  bg-bg
-     --shadow-md          →  shadow-md
-     --radius-lg          →  rounded-lg
-     --z-sticky           →  z-sticky
-     --animate-fade-in    →  animate-fade-in
-   ──────────────────────────────────────────────────────────── */
-@theme {
+/* ── DESIGN TOKENS ────────────────────────────────────────── */
+:root {
+  /* ═══ TYPOGRAPHY & SPACING ════════════════════════════════ */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --spacing: 0.25rem;
 
   /* ═══ COLORS ══════════════════════════════════════════════ */
+  --color-primary:       #0D9488;
+  --color-primary-light: #14B8A6;
+  --color-primary-dark:  #0F766E;
 
-  /* ── Brand / Primary ──────────────────────────────────────── */
-  --color-primary:       #0D9488;    /* Emerald Teal — CTA, active, focus       */
-  --color-primary-light: #14B8A6;    /* Lighter teal — hover states             */
-  --color-primary-dark:  #0F766E;    /* Darker teal — pressed/active states     */
-
-  /* ── Semantic / Feedback ──────────────────────────────────── */
-  --color-success:       #22C55E;    /* Available / Vacant = Green              */
+  --color-success:       #22C55E;
   --color-success-light: #4ade80;
-  --color-warning:       #F59E0B;    /* Held = Amber                            */
+  --color-warning:       #F59E0B;
   --color-warning-light: #fbbf24;
-  --color-danger:        #EF4444;    /* Occupied = Red                          */
+  --color-danger:        #EF4444;
   --color-danger-light:  #f87171;
   --color-info:          #0D9488;
   --color-info-light:    #F1F5F9;
 
-  /* ── Status (Bed Availability) ────────────────────────────── */
   --color-vacant:   #22C55E;
   --color-held:     #F59E0B;
   --color-occupied: #EF4444;
   --color-waitlist: #0D9488;
 
-  /* ── Backgrounds (60% Dominant) ───────────────────────────── */
-  --color-bg:           #F8FAFC;     /* Clean Pearl — main page background      */
-  --color-bg-secondary: #F1F5F9;     /* Slate 100 — subtle structural contrast  */
-  --color-bg-tertiary:  #E2E8F0;     /* Slate 200 — dividers, skeleton base     */
+  --color-bg:           #F8FAFC;
+  --color-bg-secondary: #F1F5F9;
+  --color-bg-tertiary:  #E2E8F0;
 
-  /* ── Text (30% Structure) ─────────────────────────────────── */
-  --color-text:           #0F172A;   /* Deep Navy — headings, primary text      */
-  --color-text-secondary: #475569;   /* Slate 600 — labels, secondary copy      */
-  --color-text-tertiary:  #64748B;   /* Slate 500 — hints, placeholder          */
+  --color-text:           #0F172A;
+  --color-text-secondary: #475569;
+  --color-text-tertiary:  #64748B;
 
-  /* ── Borders (Reduced 60%+) ───────────────────────────────── */
-  --color-border:       rgba(15, 23, 42, 0.08);  /* Near-invisible hairlines   */
-  --color-border-hover: rgba(15, 23, 42, 0.15);  /* Hover emphasis             */
+  --color-border:       rgba(15, 23, 42, 0.08);
+  --color-border-hover: rgba(15, 23, 42, 0.15);
 
-  /* ── Surfaces (Cards, Inputs) ─────────────────────────────── */
   --color-card:         #FFFFFF;
   --color-card-hover:   #FFFFFF;
   --color-input:        #FFFFFF;
-  --color-input-border: #CBD5E1;     /* Slate 300 — visible input edges         */
+  --color-input-border: #CBD5E1;
 
-  /* ── Navigation / Sidebar ─────────────────────────────────── */
   --color-sidebar-bg:        #0F172A;
   --color-sidebar-text:      #E2E8F0;
   --color-sidebar-hover:     #1E293B;
   --color-sidebar-active:    #0D9488;
   --color-sidebar-active-bg: rgba(13, 148, 136, 0.1);
 
-
   /* ═══ SHADOWS ═════════════════════════════════════════════ */
-  /* Used via: shadow-xs, shadow-sm, shadow-md, shadow-lg, shadow-xl */
-
   --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.03);
-  --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.05),
-               0 1px 2px -1px rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.05),
-               0 2px 4px -2px rgba(15, 23, 42, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.07),
-               0 4px 6px -4px rgba(15, 23, 42, 0.07);
-  --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1),
-               0 8px 10px -6px rgba(15, 23, 42, 0.1);
-
+  --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.07), 0 4px 6px -4px rgba(15, 23, 42, 0.07);
+  --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
 
   /* ═══ BORDER RADIUS ═══════════════════════════════════════ */
-  /* Used via: rounded-sm, rounded (default), rounded-lg, rounded-xl */
-
-  --radius-sm: 0.75rem;     /* 12px — buttons, badges, inputs             */
-  --radius:    1rem;         /* 16px — default cards, panels               */
-  --radius-lg: 1.25rem;     /* 20px — large panels, modals                */
-  --radius-xl: 1.5rem;      /* 24px — premium hero cards                  */
-
+  --radius-sm: 0.375rem;
+  --radius:    0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
 
   /* ═══ Z-INDEX SCALE ═══════════════════════════════════════ */
-  /* Used via: z-dropdown, z-sticky, z-overlay, z-modal, z-toast */
-
   --z-dropdown: 50;
   --z-sticky:   100;
   --z-overlay:  200;
   --z-modal:    300;
   --z-toast:    400;
 
-
-  /* ═══ ANIMATIONS ══════════════════════════════════════════ */
-  /* Used via: animate-fade-in, animate-slide-up, etc. */
-
-  --animate-fade-in:      fadeIn 0.2s ease-out;
-  --animate-slide-up:     slideUp 0.3s ease-out;
-  --animate-slide-down:   slideDown 0.3s ease-out;
-  --animate-spin-slow:    spin 1.2s linear infinite;
-  --animate-pulse-subtle: pulseSubtle 2s ease-in-out infinite;
-  --animate-skeleton:     skeleton 1.5s ease-in-out infinite;
-}
-
-
-/* ── RUNTIME-ONLY CUSTOM PROPERTIES ───────────────────────────
-   These are NOT Tailwind utilities. They are consumed via var()
-   in component inline styles or custom CSS classes only.
-   Keep this section minimal — most things belong in @theme.
-   ──────────────────────────────────────────────────────────── */
-:root {
+  /* ═══ OTHER UTILS ═════════════════════════════════════════ */
   --ring-color:  #0D9488;
   --ring-offset: 2px;
-
   --transition-fast: 150ms ease;
   --transition-base: 200ms ease;
   --transition-slow: 300ms ease;
 }
 
-
-/* ── BASE STYLES ──────────────────────────────────────────────
-   Global resets, body font, root layout, scrollbar.
-   ──────────────────────────────────────────────────────────── */
-* {
+/* ── MODERN RESET ───────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 html {
@@ -173,24 +94,43 @@ html {
 }
 
 body {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans);
   font-feature-settings: "cv11", "ss01";
   background-color: var(--color-bg);
   color: var(--color-text);
   min-height: 100vh;
+  line-height: 1.5;
 }
 
-/* ── Typography Adjustments ─────────────────────────────────── */
 h1, h2, h3, h4, h5, h6 {
   color: var(--color-text);
+  line-height: 1.2;
 }
-
 h1 { font-weight: 800; letter-spacing: -0.04em; }
 h2 { font-weight: 700; letter-spacing: -0.03em; }
 h3 { font-weight: 700; letter-spacing: -0.025em; }
 h4 { font-weight: 600; letter-spacing: -0.02em; }
 
-/* ── Text Selection ────────────────────────────────────────── */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+input, textarea, select {
+  font-family: inherit;
+}
+
 ::selection {
   background-color: rgba(13, 148, 136, 0.15);
   color: #0F172A;
@@ -202,25 +142,15 @@ h4 { font-weight: 600; letter-spacing: -0.02em; }
   flex-direction: column;
 }
 
-/* ── Custom Scrollbar ───────────────────────────────────────── */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
   background: rgba(15, 23, 42, 0.12);
   border-radius: 3px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(15, 23, 42, 0.25);
-}
+::-webkit-scrollbar-thumb:hover { background: rgba(15, 23, 42, 0.25); }
 
-
-/* ── KEYFRAME ANIMATIONS ──────────────────────────────────────
-   Referenced by @theme --animate-* values above.
-   ──────────────────────────────────────────────────────────── */
+/* ── KEYFRAME ANIMATIONS ────────────────────────────────────── */
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -248,19 +178,4 @@ h4 { font-weight: 600; letter-spacing: -0.02em; }
 @keyframes skeleton {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
-}
-
-
-/* ── CUSTOM UTILITY CLASSES ───────────────────────────────────
-   Used alongside Tailwind utilities in components.
-   ──────────────────────────────────────────────────────────── */
-.skeleton-pulse {
-  background: linear-gradient(
-    90deg,
-    #F1F5F9 25%,
-    #E2E8F0 50%,
-    #F1F5F9 75%
-  );
-  background-size: 200% 100%;
-  animation: skeleton 1.5s ease-in-out infinite;
 }

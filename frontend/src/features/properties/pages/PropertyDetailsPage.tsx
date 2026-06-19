@@ -34,6 +34,7 @@ import { LoadingSpinner } from "../../../components/common/LoadingSpinner";
 import { PropertyDetailsSkeleton } from "../../../components/common/PropertyDetailsSkeleton";
 import { RoomCard } from "../components/RoomCard";
 import { BedCard } from "../components/BedCard";
+import styles from "./PropertyDetailsPage.module.css";
 
 export default function PropertyDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -181,14 +182,14 @@ export default function PropertyDetailsPage() {
 
   if (isError || !property) {
     return (
-      <div className="mx-auto max-w-md py-32 text-center px-4">
-        <AlertTriangle className="mx-auto h-12 w-12 text-amber-500 mb-6" />
-        <h2 className="text-3xl font-extrabold text-text tracking-tight">Property Not Found</h2>
-        <p className="mt-3 text-text-secondary leading-relaxed">
+      <div className={styles.errorState}>
+        <AlertTriangle className={styles.errorIcon} />
+        <h2 className={styles.errorTitle}>Property Not Found</h2>
+        <p className={styles.errorDesc}>
           The property you are looking for does not exist or has been removed.
         </p>
-        <div className="mt-8">
-          <Button asChild className="h-12 px-8">
+        <div className={styles.errorAction}>
+          <Button asChild className={styles.errorBtn}>
             <Link to="/properties">Back to Listings</Link>
           </Button>
         </div>
@@ -214,46 +215,46 @@ export default function PropertyDetailsPage() {
   const propertyAmenities = getMockedAmenities();
 
   return (
-    <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 py-8 md:py-12 w-full bg-bg text-text animate-fade-in">
+    <div className={styles.container}>
       {/* Header Section */}
-      <div className="mb-6 md:mb-8">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-text mb-4 leading-tight">
+      <div className={styles.header}>
+        <h1 className={styles.title}>
           {property.name}
         </h1>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-text-secondary font-medium">
-            <div className="flex items-center gap-1.5">
-              <MapPin className="h-4 w-4 text-primary shrink-0" />
-              <span className="underline decoration-border underline-offset-4 hover:decoration-text transition-colors cursor-pointer">
+        <div className={styles.headerMeta}>
+          <div className={styles.metaInfo}>
+            <div className={styles.location}>
+              <MapPin className={styles.locationIcon} />
+              <span className={styles.locationText}>
                 {property.city}, {property.state}
               </span>
             </div>
-            <span className="hidden sm:inline text-border">•</span>
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="capitalize text-xs tracking-wider font-bold bg-white shadow-sm px-2.5 py-0.5 border-border/60">
+            <span className={styles.metaDot}>•</span>
+            <div className={styles.badges}>
+              <Badge variant="outline" className={styles.badge}>
                 {property.property_type}
               </Badge>
-              <Badge variant="outline" className="capitalize text-xs tracking-wider font-bold bg-white shadow-sm px-2.5 py-0.5 border-border/60">
+              <Badge variant="outline" className={styles.badge}>
                 {property.gender_preference === "coed" ? "Co-ed" : property.gender_preference}
               </Badge>
               {property.is_verified && (
-                <Badge variant="success" className="flex items-center gap-1 text-xs tracking-wider font-bold shadow-sm px-2.5 py-0.5">
-                  <ShieldCheck className="h-3.5 w-3.5" />
+                <Badge variant="success" className={styles.verifiedBadge}>
+                  <ShieldCheck className={styles.verifiedIcon} />
                   Verified
                 </Badge>
               )}
             </div>
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className={styles.actions}>
             <Button
               variant="outline"
               size="sm"
-              className="flex items-center gap-2 h-10 px-4 rounded-xl border-border/60 shadow-sm hover:shadow-md bg-white transition-all font-semibold"
+              className={styles.saveBtn}
               onClick={handleToggleSave}
               disabled={isSaving}
             >
-              <Heart className={`h-4 w-4 transition-colors ${isSaved ? "fill-danger text-danger" : "text-text"}`} />
+              <Heart className={`${styles.saveIcon} ${isSaved ? styles.saveIconSaved : ""}`} />
               {isSaved ? "Saved" : "Save"}
             </Button>
           </div>
@@ -261,55 +262,54 @@ export default function PropertyDetailsPage() {
       </div>
 
       {/* Airbnb-style Masonry Image Gallery */}
-      <div className="grid grid-cols-4 grid-rows-2 gap-3 h-[300px] sm:h-[400px] lg:h-[500px] rounded-3xl overflow-hidden mb-12 shadow-sm ring-1 ring-border/30">
+      <div className={styles.gallery}>
         {images.length > 0 ? (
           <>
             {/* Main large image */}
-            <div className="col-span-4 row-span-2 sm:col-span-2 sm:row-span-2 relative cursor-pointer group bg-bg-secondary">
+            <div className={styles.mainImageWrapper}>
               <img
                 src={images[activeImageIndex]?.url}
                 alt={images[activeImageIndex]?.alt_text || property.name}
-                className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                className={styles.galleryImage}
               />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+              <div className={styles.imageOverlay} />
             </div>
             {/* 4 smaller images on the right (hidden on mobile) */}
             {images.slice(1, 5).map((img, idx) => (
-              <div key={img.id} className="hidden sm:block relative col-span-1 row-span-1 cursor-pointer group overflow-hidden bg-bg-secondary">
+              <div key={img.id} className={styles.subImageWrapper} onClick={() => setActiveImageIndex(idx + 1)}>
                 <img
                   src={img.url}
                   alt={img.alt_text || ""}
-                  className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                  onClick={() => setActiveImageIndex(idx + 1)}
+                  className={styles.galleryImage}
                 />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                <div className={styles.imageOverlay} />
               </div>
             ))}
             {/* Fallback if less than 5 images */}
             {Array.from({ length: Math.max(0, 4 - (images.length - 1)) }).map((_, i) => (
-              <div key={`empty-${i}`} className="hidden sm:block relative col-span-1 row-span-1 overflow-hidden bg-bg-tertiary border border-border/20">
-                <div className="flex h-full w-full items-center justify-center">
-                  <ImageIcon className="h-8 w-8 text-text-tertiary/30" />
+              <div key={`empty-${i}`} className={styles.emptySubImage}>
+                <div className={styles.emptySubIconWrapper}>
+                  <ImageIcon className={styles.emptySubIcon} />
                 </div>
               </div>
             ))}
           </>
         ) : (
-          <div className="col-span-4 row-span-2 flex h-full w-full flex-col items-center justify-center text-text-tertiary bg-bg-tertiary">
-            <Building className="h-16 w-16 stroke-[1.2] mb-3 text-text-tertiary/50" />
-            <span className="text-sm font-medium">No images uploaded for this listing</span>
+          <div className={styles.noImagesWrapper}>
+            <Building className={styles.noImagesIcon} />
+            <span className={styles.noImagesText}>No images uploaded for this listing</span>
           </div>
         )}
       </div>
 
       {/* Main Content Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-12 lg:gap-16">
+      <div className={styles.contentLayout}>
         {/* Left Column: Details */}
-        <div className="space-y-12">
+        <div className={styles.leftColumn}>
           {/* About Section */}
           <section>
-            <h2 className="text-2xl font-bold tracking-tight mb-6">About this space</h2>
-            <div className="prose prose-sm sm:prose-base prose-neutral text-text-secondary leading-relaxed whitespace-pre-wrap">
+            <h2 className={styles.sectionTitle}>About this space</h2>
+            <div className={styles.description}>
               {property.description || "No description provided for this accommodation listing."}
             </div>
           </section>
@@ -318,29 +318,29 @@ export default function PropertyDetailsPage() {
 
           {/* Amenities Grid */}
           <section>
-            <h2 className="text-2xl font-bold tracking-tight mb-6">What this place offers</h2>
+            <h2 className={styles.sectionTitle}>What this place offers</h2>
             {propertyAmenities.length === 0 ? (
-              <p className="text-sm text-text-secondary">Standard PG essentials are provided.</p>
+              <p className={styles.description}>Standard PG essentials are provided.</p>
             ) : (
-              <div className="grid grid-cols-2 gap-y-6 gap-x-8">
+              <div className={styles.amenitiesGrid}>
                 {propertyAmenities.map((amenity) => (
-                  <div key={amenity.id} className="flex items-center gap-4">
-                    <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-bg-secondary text-text border border-border/40">
+                  <div key={amenity.id} className={styles.amenityItem}>
+                    <div className={styles.amenityIconWrapper}>
                       {amenity.icon === "wifi" ? (
-                        <Wifi className="h-5 w-5" />
+                        <Wifi className={styles.amenityIcon} />
                       ) : amenity.icon === "tv" ? (
-                        <Tv className="h-5 w-5" />
+                        <Tv className={styles.amenityIcon} />
                       ) : amenity.icon === "food" ? (
-                        <Coffee className="h-5 w-5" />
+                        <Coffee className={styles.amenityIcon} />
                       ) : amenity.icon === "security" ? (
-                        <Shield className="h-5 w-5" />
+                        <Shield className={styles.amenityIcon} />
                       ) : (
-                        <CheckCircle2 className="h-5 w-5" />
+                        <CheckCircle2 className={styles.amenityIcon} />
                       )}
                     </div>
-                    <div className="flex flex-col">
-                      <span className="text-sm font-semibold text-text">{amenity.name}</span>
-                      <span className="text-[11px] text-text-secondary capitalize font-medium">{amenity.category}</span>
+                    <div className={styles.amenityTextWrapper}>
+                      <span className={styles.amenityName}>{amenity.name}</span>
+                      <span className={styles.amenityCategory}>{amenity.category}</span>
                     </div>
                   </div>
                 ))}
@@ -351,23 +351,23 @@ export default function PropertyDetailsPage() {
           <Separator className="bg-border/60" />
 
           {/* ── Hierarchy Selector (Linear Style) ── */}
-          <section>
-            <h2 className="text-2xl font-bold tracking-tight mb-6 flex items-center gap-2">
+          <section id="bed-selection-section">
+            <h2 className={styles.sectionTitle}>
               <BedDouble className="h-6 w-6 text-primary" />
               Select your bed
             </h2>
             
-            <div className="space-y-8 bg-bg-secondary/30 p-1 rounded-3xl">
+            <div className={styles.selectorContainer}>
               {floors.length === 0 ? (
-                <div className="text-center py-12 border border-dashed border-border rounded-2xl bg-white shadow-sm">
-                  <Layers className="mx-auto h-10 w-10 text-text-tertiary mb-3" />
-                  <p className="text-sm text-text-secondary font-medium">No inventory configured for this property.</p>
+                <div className={styles.emptyFloors}>
+                  <Layers className={styles.emptyFloorsIcon} />
+                  <p className={styles.emptyFloorsText}>No inventory configured for this property.</p>
                 </div>
               ) : (
                 <>
                   {/* Floor Level Selector */}
-                  <div className="space-y-4">
-                    <div className="flex flex-wrap gap-2 p-1.5 bg-bg/50 rounded-2xl w-fit">
+                  <div>
+                    <div className={styles.floorTabs}>
                       {floors.map((floor) => (
                         <button
                           key={floor.id}
@@ -375,11 +375,7 @@ export default function PropertyDetailsPage() {
                             setSelectedFloorId(floor.id);
                             setSelectedRoomId(null);
                           }}
-                          className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 cursor-pointer ${
-                            selectedFloorId === floor.id
-                              ? "bg-white text-text shadow-sm ring-1 ring-border/50 scale-100"
-                              : "text-text-secondary hover:text-text hover:bg-white/50"
-                          }`}
+                          className={`${styles.floorTab} ${selectedFloorId === floor.id ? styles.floorTabActive : styles.floorTabInactive}`}
                         >
                           {floor.name || `Floor ${floor.floor_number}`}
                         </button>
@@ -388,15 +384,15 @@ export default function PropertyDetailsPage() {
                   </div>
 
                   {/* Room Level Selector */}
-                  <div className="space-y-4 pt-2">
+                  <div className={styles.roomsContainer}>
                     {isRoomsLoading ? (
-                      <div className="flex justify-center items-center py-10">
+                      <div className={styles.loadingSpinner}>
                         <LoadingSpinner size="md" />
                       </div>
                     ) : rooms.length === 0 ? (
-                      <p className="text-sm text-text-tertiary italic p-6 bg-white rounded-xl border border-border/40">No rooms listed on this floor.</p>
+                      <p className={styles.emptyRooms}>No rooms listed on this floor.</p>
                     ) : (
-                      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
+                      <div className={styles.roomsGrid}>
                         {rooms.map((room) => (
                           <RoomCard
                             key={room.id}
@@ -411,15 +407,15 @@ export default function PropertyDetailsPage() {
 
                   {/* Bed Level Details */}
                   {selectedRoomId && (
-                    <div className="space-y-4 pt-6 mt-4 border-t border-border/60">
+                    <div className={styles.bedsContainer}>
                       {isBedsLoading ? (
-                        <div className="flex justify-center items-center py-8">
+                        <div className={styles.loadingSpinner}>
                           <LoadingSpinner size="md" />
                         </div>
                       ) : beds.length === 0 ? (
-                        <p className="text-sm text-text-tertiary italic">No beds configured for this room.</p>
+                        <p className={styles.emptyRooms}>No beds configured for this room.</p>
                       ) : (
-                        <div className="grid gap-4 sm:grid-cols-2">
+                        <div className={styles.bedsGrid}>
                           {beds.map((bed) => {
                             const myActiveHold = myHolds.find(
                               (h) => h.bed_id === bed.id && (h.status === HoldStatus.PENDING || h.status === HoldStatus.APPROVED)
@@ -448,9 +444,9 @@ export default function PropertyDetailsPage() {
             <>
               <Separator className="bg-border/60" />
               <section>
-                <h2 className="text-2xl font-bold tracking-tight mb-6">House Rules</h2>
-                <div className="p-6 rounded-2xl bg-bg-secondary border border-border/60">
-                  <p className="text-sm text-text-secondary leading-relaxed whitespace-pre-wrap">
+                <h2 className={styles.sectionTitle}>House Rules</h2>
+                <div className={styles.rulesCard}>
+                  <p className={styles.rulesText}>
                     {property.rules}
                   </p>
                 </div>
@@ -460,42 +456,42 @@ export default function PropertyDetailsPage() {
         </div>
 
         {/* Right Column: Floating Booking Sidebar */}
-        <div className="relative">
-          <div className="sticky top-28 space-y-6">
+        <div className={styles.sidebar}>
+          <div className={styles.sidebarSticky}>
             {/* Reservation Card (Airbnb / Stripe style) */}
-            <Card className="border-0 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.08)] ring-1 ring-border/40 rounded-3xl overflow-hidden">
-              <CardContent className="p-8 space-y-8">
-                <div className="flex flex-col">
-                  <span className="text-[13px] font-bold tracking-wider uppercase text-text-secondary mb-2">Monthly Rent</span>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-extrabold text-text tracking-tight">
+            <Card className={styles.bookingCard}>
+              <CardContent className={styles.bookingContent}>
+                <div>
+                  <span className={styles.priceLabel}>Monthly Rent</span>
+                  <div className={styles.priceWrapper}>
+                    <span className={styles.priceAmount}>
                       {property.min_price ? `₹${property.min_price.toLocaleString("en-IN")}` : "N/A"}
                     </span>
-                    <span className="text-base font-medium text-text-secondary">/ mo</span>
+                    <span className={styles.priceUnit}>/ mo</span>
                   </div>
                 </div>
 
-                <div className="space-y-3 bg-bg-secondary/50 p-5 rounded-2xl border border-border/40">
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-text-secondary font-medium">Availability</span>
-                    <span className="font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded text-xs">{property.available_beds} beds left</span>
+                <div className={styles.statsBox}>
+                  <div className={styles.statRow}>
+                    <span className={styles.statLabel}>Availability</span>
+                    <span className={styles.statValueAvailable}>{property.available_beds} beds left</span>
                   </div>
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-text-secondary font-medium">Total Capacity</span>
-                    <span className="font-semibold text-text">{property.total_beds} beds</span>
+                  <div className={styles.statRow}>
+                    <span className={styles.statLabel}>Total Capacity</span>
+                    <span className={styles.statValueTotal}>{property.total_beds} beds</span>
                   </div>
                 </div>
 
-                <div className="space-y-3">
+                <div className={styles.bookingAction}>
                   <Button 
-                    className="w-full h-14 text-base font-bold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all hover:-translate-y-0.5 active:translate-y-0"
+                    className={styles.selectBedBtn}
                     onClick={() => {
                       document.getElementById('bed-selection-section')?.scrollIntoView({ behavior: 'smooth' });
                     }}
                   >
                     Select a Bed
                   </Button>
-                  <p className="text-[11px] text-center text-text-tertiary font-medium">
+                  <p className={styles.bookingNotice}>
                     You won't be charged yet
                   </p>
                 </div>
@@ -503,44 +499,44 @@ export default function PropertyDetailsPage() {
             </Card>
 
             {/* Contact Details Card */}
-            <Card className="border-0 bg-white shadow-sm ring-1 ring-border/40 rounded-2xl overflow-hidden">
-              <CardContent className="p-6 space-y-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <Clock className="h-5 w-5 text-primary" />
-                  <h3 className="font-bold text-text">Contact Manager</h3>
+            <Card className={styles.contactCard}>
+              <CardContent className={styles.contactContent}>
+                <div className={styles.contactTitle}>
+                  <Clock className={styles.contactTitleIcon} />
+                  <h3 className={styles.contactTitleText}>Contact Manager</h3>
                 </div>
                 
                 {isAuthenticated ? (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-bg-secondary border border-border flex items-center justify-center">
-                        <Phone className="h-4 w-4 text-text-secondary" />
+                  <div className={styles.contactList}>
+                    <div className={styles.contactItem}>
+                      <div className={styles.contactIconWrapper}>
+                        <Phone className={styles.contactIcon} />
                       </div>
-                      <div className="flex flex-col">
-                        <span className="text-[11px] uppercase tracking-wider text-text-tertiary font-bold">Phone</span>
-                        <a href={`tel:${property.contact_phone}`} className="text-sm font-semibold hover:text-primary transition-colors">
+                      <div className={styles.contactTextWrapper}>
+                        <span className={styles.contactLabel}>Phone</span>
+                        <a href={`tel:${property.contact_phone}`} className={styles.contactLink}>
                           {property.contact_phone || "Not Provided"}
                         </a>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-bg-secondary border border-border flex items-center justify-center">
-                        <Mail className="h-4 w-4 text-text-secondary" />
+                    <div className={styles.contactItem}>
+                      <div className={styles.contactIconWrapper}>
+                        <Mail className={styles.contactIcon} />
                       </div>
-                      <div className="flex flex-col">
-                        <span className="text-[11px] uppercase tracking-wider text-text-tertiary font-bold">Email</span>
-                        <a href={`mailto:${property.contact_email}`} className="text-sm font-semibold hover:text-primary transition-colors">
+                      <div className={styles.contactTextWrapper}>
+                        <span className={styles.contactLabel}>Email</span>
+                        <a href={`mailto:${property.contact_email}`} className={styles.contactLink}>
                           {property.contact_email || "Not Provided"}
                         </a>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-bg-secondary border border-border/60 p-5 rounded-xl text-center space-y-4">
-                    <p className="text-xs text-text-secondary font-medium">
+                  <div className={styles.contactLocked}>
+                    <p className={styles.contactLockedText}>
                       Contact details are locked for guests to prevent spam.
                     </p>
-                    <Button size="sm" variant="default" asChild className="w-full h-10 rounded-lg">
+                    <Button size="sm" variant="default" asChild className={styles.contactLockedBtn}>
                       <Link to="/login">Sign in to view</Link>
                     </Button>
                   </div>

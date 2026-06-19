@@ -9,6 +9,7 @@ import { Button } from "../../../components/ui/Button";
 import { Input } from "../../../components/ui/Input";
 import { Badge } from "../../../components/ui/Badge";
 import { LoadingSpinner } from "../../../components/common/LoadingSpinner";
+import styles from "./HomePage.module.css";
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -39,50 +40,50 @@ export default function HomePage() {
   const featuredListings = data || [];
 
   return (
-    <div className="flex flex-col w-full pb-16 bg-bg text-text">
+    <div className={styles.container}>
       {/* ── Hero Section ── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/[0.06] via-primary-dark/[0.03] to-bg py-28 lg:py-40 px-4 sm:px-6 lg:px-8">
-        <div className="absolute inset-y-0 right-0 -z-10 w-full max-w-3xl opacity-20 dark:opacity-10 blur-3xl">
-          <div className="aspect-[1155/678] w-[72.1875rem] bg-gradient-to-tr from-primary to-primary-light" />
+      <section className={styles.heroSection}>
+        <div className={styles.heroBgWrapper}>
+          <div className={styles.heroBgShape} />
         </div>
 
-        <div className="mx-auto max-w-7xl text-center">
-          <Badge variant="outline" className="mb-6 animate-fade-in border-primary/20 text-primary bg-primary/5 px-4 py-1.5 text-xs tracking-wide">
+        <div className={styles.heroContent}>
+          <Badge variant="outline" className={styles.heroBadge}>
             ✨ Real-time Student Housing Reservations
           </Badge>
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl max-w-5xl mx-auto leading-[1.1]">
-            Premium Student Accommodations, <span className="bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">Simplified.</span>
+          <h1 className={styles.heroTitle}>
+            Premium Student Accommodations, <span className={styles.heroTitleHighlight}>Simplified.</span>
           </h1>
-          <p className="mt-8 text-lg sm:text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed">
+          <p className={styles.heroSubtitle}>
             StaySync connects students with verified high-quality PGs, hostels, and shared flats. Discover, save, and hold beds instantly in real-time.
           </p>
 
           {/* Search form bar */}
-          <form onSubmit={handleSearchSubmit} className="mt-12 max-w-2xl mx-auto flex flex-col sm:flex-row gap-3 p-2.5 rounded-2xl bg-card ring-1 ring-border/40 shadow-lg">
-            <div className="relative flex-grow">
-              <Search className="absolute left-3.5 top-3.5 h-5 w-5 text-text-tertiary" />
+          <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
+            <div className={styles.searchInputWrapper}>
+              <Search className={styles.searchIcon} />
               <Input
                 type="text"
                 placeholder="Search by city, state, or property name..."
-                className="pl-10 border-none bg-transparent shadow-none focus-visible:ring-0 h-12"
+                className={styles.searchInput}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button type="submit" size="lg" className="w-full sm:w-auto font-bold px-8">
+            <Button type="submit" size="lg" className={styles.searchBtn}>
               Search Stays
             </Button>
           </form>
 
           {/* Popular Cities */}
-          <div className="mt-10 flex flex-wrap justify-center gap-2 text-sm text-text-secondary">
+          <div className={styles.popularCities}>
             <span>Popular Cities:</span>
             {["Mumbai", "Delhi", "Bangalore", "Pune"].map((city) => (
               <button
                 key={city}
                 type="button"
                 onClick={() => navigate(`/properties?search=${encodeURIComponent(city)}`)}
-                className="font-medium text-primary hover:underline hover:text-primary-dark transition-colors cursor-pointer"
+                className={styles.cityBtn}
               >
                 {city}
               </button>
@@ -92,68 +93,66 @@ export default function HomePage() {
       </section>
 
       {/* ── Value Props / Features ── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-bg">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="flex flex-col items-center text-center p-8 bg-card rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-5">
-                <Shield className="h-7 w-7" />
-              </div>
-              <h3 className="text-lg font-bold">Verified Listings</h3>
-              <p className="mt-3 text-sm text-text-secondary leading-relaxed">
-                Every listed PG and flat undergoes verification checkpoints, ensuring security, safety, and amenities accuracy.
-              </p>
+      <section className={styles.featuresSection}>
+        <div className={styles.featuresGrid}>
+          <div className={styles.featureCard}>
+            <div className={styles.featureIconWrapper}>
+              <Shield className={styles.featureIcon} />
             </div>
-            <div className="flex flex-col items-center text-center p-8 bg-card rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-5">
-                <CheckCircle2 className="h-7 w-7" />
-              </div>
-              <h3 className="text-lg font-bold">Instant Bed Holds</h3>
-              <p className="mt-3 text-sm text-text-secondary leading-relaxed">
-                Secure your bed immediately with a live hold reservation while wrapping up document steps. No deposit loops.
-              </p>
+            <h3 className={styles.featureTitle}>Verified Listings</h3>
+            <p className={styles.featureDesc}>
+              Every listed PG and flat undergoes verification checkpoints, ensuring security, safety, and amenities accuracy.
+            </p>
+          </div>
+          <div className={styles.featureCard}>
+            <div className={styles.featureIconWrapper}>
+              <CheckCircle2 className={styles.featureIcon} />
             </div>
-            <div className="flex flex-col items-center text-center p-8 bg-card rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-5">
-                <Building className="h-7 w-7" />
-              </div>
-              <h3 className="text-lg font-bold">Flexible Formats</h3>
-              <p className="mt-3 text-sm text-text-secondary leading-relaxed">
-                Choose sharing types, PG amenities lists, and gender preferences. Tailored specifically for student workloads.
-              </p>
+            <h3 className={styles.featureTitle}>Instant Bed Holds</h3>
+            <p className={styles.featureDesc}>
+              Secure your bed immediately with a live hold reservation while wrapping up document steps. No deposit loops.
+            </p>
+          </div>
+          <div className={styles.featureCard}>
+            <div className={styles.featureIconWrapper}>
+              <Building className={styles.featureIcon} />
             </div>
+            <h3 className={styles.featureTitle}>Flexible Formats</h3>
+            <p className={styles.featureDesc}>
+              Choose sharing types, PG amenities lists, and gender preferences. Tailored specifically for student workloads.
+            </p>
           </div>
         </div>
       </section>
 
       {/* ── Featured Properties ── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10">
+      <section className={styles.propertiesSection}>
+        <div className={styles.propertiesContainer}>
+          <div className={styles.propertiesHeader}>
             <div>
-              <h2 className="text-3xl font-extrabold tracking-tight">Featured Accommodations</h2>
-              <p className="mt-2 text-text-secondary">Handpicked premium properties with live bed availability</p>
+              <h2 className={styles.propertiesTitle}>Featured Accommodations</h2>
+              <p className={styles.propertiesSubtitle}>Handpicked premium properties with live bed availability</p>
             </div>
-            <Button variant="outline" asChild className="mt-4 sm:mt-0 font-medium flex items-center gap-1 group">
+            <Button variant="outline" asChild className={styles.browseBtn}>
               <Link to="/properties">
                 Browse All
-                <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                <ChevronRight className={styles.browseBtnIcon} />
               </Link>
             </Button>
           </div>
 
           {isLoading ? (
-            <div className="flex justify-center items-center py-20">
+            <div className={styles.loadingWrapper}>
               <LoadingSpinner size="lg" />
             </div>
           ) : featuredListings.length === 0 ? (
-            <div className="text-center py-16 border border-dashed border-border rounded-xl bg-card">
-              <Building className="mx-auto h-12 w-12 text-text-tertiary mb-3" />
-              <h3 className="text-lg font-semibold">No active listings available</h3>
-              <p className="text-text-secondary text-sm mt-1">Check back later or check draft properties.</p>
+            <div className={styles.emptyState}>
+              <Building className={styles.emptyIcon} />
+              <h3 className={styles.emptyTitle}>No active listings available</h3>
+              <p className={styles.emptyDesc}>Check back later or check draft properties.</p>
             </div>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className={styles.propertiesGrid}>
               {featuredListings.map((property) => (
                 <Card key={property.id} className="group overflow-hidden border-border bg-card shadow-sm hover:shadow-md transition-shadow">
                   {/* Property Image Cover */}
@@ -230,15 +229,15 @@ export default function HomePage() {
       </section>
 
       {/* ── CTA Portal Banner ── */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-10">
-        <div className="rounded-2xl bg-gradient-to-r from-primary to-primary-dark p-8 sm:p-12 text-white shadow-xl text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent pointer-events-none" />
-          <h2 className="text-3xl font-extrabold tracking-tight">Are you a property manager?</h2>
-          <p className="mt-4 text-lg text-primary-light max-w-2xl mx-auto leading-relaxed">
+      <section className={styles.ctaSection}>
+        <div className={styles.ctaCard}>
+          <div className={styles.ctaBg} />
+          <h2 className={styles.ctaTitle}>Are you a property manager?</h2>
+          <p className={styles.ctaDesc}>
             Reach thousands of college students. List your hostels, PGs, or apartments on StaySync, and manage bookings and holds seamlessly.
           </p>
-          <div className="mt-8 flex justify-center gap-4">
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/15 cursor-pointer bg-transparent" asChild>
+          <div className={styles.ctaActions}>
+            <Button size="lg" variant="outline" className={styles.ctaBtn} asChild>
               <Link to="/register?role=owner">List Your Stays</Link>
             </Button>
           </div>

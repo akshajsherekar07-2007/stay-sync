@@ -3,6 +3,7 @@ import { MapPin, Building } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/Card";
 import { Badge } from "../../../components/ui/Badge";
 import type { PropertyListItem } from "../../../types/property";
+import styles from "./PropertyCard.module.css";
 
 interface PropertyCardProps {
   property: PropertyListItem;
@@ -17,80 +18,80 @@ export function PropertyCard({ property }: PropertyCardProps) {
   const isAvailable = property.available_beds > 0;
 
   return (
-    <Link to={`/property/${property.id}`} className="group block h-full outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-2xl active:scale-[0.98] transition-all duration-300">
-      <Card className="overflow-hidden border-0 bg-white ring-1 ring-border/40 shadow-sm group-hover:shadow-2xl group-hover:-translate-y-1 transition-all duration-300 flex flex-col h-full rounded-2xl">
+    <Link to={`/property/${property.id}`} className={styles.link}>
+      <Card className={styles.card}>
         {/* Cover image area - Airbnb Style (4/3 aspect ratio) */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-bg-tertiary">
+        <div className={styles.imageArea}>
           {property.primary_image_url ? (
             <img
               src={property.primary_image_url}
               alt={property.name}
-              className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              className={styles.image}
             />
           ) : (
-            <div className="flex h-full w-full flex-col items-center justify-center text-text-tertiary bg-bg-secondary">
-              <Building className="h-10 w-10 stroke-[1.5] mb-2 text-text-tertiary/50" />
+            <div className={styles.emptyImage}>
+              <Building className={styles.emptyIcon} />
             </div>
           )}
           
           {/* Subtle gradient overlay at the top for badge legibility */}
-          <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/40 to-transparent pointer-events-none" />
+          <div className={styles.gradientOverlay} />
 
           {/* Badges */}
-          <div className="absolute top-4 left-4 flex flex-col gap-2 z-10 items-start">
-            <Badge className="capitalize font-semibold text-xs tracking-wide shadow-sm backdrop-blur-md bg-white/90 text-text border-none px-2.5 py-1">
+          <div className={styles.badgesTopLeft}>
+            <div className={styles.typeBadge}>
               {property.property_type}
-            </Badge>
+            </div>
           </div>
           
-          <div className="absolute top-4 right-4 flex z-10">
-            <Badge variant="outline" className="capitalize shadow-sm backdrop-blur-md bg-black/60 text-white border-white/20 font-medium px-2.5 py-1">
+          <div className={styles.badgesTopRight}>
+            <div className={styles.genderBadge}>
               {property.gender_preference === "coed" ? "Co-ed" : property.gender_preference}
-            </Badge>
+            </div>
           </div>
         </div>
 
         {/* Card Content Area */}
-        <CardHeader className="p-5 pb-3">
-          <div className="flex justify-between items-start gap-4">
-            <div className="flex-1">
-              <CardTitle className="text-[17px] font-bold line-clamp-1 text-text group-hover:text-primary transition-colors duration-200">
+        <CardHeader className={styles.header}>
+          <div className={styles.headerContent}>
+            <div className={styles.headerMain}>
+              <CardTitle className={styles.title}>
                 {property.name}
               </CardTitle>
-              <div className="flex items-center gap-1 mt-1 text-[13px] text-text-secondary">
-                <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
-                <span className="truncate">{property.city}, {property.state}</span>
+              <div className={styles.location}>
+                <MapPin className={styles.locationIcon} />
+                <span className={styles.locationText}>{property.city}, {property.state}</span>
               </div>
             </div>
             
             {/* Price block - Right aligned */}
-            <div className="text-right flex-shrink-0">
-              <div className="text-lg font-extrabold text-text leading-none">
+            <div className={styles.priceBlock}>
+              <div className={styles.priceAmount}>
                 {property.min_price ? `₹${property.min_price.toLocaleString("en-IN")}` : "N/A"}
               </div>
-              <div className="text-[11px] font-medium text-text-secondary mt-1">
+              <div className={styles.priceUnit}>
                 / mo
               </div>
             </div>
           </div>
         </CardHeader>
 
-        <CardContent className="px-5 pb-5 text-sm flex-1 flex flex-col justify-end">
+        <CardContent className={styles.content}>
           {/* Minimal availability indicator */}
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[13px] font-medium text-text-secondary">Availability</span>
-            <span className="text-[13px] font-bold">
+          <div className={styles.availabilityHeader}>
+            <span className={styles.availabilityLabel}>Availability</span>
+            <span className={styles.availabilityValue}>
               {isAvailable ? (
-                <span className="text-emerald-600">{property.available_beds} beds left</span>
+                <span className={styles.textAvailable}>{property.available_beds} beds left</span>
               ) : (
-                <span className="text-danger">Sold Out</span>
+                <span className={styles.textSoldOut}>Sold Out</span>
               )}
             </span>
           </div>
           
-          <div className="h-1.5 w-full rounded-full bg-bg-tertiary overflow-hidden">
+          <div className={styles.barTrack}>
             <div
-              className={`h-full rounded-full transition-all duration-1000 ease-out ${isAvailable ? 'bg-primary' : 'bg-danger'}`}
+              className={`${styles.barFill} ${isAvailable ? styles.bgAvailable : styles.bgSoldOut}`}
               style={{ width: `${isAvailable ? fillPercentage : 100}%` }}
             />
           </div>

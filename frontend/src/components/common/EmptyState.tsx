@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
+import styles from "./EmptyState.module.css";
 
 export interface EmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: React.ComponentType<{ className?: string }> | React.ReactNode;
@@ -19,24 +20,21 @@ export function EmptyState({
   const isIconComponent = typeof Icon === "function" || (Icon && typeof (Icon as any).render === "function");
   return (
     <div
-      className={cn(
-        "flex min-h-[400px] flex-col items-center justify-center rounded-[24px] bg-card border-none shadow-sm p-8 text-center animate-fade-in relative overflow-hidden",
-        className
-      )}
+      className={cn(styles.container, className)}
       {...props}
     >
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner relative z-10 mb-6">
+      <div className={styles.backgroundBlob} />
+      <div className={styles.iconContainer}>
         {Icon ? (
           isIconComponent ? (
             // @ts-ignore
-            <Icon className="h-10 w-10 text-primary" />
+            <Icon className={styles.icon} />
           ) : (
             Icon
           )
         ) : (
           <svg
-            className="h-10 w-10 text-primary"
+            className={styles.icon}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -51,9 +49,9 @@ export function EmptyState({
           </svg>
         )}
       </div>
-      <h3 className="text-xl font-bold text-text relative z-10">{title}</h3>
-      <p className="mt-2 max-w-sm text-sm text-text-secondary leading-relaxed relative z-10">{description}</p>
-      {action && <div className="mt-8 relative z-10 font-bold">{action}</div>}
+      <h3 className={styles.title}>{title}</h3>
+      <p className={styles.description}>{description}</p>
+      {action && <div className={styles.action}>{action}</div>}
     </div>
   );
 }

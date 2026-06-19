@@ -1,0 +1,64 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: colors 0.2s;
+}
+
+.badge:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-primary);
+}
+
+.variant-default {
+  background-color: var(--color-primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+.variant-default:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.variant-secondary {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text);
+}
+.variant-secondary:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+.variant-destructive {
+  background-color: var(--color-danger);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+.variant-destructive:hover {
+  background-color: rgba(220, 38, 38, 0.9);
+}
+
+.variant-outline {
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.variant-success {
+  background-color: rgb(16, 185, 129); /* success */
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+.variant-success:hover {
+  background-color: rgba(16, 185, 129, 0.9);
+}
+
+.variant-warning {
+  background-color: rgb(245, 158, 11); /* warning */
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+.variant-warning:hover {
+  background-color: rgba(245, 158, 11, 0.9);
+}

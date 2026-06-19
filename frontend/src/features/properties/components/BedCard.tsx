@@ -2,6 +2,7 @@ import { Bed } from "lucide-react";
 import { Badge } from "../../../components/ui/Badge";
 import { Button } from "../../../components/ui/Button";
 import type { BedRead } from "../../../types/property";
+import styles from "./BedCard.module.css";
 
 export interface HoldData {
   id: string;
@@ -22,40 +23,40 @@ export function BedCard({ bed, myActiveHold, onHoldRequest, isHolding = false }:
 
   // Base styling depending on status
   const getStatusStyles = () => {
-    if (isVacant) return "border-transparent hover:bg-emerald-500/5 hover:shadow-md ring-1 ring-emerald-500/20";
-    if (isHeld) return "border-transparent bg-amber-500/5 ring-1 ring-amber-500/20";
-    return "border-transparent bg-rose-500/5 opacity-75 grayscale-[0.2] ring-1 ring-rose-500/10";
+    if (isVacant) return styles.cardVacant;
+    if (isHeld) return styles.cardHeld;
+    return styles.cardOccupied;
   };
 
   const getIconStyles = () => {
-    if (isVacant) return "bg-emerald-500/15 text-emerald-600 shadow-inner";
-    if (isHeld) return "bg-amber-500/15 text-amber-600";
-    return "bg-rose-500/15 text-rose-600";
+    if (isVacant) return styles.iconVacant;
+    if (isHeld) return styles.iconHeld;
+    return styles.iconOccupied;
   };
 
   return (
     <div
-      className={`flex items-center justify-between p-5 rounded-2xl border bg-card transition-all duration-300 ${getStatusStyles()}`}
+      className={`${styles.card} ${getStatusStyles()}`}
     >
-      <div className="flex items-center gap-4">
-        <div className={`h-12 w-12 flex items-center justify-center rounded-xl ${getIconStyles()}`}>
-          <Bed className="h-6 w-6" />
+      <div className={styles.leftContent}>
+        <div className={`${styles.iconWrapper} ${getIconStyles()}`}>
+          <Bed className={styles.bedIcon} />
         </div>
-        <div className="flex flex-col">
-          <span className="text-sm font-extrabold text-text tracking-tight">Bed {bed.bed_number}</span>
-          <span className="text-[11px] text-text-secondary font-medium">
+        <div className={styles.bedInfo}>
+          <span className={styles.bedNumber}>Bed {bed.bed_number}</span>
+          <span className={styles.bedLabel}>
             {bed.label || "Regular Bed"}
           </span>
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
-        <span className="text-sm font-bold text-text">
+      <div className={styles.rightContent}>
+        <span className={styles.price}>
           {bed.price ? `₹${bed.price.toLocaleString("en-IN")}` : "Included"}
         </span>
         
         {myActiveHold ? (
-          <Badge variant="success" className="text-[11px] py-1 px-3 shadow-sm bg-emerald-500 hover:bg-emerald-600 border-none font-semibold">
+          <Badge variant="success" className={styles.holdBadge}>
             Your Hold
           </Badge>
         ) : isVacant ? (
@@ -63,7 +64,7 @@ export function BedCard({ bed, myActiveHold, onHoldRequest, isHolding = false }:
             size="sm"
             variant="outline"
             disabled={isHolding}
-            className="text-[11px] py-1 h-8 px-4 font-bold cursor-pointer border-emerald-500/50 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all shadow-sm active:scale-95"
+            className={styles.holdBtn}
             onClick={() => onHoldRequest(bed.id)}
           >
             {isHolding ? "Holding..." : "Hold Bed"}
@@ -71,7 +72,7 @@ export function BedCard({ bed, myActiveHold, onHoldRequest, isHolding = false }:
         ) : (
           <Badge
             variant={isHeld ? "warning" : "destructive"}
-            className="text-[10px] py-1 px-3 uppercase tracking-wider text-white shadow-sm border-none font-semibold"
+            className={styles.statusBadge}
           >
             {bed.status}
           </Badge>

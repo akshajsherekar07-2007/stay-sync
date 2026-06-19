@@ -1,0 +1,125 @@
+.card {
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid transparent;
+  text-align: left;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-card);
+  box-shadow: var(--shadow-sm);
+  font-family: inherit;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+  background-color: var(--color-bg-secondary);
+}
+
+.cardSelected {
+  background-color: rgba(13, 148, 136, 0.1); /* primary/10 */
+  box-shadow: var(--shadow-md);
+  box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.4); /* ring-2 ring-primary/40 */
+}
+
+.cardSelected:hover {
+  box-shadow: var(--shadow-md), 0 0 0 2px rgba(13, 148, 136, 0.4);
+}
+
+.hoverBlob {
+  position: absolute;
+  right: -1rem;
+  top: -1rem;
+  width: 4rem;
+  height: 4rem;
+  background-color: rgba(13, 148, 136, 0.05); /* primary/5 */
+  border-radius: 9999px;
+  filter: blur(1rem);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.card:hover .hoverBlob {
+  opacity: 1;
+}
+
+.contentWrapper {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.roomTitle {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -0.025em;
+}
+
+.badgeBase {
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.125rem 0.5rem;
+}
+
+.badgeSelected {
+  box-shadow: var(--shadow-sm);
+}
+
+.roomDesc {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+}
+
+.footerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 1.25rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(226, 232, 240, 0.2);
+  width: 100%;
+  font-size: 0.875rem;
+  position: relative;
+  z-index: 10;
+}
+
+.priceLabel {
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.priceValue {
+  font-weight: 700;
+  color: var(--color-text);
+  transition: color 0.2s;
+}
+
+.card:hover .priceValue {
+  color: var(--color-primary);
+}
+
+.priceValueSelected {
+  font-weight: 700;
+  color: var(--color-primary);
+}

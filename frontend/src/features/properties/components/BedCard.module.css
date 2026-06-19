@@ -1,0 +1,149 @@
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  border: 1px solid transparent;
+  background-color: var(--color-card);
+  transition: all 0.3s ease;
+}
+
+/* Status variants for the card */
+.cardVacant {
+  border-color: transparent;
+}
+.cardVacant:hover {
+  background-color: rgba(16, 185, 129, 0.05); /* emerald-500/5 */
+  box-shadow: var(--shadow-md);
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.2); /* ring-1 emerald-500/20 */
+}
+
+.cardHeld {
+  border-color: transparent;
+  background-color: rgba(245, 158, 11, 0.05); /* amber-500/5 */
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.2); /* ring-1 amber-500/20 */
+}
+
+.cardOccupied {
+  border-color: transparent;
+  background-color: rgba(244, 63, 94, 0.05); /* rose-500/5 */
+  opacity: 0.75;
+  filter: grayscale(0.2);
+  box-shadow: 0 0 0 1px rgba(244, 63, 94, 0.1); /* ring-1 rose-500/10 */
+}
+
+.leftContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.iconWrapper {
+  height: 3rem;
+  width: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+}
+
+/* Status variants for the icon wrapper */
+.iconVacant {
+  background-color: rgba(16, 185, 129, 0.15); /* emerald-500/15 */
+  color: rgb(5, 150, 105); /* emerald-600 */
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); /* shadow-inner */
+}
+
+.iconHeld {
+  background-color: rgba(245, 158, 11, 0.15); /* amber-500/15 */
+  color: rgb(217, 119, 6); /* amber-600 */
+}
+
+.iconOccupied {
+  background-color: rgba(244, 63, 94, 0.15); /* rose-500/15 */
+  color: rgb(225, 29, 72); /* rose-600 */
+}
+
+.bedIcon {
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.bedInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.bedNumber {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -0.025em;
+}
+
+.bedLabel {
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.rightContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.price {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.holdBadge {
+  font-size: 0.6875rem;
+  padding: 0.25rem 0.75rem;
+  box-shadow: var(--shadow-sm);
+  background-color: rgb(16, 185, 129); /* emerald-500 */
+  border: none;
+  font-weight: 600;
+  color: white;
+}
+
+.holdBadge:hover {
+  background-color: rgb(5, 150, 105); /* emerald-600 */
+}
+
+.holdBtn {
+  font-size: 0.6875rem;
+  padding: 0.25rem 1rem;
+  height: 2rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid rgba(16, 185, 129, 0.5); /* border-emerald-500/50 */
+  color: rgb(5, 150, 105); /* text-emerald-600 */
+  background-color: transparent;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  border-radius: 0.75rem;
+}
+
+.holdBtn:hover {
+  background-color: rgb(16, 185, 129); /* emerald-500 */
+  color: white;
+}
+
+.holdBtn:active {
+  transform: scale(0.95);
+}
+
+.statusBadge {
+  font-size: 0.625rem;
+  padding: 0.25rem 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: white;
+  box-shadow: var(--shadow-sm);
+  border: none;
+  font-weight: 600;
+}

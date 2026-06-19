@@ -1,15 +1,10 @@
 import * as React from "react";
 import * as LabelPrimitive from "@radix-ui/react-label";
-import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/utils";
-
-const labelVariants = cva(
-  "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-text"
-);
+import styles from "./Label.module.css";
 
 export interface LabelProps
-  extends React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>,
-    VariantProps<typeof labelVariants> {
+  extends React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> {
   required?: boolean;
 }
 
@@ -19,11 +14,11 @@ const Label = React.forwardRef<
 >(({ className, required, children, ...props }, ref) => (
   <LabelPrimitive.Root
     ref={ref}
-    className={cn(labelVariants(), className)}
+    className={cn(styles.label, className)}
     {...props}
   >
     {children}
-    {required && <span className="ml-0.5 text-danger font-semibold" aria-hidden="true">*</span>}
+    {required && <span className={styles.asterisk} aria-hidden="true">*</span>}
   </LabelPrimitive.Root>
 ));
 Label.displayName = LabelPrimitive.Root.displayName;
