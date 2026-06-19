@@ -5,7 +5,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../../components/ui/Card";
 import { Input } from "../../../components/ui/Input";
 import { Label } from "../../../components/ui/Label";
 import { Button } from "../../../components/ui/Button";
@@ -61,122 +60,93 @@ export default function LoginPage() {
   };
 
   return (
-    <Card className="w-full border-border bg-card shadow-lg animate-slide-up">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold tracking-tight text-center md:text-left">
-          Sign in
-        </CardTitle>
-        <CardDescription className="text-center md:text-left">
-          Enter your email and credentials to access your portal.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email" required>
-              Email Address
-            </Label>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-text-tertiary">
-                <Mail className="h-4 w-4" />
-              </span>
-              <Input
-                id="email"
-                type="email"
-                placeholder="student@example.com"
-                className="pl-10 animate-fade-in"
-                error={!!errors.email}
-                disabled={isLoading}
-                {...registerField("email")}
-              />
-            </div>
-            {errors.email && (
-              <p className="text-xs text-danger font-medium animate-fade-in">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password" required>
-                Password
-              </Label>
-            </div>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-text-tertiary">
-                <Lock className="h-4 w-4" />
-              </span>
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
-                className="pl-10 pr-10 animate-fade-in"
-                error={!!errors.password}
-                disabled={isLoading}
-                {...registerField("password")}
-              />
-              <button
-                type="button"
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-text-tertiary hover:text-text-secondary focus:outline-none"
-                onClick={() => setShowPassword(!showPassword)}
-                disabled={isLoading}
-                tabIndex={-1}
-              >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4" aria-hidden="true" />
-                ) : (
-                  <Eye className="h-4 w-4" aria-hidden="true" />
-                )}
-              </button>
-            </div>
-            {errors.password && (
-              <p className="text-xs text-danger font-medium animate-fade-in">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
-
-          <Button type="submit" className="w-full mt-2" loading={isLoading}>
-            Sign In
-          </Button>
-        </form>
-
-        {/* Dev Quick Login Panel */}
-        <div className="mt-6 rounded-lg bg-bg-secondary p-4 border border-border">
-          <p className="text-xs font-semibold text-text-secondary mb-2">
-            Developer Quick Fill:
-          </p>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => handleQuickLogin("student@example.com")}
-              className="flex flex-col items-start p-2 text-left rounded-md border border-border bg-card hover:bg-bg-tertiary hover:border-border-hover transition-colors cursor-pointer"
+    <div className="w-full">
+      <div className="mb-8 text-center md:text-left">
+        <h1 className="text-3xl font-extrabold tracking-tight text-text mb-2">
+          Welcome back
+        </h1>
+        <p className="text-text-secondary text-sm">
+          Enter your credentials to access your account.
+        </p>
+      </div>
+      
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <div className="space-y-2">
+          <Label htmlFor="email" required className="text-xs uppercase tracking-wider text-text-secondary font-semibold">
+            Email Address
+          </Label>
+          <div className="relative">
+            <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-text-tertiary">
+              <Mail className="h-4 w-4" />
+            </span>
+            <Input
+              id="email"
+              type="email"
+              placeholder="name@example.com"
+              className="pl-10 h-12 bg-white"
+              error={!!errors.email}
               disabled={isLoading}
-            >
-              <span className="text-xs font-semibold text-primary">Student</span>
-              <span className="text-[10px] text-text-secondary truncate w-full">
-                student@example.com
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleQuickLogin("owner@example.com")}
-              className="flex flex-col items-start p-2 text-left rounded-md border border-border bg-card hover:bg-bg-tertiary hover:border-border-hover transition-colors cursor-pointer"
-              disabled={isLoading}
-            >
-              <span className="text-xs font-semibold text-primary">Owner</span>
-              <span className="text-[10px] text-text-secondary truncate w-full">
-                owner@example.com
-              </span>
-            </button>
+              {...registerField("email")}
+            />
           </div>
+          {errors.email && (
+            <p className="text-xs text-danger font-medium animate-fade-in">
+              {errors.email.message}
+            </p>
+          )}
         </div>
-      </CardContent>
-      <CardFooter className="flex flex-col space-y-2 text-center text-sm text-text-secondary">
-        <div className="w-full border-t border-border my-2" />
+
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password" required className="text-xs uppercase tracking-wider text-text-secondary font-semibold">
+              Password
+            </Label>
+            <Link to="#" className="text-xs font-semibold text-primary hover:text-primary-dark hover:underline">
+              Forgot password?
+            </Link>
+          </div>
+          <div className="relative">
+            <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-text-tertiary">
+              <Lock className="h-4 w-4" />
+            </span>
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="••••••••"
+              className="pl-10 pr-10 h-12 bg-white"
+              error={!!errors.password}
+              disabled={isLoading}
+              {...registerField("password")}
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-text-tertiary hover:text-text-secondary focus:outline-none"
+              onClick={() => setShowPassword(!showPassword)}
+              disabled={isLoading}
+              tabIndex={-1}
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" aria-hidden="true" />
+              ) : (
+                <Eye className="h-4 w-4" aria-hidden="true" />
+              )}
+            </button>
+          </div>
+          {errors.password && (
+            <p className="text-xs text-danger font-medium animate-fade-in">
+              {errors.password.message}
+            </p>
+          )}
+        </div>
+
+        <Button type="submit" className="w-full h-12 text-base mt-2" loading={isLoading}>
+          Sign In
+        </Button>
+      </form>
+
+      <div className="mt-8 text-center text-sm text-text-secondary">
         <p>
-          Don&apos;t have an account?{" "}
+          Don't have an account?{" "}
           <Link
             to="/register"
             className="font-semibold text-primary hover:text-primary-dark hover:underline transition-colors"
@@ -184,7 +154,38 @@ export default function LoginPage() {
             Create an account
           </Link>
         </p>
-      </CardFooter>
-    </Card>
+      </div>
+
+      {/* Dev Quick Login Panel */}
+      <div className="mt-10 rounded-xl bg-bg-secondary p-5 border border-border/60">
+        <p className="text-[11px] uppercase tracking-wider font-bold text-text-tertiary mb-3">
+          Developer Quick Access
+        </p>
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => handleQuickLogin("student@example.com")}
+            className="group flex flex-col items-start p-3 text-left rounded-lg border border-border/60 bg-white hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer"
+            disabled={isLoading}
+          >
+            <span className="text-sm font-bold text-text group-hover:text-primary transition-colors">Student Demo</span>
+            <span className="text-xs text-text-secondary truncate w-full mt-0.5">
+              student@example.com
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={() => handleQuickLogin("owner@example.com")}
+            className="group flex flex-col items-start p-3 text-left rounded-lg border border-border/60 bg-white hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer"
+            disabled={isLoading}
+          >
+            <span className="text-sm font-bold text-text group-hover:text-primary transition-colors">Owner Demo</span>
+            <span className="text-xs text-text-secondary truncate w-full mt-0.5">
+              owner@example.com
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

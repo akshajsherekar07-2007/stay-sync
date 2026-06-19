@@ -1,5 +1,5 @@
 import { Link, Navigate, Outlet } from "react-router-dom";
-import { Home } from "lucide-react";
+import { Building2 } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 
 export function AuthLayout() {
@@ -10,33 +10,80 @@ export function AuthLayout() {
   }
 
   return (
-    <div className="flex min-h-screen w-full bg-bg text-text md:grid md:grid-cols-2">
+    <div className="flex min-h-screen w-full bg-bg text-text md:grid md:grid-cols-2 overflow-hidden">
       {/* Decorative Left Panel (Desktop only) */}
-      <div className="hidden flex-col justify-between bg-primary p-12 text-white md:flex">
-        <div className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-          <Home className="h-8 w-8" aria-hidden="true" />
+      <div className="relative hidden flex-col justify-between bg-sidebar-bg p-12 text-sidebar-text md:flex overflow-hidden">
+        {/* Subtle Background Pattern */}
+        <div 
+          className="absolute inset-0 opacity-[0.03]" 
+          style={{ 
+            backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`, 
+            backgroundSize: `32px 32px` 
+          }}
+        />
+        
+        {/* Soft glowing orb in the background */}
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-primary/20 rounded-full blur-[100px]" />
+        <div className="absolute top-1/2 left-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2" />
+
+        <div className="relative z-10 flex items-center gap-2.5 text-2xl font-bold tracking-tight text-white">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/20">
+            <Building2 className="h-5 w-5 text-white" aria-hidden="true" />
+          </div>
           <span>StaySync</span>
         </div>
-        <div className="space-y-6">
-          <h1 className="text-4xl font-extrabold tracking-tight leading-tight lg:text-5xl">
-            Find the perfect student accommodation, instantly.
-          </h1>
-          <p className="text-lg text-primary-light">
-            StaySync connects students with premium accommodation options. Manage bookings, holds, and properties all in one secure place.
-          </p>
+
+        {/* Abstract Product Mockup */}
+        <div className="relative z-10 flex flex-col items-center justify-center flex-1 my-12">
+          <div className="w-full max-w-[420px] rounded-2xl bg-white/5 border border-white/10 p-6 backdrop-blur-sm shadow-2xl overflow-hidden animate-slide-up" style={{ animationDelay: '0.1s' }}>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="flex gap-1.5">
+                <div className="h-3 w-3 rounded-full bg-white/20" />
+                <div className="h-3 w-3 rounded-full bg-white/20" />
+                <div className="h-3 w-3 rounded-full bg-white/20" />
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div className="h-8 w-3/4 rounded-lg bg-white/10" />
+              <div className="space-y-2">
+                <div className="h-4 w-full rounded bg-white/5" />
+                <div className="h-4 w-5/6 rounded bg-white/5" />
+                <div className="h-4 w-4/6 rounded bg-white/5" />
+              </div>
+              <div className="flex gap-3 pt-4">
+                <div className="h-20 flex-1 rounded-xl bg-primary/20 border border-primary/30" />
+                <div className="h-20 flex-1 rounded-xl bg-white/5" />
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="text-sm text-primary-light/80">
-          © {new Date().getFullYear()} StaySync. Trusted by thousands of students.
+
+        <div className="relative z-10 space-y-6 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+          <blockquote className="text-xl font-medium leading-relaxed tracking-tight text-white">
+            "StaySync has completely transformed how we manage our properties. 
+            The waitlist features and instant holds fill our beds 40% faster than before."
+          </blockquote>
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-lg font-bold text-white">
+              S
+            </div>
+            <div>
+              <p className="font-semibold text-white">Sarah Jenkins</p>
+              <p className="text-sm text-sidebar-text/70">Property Manager at Apex Housing</p>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Right Panel (Form content) */}
-      <div className="flex w-full items-center justify-center p-6 sm:p-12 md:p-16">
-        <div className="mx-auto flex w-full max-w-md flex-col justify-center space-y-6">
+      <div className="relative flex w-full items-center justify-center p-6 sm:p-12 md:p-16 bg-bg z-10">
+        <div className="mx-auto flex w-full max-w-[400px] flex-col justify-center space-y-8 animate-fade-in">
           {/* Mobile Branding */}
-          <div className="flex flex-col items-center gap-2 md:hidden">
-            <Link to="/" className="flex items-center gap-2 text-2xl font-bold text-primary">
-              <Home className="h-8 w-8" aria-hidden="true" />
+          <div className="flex flex-col items-center gap-2 md:hidden mb-4">
+            <Link to="/" className="flex items-center gap-2.5 text-2xl font-bold text-text">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-md">
+                <Building2 className="h-5 w-5 text-white" aria-hidden="true" />
+              </div>
               <span>StaySync</span>
             </Link>
           </div>

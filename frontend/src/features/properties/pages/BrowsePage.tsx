@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useSearchParams } from "react-router-dom";
-import { Search, MapPin, Building, SlidersHorizontal, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
+import { Search, SlidersHorizontal, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { propertyService } from "../../../services/propertyService";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../../../components/ui/Card";
+import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/Card";
 import { Button } from "../../../components/ui/Button";
 import { Input } from "../../../components/ui/Input";
 import { Label } from "../../../components/ui/Label";
-import { Badge } from "../../../components/ui/Badge";
 import { SkeletonCard } from "../../../components/common/SkeletonCard";
 import { EmptyState } from "../../../components/common/EmptyState";
+import { PropertyCard } from "../components/PropertyCard";
 import { PropertyType, GenderPreference } from "../../../types/enums";
 
 export default function BrowsePage() {
@@ -95,22 +95,22 @@ export default function BrowsePage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* ── Filters Sidebar ── */}
         <div className="lg:col-span-1 space-y-6">
-          <Card className="border-border bg-card shadow-xs">
-            <CardHeader className="flex flex-row items-center justify-between border-b border-border pb-4">
-              <div className="flex items-center gap-2">
-                <SlidersHorizontal className="h-4 w-4 text-primary" />
-                <CardTitle className="text-base font-bold">Filters</CardTitle>
+          <Card className="border-border/60 bg-card shadow-sm sticky top-6">
+            <CardHeader className="flex flex-row items-center justify-between border-b border-border/40 pb-4 bg-bg-secondary/30 rounded-t-xl">
+              <div className="flex items-center gap-2.5">
+                <SlidersHorizontal className="h-4.5 w-4.5 text-primary" />
+                <CardTitle className="text-base font-extrabold tracking-tight">Filters</CardTitle>
               </div>
               <button
                 type="button"
                 onClick={clearFilters}
-                className="text-xs font-semibold text-text-secondary hover:text-primary transition-colors flex items-center gap-1 cursor-pointer"
+                className="text-[11px] font-bold uppercase tracking-wider text-text-secondary hover:text-primary transition-colors flex items-center gap-1.5 cursor-pointer active:scale-95"
               >
                 <RotateCcw className="h-3 w-3" />
                 Reset
               </button>
             </CardHeader>
-            <CardContent className="space-y-4 pt-6">
+            <CardContent className="space-y-5 pt-6">
               {/* City Filter */}
               <div className="space-y-1.5">
                 <Label htmlFor="city-filter">City</Label>
@@ -201,12 +201,12 @@ export default function BrowsePage() {
         {/* ── Properties Listing Grid ── */}
         <div className="lg:col-span-3 space-y-6">
           {/* Search bar */}
-          <div className="relative">
-            <Search className="absolute left-3 top-3 h-5 w-5 text-text-tertiary" />
+          <div className="relative group">
+            <Search className="absolute left-4 top-3.5 h-5 w-5 text-text-tertiary group-focus-within:text-primary transition-colors" />
             <Input
               type="text"
               placeholder="Search by college name, property title, or address..."
-              className="pl-10 h-11 border-border shadow-xs"
+              className="pl-12 h-12 border-border/60 shadow-sm rounded-xl bg-card focus-visible:ring-primary/20 text-base"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
             />
@@ -240,73 +240,7 @@ export default function BrowsePage() {
             <>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {properties.map((property) => (
-                  <Card key={property.id} className="group overflow-hidden border-border bg-card shadow-sm hover:shadow-md transition-all">
-                    {/* Cover image */}
-                    <div className="relative aspect-[16/10] overflow-hidden bg-bg-tertiary">
-                      {property.primary_image_url ? (
-                        <img
-                          src={property.primary_image_url}
-                          alt={property.name}
-                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full flex-col items-center justify-center text-text-tertiary">
-                          <Building className="h-10 w-10 stroke-[1.5]" />
-                          <span className="text-xs mt-2">No Image</span>
-                        </div>
-                      )}
-
-                      <div className="absolute top-3 right-3 flex flex-col gap-1.5 items-end">
-                        <Badge variant="success" className="capitalize text-white">
-                          {property.property_type}
-                        </Badge>
-                        <Badge className="capitalize bg-black/70 text-white">
-                          {property.gender_preference === "coed" ? "Co-ed" : property.gender_preference}
-                        </Badge>
-                      </div>
-                    </div>
-
-                    {/* Card Content */}
-                    <CardHeader className="p-4">
-                      <div className="flex items-center gap-1 text-xs text-text-secondary mb-1">
-                        <MapPin className="h-3 w-3 text-primary" />
-                        <span className="truncate">{property.city}, {property.state}</span>
-                      </div>
-                      <CardTitle className="text-lg font-bold line-clamp-1 group-hover:text-primary transition-colors">
-                        {property.name}
-                      </CardTitle>
-                    </CardHeader>
-
-                    <CardContent className="px-4 pb-4 text-xs">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-text-secondary">Available Beds:</span>
-                        <span className="font-semibold text-text">
-                          {property.available_beds} vacant / {property.total_beds} total
-                        </span>
-                      </div>
-                      <div className="h-1.5 w-full rounded-full bg-bg-tertiary overflow-hidden">
-                        <div
-                          className="h-full bg-primary"
-                          style={{
-                            width: `${(property.total_beds > 0 ? (property.total_beds - property.available_beds) / property.total_beds : 0) * 100}%`,
-                          }}
-                        />
-                      </div>
-                    </CardContent>
-
-                    {/* Card Footer */}
-                    <CardFooter className="flex items-center justify-between p-4 border-t border-border bg-bg-secondary/40">
-                      <div>
-                        <span className="text-[10px] text-text-secondary block">Monthly Rent</span>
-                        <span className="text-base font-bold text-primary">
-                          {property.min_price ? `₹${property.min_price.toLocaleString("en-IN")}` : "N/A"}
-                        </span>
-                      </div>
-                      <Button size="sm" asChild>
-                        <Link to={`/property/${property.id}`}>View Details</Link>
-                      </Button>
-                    </CardFooter>
-                  </Card>
+                  <PropertyCard key={property.id} property={property} />
                 ))}
               </div>
 

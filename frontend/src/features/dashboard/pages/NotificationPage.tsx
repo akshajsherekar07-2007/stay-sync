@@ -22,6 +22,7 @@ import { Button } from "../../../components/ui/Button";
 import { Card, CardContent } from "../../../components/ui/Card";
 import { LoadingSpinner } from "../../../components/common/LoadingSpinner";
 import { Badge } from "../../../components/ui/Badge";
+import { EmptyState } from "../../../components/common/EmptyState";
 
 export default function NotificationPage() {
   const queryClient = useQueryClient();
@@ -103,12 +104,12 @@ export default function NotificationPage() {
               <LoadingSpinner size="lg" />
             </div>
           ) : notifications.length === 0 ? (
-            <div className="text-center py-20">
-              <Bell className="h-12 w-12 text-text-tertiary mx-auto mb-4 opacity-50" />
-              <h3 className="text-lg font-bold text-text">No notifications found</h3>
-              <p className="text-text-secondary mt-1 text-sm">
-                {filterUnread ? "You have read all your notifications." : "You have no notifications yet."}
-              </p>
+            <div className="p-1">
+              <EmptyState
+                icon={<Bell className="h-10 w-10 text-primary" />}
+                title="No notifications found"
+                description={filterUnread ? "You have read all your notifications." : "You have no notifications yet."}
+              />
             </div>
           ) : (
             <div className="divide-y divide-border/50">

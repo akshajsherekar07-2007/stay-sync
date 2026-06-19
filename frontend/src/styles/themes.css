@@ -1,8 +1,21 @@
-/* ── Sonner Toast Theme Overrides ──────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════
+   StaySync — Third-Party Component Overrides
+   ═══════════════════════════════════════════════════════════════
+   
+   Style overrides for external libraries (Sonner toasts, etc.)
+   that cannot be controlled via Tailwind utility classes.
+   
+   ══════════════════════════════════════════════════════════════ */
+
+
+/* ── Sonner Toast Overrides ───────────────────────────────────
+   Sonner reads CSS custom properties for its theme.
+   We map them to our design tokens.
+   ──────────────────────────────────────────────────────────── */
 [data-sonner-toaster] {
-  --normal-bg: var(--color-card);
-  --normal-border: var(--color-border);
-  --normal-text: var(--color-text);
+  --normal-bg: #FFFFFF;
+  --normal-border: rgba(15, 23, 42, 0.08);
+  --normal-text: #0F172A;
   font-family: "Inter", system-ui, -apple-system, sans-serif;
 }
 
@@ -12,38 +25,13 @@
 }
 
 [data-sonner-toaster] [data-sonner-toast][data-type="success"] {
-  --normal-bg: var(--color-success);
+  --normal-bg: #22C55E;
   --normal-text: #ffffff;
-  --normal-border: var(--color-success);
+  --normal-border: #22C55E;
 }
 
 [data-sonner-toaster] [data-sonner-toast][data-type="error"] {
-  --normal-bg: var(--color-danger);
+  --normal-bg: #EF4444;
   --normal-text: #ffffff;
-  --normal-border: var(--color-danger);
-}
-
-/* ── Glass Effect Utility ─────────────────────────────────── */
-.glass {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.dark .glass {
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* ── Navbar Glass ─────────────────────────────────────────── */
-.navbar-glass {
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  background: rgba(255, 255, 255, 0.85);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.dark .navbar-glass {
-  background: rgba(15, 23, 42, 0.85);
+  --normal-border: #EF4444;
 }

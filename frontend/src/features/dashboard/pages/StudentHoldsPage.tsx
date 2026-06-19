@@ -10,6 +10,7 @@ import { Card, CardContent } from "../../../components/ui/Card";
 import { Button } from "../../../components/ui/Button";
 import { Badge } from "../../../components/ui/Badge";
 import { LoadingSpinner } from "../../../components/common/LoadingSpinner";
+import { EmptyState } from "../../../components/common/EmptyState";
 
 export default function StudentHoldsPage() {
   const queryClient = useQueryClient();
@@ -52,16 +53,16 @@ export default function StudentHoldsPage() {
           <LoadingSpinner size="lg" />
         </div>
       ) : holds.length === 0 ? (
-        <Card className="bg-bg border-border text-center py-12 shadow-xs">
-          <CardContent>
-            <Clock className="h-12 w-12 text-text-tertiary mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-text">No Holds Found</h3>
-            <p className="text-text-secondary mt-2">You haven't requested any bed holds yet.</p>
-            <Button className="mt-6" asChild>
+        <EmptyState
+          icon={<Clock className="h-10 w-10 text-primary" />}
+          title="No Holds Found"
+          description="You haven't requested any bed holds yet."
+          action={
+            <Button asChild>
               <Link to="/properties">Browse Properties</Link>
             </Button>
-          </CardContent>
-        </Card>
+          }
+        />
       ) : (
         <div className="space-y-4">
           {holds.map((hold) => (
